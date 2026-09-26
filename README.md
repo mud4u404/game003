@@ -37,6 +37,8 @@ PLAYWRIGHT_MODULE=/absolute/path/to/playwright node tests/browser.cjs
 
 浏览器检查覆盖授权/扩建、刷新存档、双标签互斥与接管、人物查看、移动端布局、离线进展及损坏存档保护；截图默认输出到 `/tmp/meiao-browser-checks`。
 
+动作回放检查页为 `http://localhost:4173/assets/dev/motion-review.html`，使用独立固定患者、不读取或修改游戏存档；可逐阶段查看起坐、走路、接诊与护理。
+
 游戏进度只保存在当前浏览器的本地存储中，不会随 GitHub 代码同步。离线运行采用重开时补算，尚未部署云端常驻服务。LLM、专业疾病系统、科研与学科声誉尚未实现。
 
 ## 保存与接力

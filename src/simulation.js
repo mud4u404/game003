@@ -1,5 +1,6 @@
+import { movePatient, settledMotion, atDestination, patientPose, ROOM_POS, ENTRY, DESK, seatFeet, registrationSlot, nursingSlot, NURSING_POS, WALK_SPEED } from './movement.js';
 // Time and randomness belong to the simulation, never to rendering or UI refreshes.
-export const VERSION = 1;
+export const VERSION = 2;
 export const MINUTE = 60_000;
 export const HOUR = 60 * MINUTE;
 export const PROJECT = { cost: 6800, duration: 20 * MINUTE, reserve: 30_000 };
@@ -47,11 +48,30 @@ function demand(s, at) {
     note(s, '接待安排了外部接续', '当前候诊已满，已告知新到访者可用的外部服务。', 'referral');
     return;
   }
+  p.queueSlot = freeSlot(s, ['arriving', 'registerQueue']);
+  p.motion = settledMotion(ENTRY, at);
+  movePatient(p, 'arriving', at, registrationSlot(p.queueSlot), 0);
   s.patients.push(p);
 }
+function freeSlot(s, phases) {
+  const occupied = new Set(s.patients.filter(p => phases.includes(p.phase)).map(p => p.queueSlot));
+  let i = 0; while (occupied.has(i)) i++; return i;
+}
 function enter(p, phase, at, duration = null) {
-  p.previousPhase = p.phase; p.phase = phase; p.phaseAt = at;
-  p.due = duration === null ? null : at + duration;
+  const target = { arriving: registrationSlot(p.queueSlot || 0), registerQueue: registrationSlot(p.queueSlot || 0),
+    registration: DESK, waiting: seatFeet(p.seat || 0), consultation: ROOM_POS[p.room || 1],
+    nursingQueue: nursingSlot(p.queueSlot || 0), nursing: NURSING_POS, leaving: ENTRY }[phase];
+  movePatient(p, phase, at, target, duration);
+}
+function releaseRoom(p) {
+  // Keep the room reserved until the outgoing patient has crossed its doorway.
+  let length = 0;
+  for (let i = 1; i < p.motion.points.length; i++) {
+    const a = p.motion.points[i-1], b = p.motion.points[i];
+    length += Math.hypot(b[0]-a[0], b[1]-a[1]);
+    if (b[1] >= 364) break;
+  }
+  p.roomReleasedAt = p.motion.start + Math.ceil(length / WALK_SPEED * 1000);
 }
 function waitingSeat(s) {
   const occupied = new Set(s.patients.filter(p => ['waiting', 'consultation'].includes(p.phase) && p.seat !== null).map(p => p.seat));
@@ -59,20 +79,20 @@ function waitingSeat(s) {
 }
 function dispatch(s) {
   if (!s.patients.some(p => p.phase === 'registration')) {
-    const p = s.patients.find(p => p.phase === 'registerQueue');
+    const p = s.patients.find(p => p.phase === 'registerQueue' && atDestination(p, s.time));
     if (p) enter(p, 'registration', s.time, 14_000);
   }
   for (let room = 1; room <= (s.secondRoom ? 2 : 1); room++) {
-    if (s.patients.some(p => p.phase === 'consultation' && p.room === room)) continue;
-    const p = s.patients.filter(p => p.phase === 'waiting').sort((a, b) => a.waitStarted - b.waitStarted)[0];
+    if (s.patients.some(p => p.room === room && (p.phase === 'consultation' || p.roomReleasedAt > s.time))) continue;
+    const p = s.patients.filter(p => p.phase === 'waiting' && (atDestination(p, s.time) || s.time <= p.motion.end)).sort((a, b) => a.waitStarted - b.waitStarted)[0];
     if (!p) break;
     const waited = s.time - p.waitStarted;
     s.metrics.waitTotal += waited; s.metrics.waitCount++;
     p.room = room; p.waited = waited;
-    enter(p, 'consultation', s.time, CASES.find(c => c.id === p.kind).consultation + 8000);
+    enter(p, 'consultation', s.time, CASES.find(c => c.id === p.kind).consultation);
   }
   if (!s.patients.some(p => p.phase === 'nursing')) {
-    const p = s.patients.find(p => p.phase === 'nursingQueue');
+    const p = s.patients.find(p => p.phase === 'nursingQueue' && atDestination(p, s.time));
     if (p) enter(p, 'nursing', s.time, 42_000);
   }
 }
@@ -86,7 +106,7 @@ function finishVisit(s, p, referred = false) {
     note(s, '完成一次接诊', p.name + '的本次服务已完成。收入 ¥' + fee + ' 已入账。');
   }
   p.outcome = referred ? '转诊接续' : '完成接诊';
-  enter(p, 'leaving', s.time, 12_000);
+  enter(p, 'leaving', s.time, 0);
 }
 function progressPatient(s, p) {
   switch (p.phase) {
@@ -96,8 +116,9 @@ function progressPatient(s, p) {
       enter(p, 'waiting', s.time); break;
     case 'consultation':
       if (p.kind === 'specialist') finishVisit(s, p, true);
-      else if (p.kind === 'care') enter(p, 'nursingQueue', s.time);
+      else if (p.kind === 'care') { p.queueSlot = freeSlot(s, ['nursingQueue']); enter(p, 'nursingQueue', s.time); }
       else finishVisit(s, p);
+      releaseRoom(p);
       break;
     case 'nursing': finishVisit(s, p); break;
     case 'leaving':
@@ -164,7 +185,10 @@ export function createState(now = Date.now(), seed = 20260926) {
   };
   // An explicit opening cohort, present whether the player is watching or not.
   for (let i = 0; i < 4; i++) demand(s, now);
-  s.patients.forEach((p, i) => { p.phaseAt = now + i * 1500; p.due = now + 8000 + i * 1500; });
+  s.patients.forEach((p, i) => {
+    p.motion = settledMotion([310 + i * 17, 1016], now);
+    enter(p, 'arriving', now + i * 1700, 0);
+  });
   s.nextArrival = now + 45_000;
   note(s, '梅奥诊所开始营业', '林岚与陈雪已到岗。周敏负责日常经营，你可以随时观察和调整授权。', 'management');
   return s;
@@ -173,7 +197,7 @@ export function advanceTo(s, target, eventLimit = 200_000) {
   if (!Number.isFinite(target) || target <= s.time) return { caughtUp: true, events: 0 };
   let count = 0;
   while (count < eventLimit) {
-    const patientDue = s.patients.reduce((min, p) => p.due === null ? min : Math.min(min, p.due), Infinity);
+    const patientDue = s.patients.reduce((min, p) => Math.min(min, p.due ?? Infinity, p.motionDue ?? Infinity, p.roomReleasedAt ?? Infinity), Infinity);
     const next = Math.min(s.nextArrival, s.nextCost, s.nextReview, s.project?.completesAt ?? Infinity, patientDue);
     if (next > target) { s.time = target; return { caughtUp: true, events: count }; }
     s.time = next;
@@ -186,6 +210,7 @@ export function advanceTo(s, target, eventLimit = 200_000) {
       s.secondRoom = true; s.project = null;
       note(s, '第二诊室开始接诊', '顾宁已到岗。新增容量不会改变小镇的患者需求。', 'management');
     }
+    for (const p of s.patients) { if (p.motionDue === next) p.motionDue = null; if (p.roomReleasedAt === next) p.roomReleasedAt = null; }
     for (const p of [...s.patients]) if (p.due !== null && p.due === next) progressPatient(s, p);
     dispatch(s);
     if (s.nextReview === next) review(s);
@@ -193,7 +218,14 @@ export function advanceTo(s, target, eventLimit = 200_000) {
   }
   return { caughtUp: false, events: count };
 }
-export function phaseLabel(p) {
+export function phaseLabel(p, time = Infinity) {
+  if (!atDestination(p, time)) {
+    const pose = patientPose(p, time);
+    if (pose.sit > 0 && time < p.motion.start) return '起身中';
+    if (time >= p.motion.end && p.motion.toSeated) return '正在落座';
+    return { waiting: '前往候诊座位', consultation: '前往诊室', nursing: '前往护理位',
+      nursingQueue: '前往护理区', registration: '走向接待台', leaving: '正在离院' }[p.phase] || '正在到院';
+  }
   return { arriving: '正在到院', registerQueue: '等待登记', registration: '接待登记', waiting: '候诊中',
     consultation: '正在接诊', nursingQueue: '等待护理', nursing: '基础护理', leaving: p.outcome || '准备离院' }[p.phase] || '';
 }
@@ -207,7 +239,7 @@ export function restoreState(serialized) {
   const count = n => Number.isSafeInteger(n) && n >= 0;
   const timed = new Set(['arriving', 'registration', 'consultation', 'nursing', 'leaving']);
   const metricKeys = ['demand', 'completed', 'referred', 'capacityRedirected', 'revenue', 'operating', 'investment', 'waitTotal', 'waitCount'];
-  if (!s || s.version !== VERSION || !finite(s.time) || !finite(s.cash) ||
+  if (!s || ![1, VERSION].includes(s.version) || !finite(s.time) || !finite(s.cash) ||
       !finite(s.startedAt) || s.startedAt > s.time || !count(s.rng) ||
       ![s.sequence, s.eventSequence, s.pressureChecks].every(count) ||
       typeof s.authority !== 'boolean' || typeof s.secondRoom !== 'boolean' ||
@@ -229,6 +261,27 @@ export function restoreState(serialized) {
         !finite(s.project.completesAt) || s.project.completesAt < s.time ||
         s.project.completesAt - s.project.startedAt !== PROJECT.duration))) {
     throw new Error('存档格式不完整');
+  }
+  if (s.version === 1) {
+    for (const p of s.patients) {
+      p.queueSlot = Math.min(3, s.patients.filter(x => x.phase === p.phase).indexOf(p));
+      const target = { arriving: ENTRY, registerQueue: registrationSlot(p.queueSlot), registration: DESK,
+        waiting: seatFeet(p.seat || 0), consultation: ROOM_POS[p.room || 1], nursingQueue: nursingSlot(p.queueSlot),
+        nursing: NURSING_POS, leaving: ENTRY }[p.phase];
+      p.motion = settledMotion(target, s.time, ['waiting','consultation','nursing'].includes(p.phase));
+      p.serviceAt = p.motion.ready; p.motionDue = null;
+    }
+    s.version = VERSION;
+  }
+  for (const p of s.patients) {
+    const m = p.motion;
+    if (!m || !Array.isArray(m.points) || m.points.length < 2 || m.points.length > 512 ||
+        m.points.some(x => !Array.isArray(x) || x.length !== 2 || !x.every(finite)) ||
+        ![m.at,m.start,m.end,m.ready,m.length,p.serviceAt].every(finite) || m.length < 0 ||
+        m.at > m.start || m.start > m.end || m.end > m.ready ||
+        (p.motionDue !== null && (!finite(p.motionDue) || p.motionDue < s.time)) ||
+        (p.roomReleasedAt != null && (!finite(p.roomReleasedAt) || p.roomReleasedAt < s.time)) ||
+        (p.due !== null && p.due < p.serviceAt)) throw new Error('存档动作时间不完整');
   }
   return s;
 }

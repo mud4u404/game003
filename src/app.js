@@ -67,9 +67,9 @@ function panel(title,subtitle,body) {return `<button class="close" data-close="p
 function ledger(rows) {return '<dl class="ledger">'+rows.map(([key,val])=>`<div><dt>${key}</dt><dd>${val}</dd></div>`).join('')+'</dl>';}
 function staffStatus(id) {
   if(id==='director')return '观察运营';
-  if(id==='reception')return state.patients.some(p=>p.phase==='registration')?'登记中':'接待在岗';
-  if(id==='nurse')return state.patients.some(p=>p.phase==='nursing')?'护理中':'护理在岗';
-  return state.patients.some(p=>p.phase==='consultation'&&p.room===(id==='doctor1'?1:2))?'接诊中':'等待接诊';
+  if(id==='reception')return state.patients.some(p=>p.phase==='registration'&&state.time>=p.serviceAt)?'登记中':'接待在岗';
+  if(id==='nurse')return state.patients.some(p=>p.phase==='nursing'&&state.time>=p.serviceAt)?'护理中':'护理在岗';
+  return state.patients.some(p=>p.phase==='consultation'&&state.time>=p.serviceAt&&p.room===(id==='doctor1'?1:2))?'接诊中':'等待接诊';
 }
 function panelContent() {
   const m=state.metrics;
@@ -106,7 +106,7 @@ function renderUI(force=false) {
   if(selected){
     const p=state.patients.find(p=>p.id===selected),staff=STAFF.find(p=>p.id===selected);
     let html='<button class="close" data-close="person" aria-label="关闭人物信息">×</button>';
-    if(p)html+=`<span class="eyebrow">来到诊所的人</span><h2>${esc(p.name)}<small>${p.age} 岁</small></h2><span class="tag">${phaseLabel(p)}</span><p>${esc(p.thought)}</p><p class="small-note">${p.phase==='waiting'?'已候诊 '+Math.floor((state.time-p.waitStarted)/MINUTE)+' 分钟':CASES.find(c=>c.id===p.kind).label}</p>`;
+    if(p)html+=`<span class="eyebrow">来到诊所的人</span><h2>${esc(p.name)}<small>${p.age} 岁</small></h2><span class="tag">${phaseLabel(p, state.time)}</span><p>${esc(p.thought)}</p><p class="small-note">${p.phase==='waiting'?'已候诊 '+Math.floor((state.time-p.waitStarted)/MINUTE)+' 分钟':CASES.find(c=>c.id===p.kind).label}</p>`;
     else if(staff)html+=`<span class="eyebrow">${staff.role}</span><h2>${staff.name}</h2><span class="tag">${staffStatus(staff.id)}</span><p>${staff.id==='director'?esc(state.directorThought):staff.description}</p>`;
     else {const past=state.history.find(p=>p.id===selected);html+=`<span class="eyebrow">本次到访已结束</span><h2>${esc(past?.name||'来访者')}</h2><p>${esc(past?.outcome||'已离开诊所')}，团队继续照护下一位患者。</p>`;}
     if(lastPersonHTML!==html){$('person').innerHTML=html;lastPersonHTML=html;}
