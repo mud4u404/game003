@@ -9,10 +9,11 @@ const KEY = 'meiao-clinic-v1';
 (async()=>{
   fs.mkdirSync(output,{recursive:true});
   const browser = await chromium.launch({headless:true,channel:process.env.CHROME_CHANNEL || 'chrome'});
-  const context = await browser.newContext({viewport:{width:1440,height:900},reducedMotion:'reduce'});
+  const context = await browser.newContext({viewport:{width:1440,height:900},reducedMotion:'reduce',hasTouch:true});
   const page = await context.newPage();const errors=[];context.on('page',p=>p.on('pageerror',e=>errors.push(e.message)));page.on('pageerror',e=>errors.push(e.message));
   try {
     await page.goto(URL);await page.getByText('自主运行',{exact:true}).waitFor();
+    await page.locator('#scene[data-art-ready="true"]').waitFor();
     await page.getByRole('button',{name:'院长',exact:true}).click();
     const toggle=page.getByRole('switch');assert.equal(await toggle.getAttribute('aria-checked'),'true');
     await toggle.click();assert.equal(await toggle.getAttribute('aria-checked'),'false');
@@ -31,6 +32,13 @@ const KEY = 'meiao-clinic-v1';
     await follower.getByRole('button',{name:'团队',exact:true}).click();await follower.getByRole('button',{name:/林岚/}).click();
     await follower.locator('#person').getByRole('heading',{name:'林岚'}).waitFor();
     await follower.keyboard.press('Escape');assert.equal(await follower.locator('#panel').isHidden(),true);assert.equal(await follower.locator('#person').isHidden(),true);
+    await follower.getByRole('button',{name:'回到全景'}).click();
+    // The stage is centered and the canvas has a header offset: client coordinates must be translated.
+    const canvasBox=await follower.locator('#scene').boundingBox();
+    const scale=Math.min(canvasBox.width/690,canvasBox.height/1060);
+    await follower.touchscreen.tap(canvasBox.x+canvasBox.width/2+(173-340)*scale,canvasBox.y+canvasBox.height/2+(210-20-550)*scale);
+    await follower.locator('#person').getByRole('heading',{name:'林岚'}).waitFor();
+    await follower.keyboard.press('Escape');
     await follower.screenshot({path:path.join(output,'clinic-desktop.png')});
     console.log('PASS controls, expansion, reload persistence, multi-tab exclusion and writer takeover, staff selection');
     const mobile=await context.newPage();await mobile.setViewportSize({width:844,height:390});await mobile.goto(URL);
@@ -38,7 +46,26 @@ const KEY = 'meiao-clinic-v1';
     await mobile.setViewportSize({width:390,height:844});await mobile.screenshot({path:path.join(output,'clinic-portrait.png')});
     await mobile.getByRole('button',{name:'院长',exact:true}).click();await mobile.getByRole('heading',{name:'周敏 · 执行院长'}).waitFor();await mobile.screenshot({path:path.join(output,'director-portrait.png')});
     for(const locator of [mobile.locator('#panel'),mobile.locator('.controls')]){const rect=await locator.boundingBox();assert.ok(rect.x>=0&&rect.x+rect.width<=390);assert.ok(rect.y>=0&&rect.y+rect.height<=844);}
-    console.log('PASS mobile landscape and portrait containment');await mobile.close();await follower.close();
+    await mobile.keyboard.press('Escape');
+    for(const [width,height] of [[320,568],[360,640],[390,844],[430,932],[768,1024],[1440,900],[844,390]]) {
+      await mobile.setViewportSize({width,height});
+      await mobile.getByRole('button',{name:'院长',exact:true}).click();
+      const stage=await mobile.locator('#game').boundingBox();
+      assert.ok(stage.height>stage.width,'The game remains portrait on wide viewports');
+      assert.ok(stage.width<=480&&stage.x>=0&&stage.x+stage.width<=width);
+      for(const selector of ['#panel','.controls','.hud','#scene','.view-controls']) {
+        const rect=await mobile.locator(selector).boundingBox();
+        assert.ok(rect.x>=stage.x-.1&&rect.x+rect.width<=stage.x+stage.width+.1,selector+' horizontal containment');
+        assert.ok(rect.y>=stage.y&&rect.y+rect.height<=stage.y+stage.height,selector+' vertical containment');
+      }
+      for(const button of await mobile.locator('.controls button').all()) {
+        const rect=await button.boundingBox();assert.ok(rect.width>=44&&rect.height>=44);
+      }
+      assert.equal(await mobile.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth),false);
+      await mobile.keyboard.press('Escape');
+    }
+    console.log('PASS seven viewport sizes, portrait stage, sheet containment, 44px controls and offset canvas tapping');
+    await mobile.close();await follower.close();
     const offlineContext=await browser.newContext({viewport:{width:1440,height:900},reducedMotion:'reduce'});
     const op=await offlineContext.newPage();
     await op.route('**/src/app.js',async route=>{const original=await (await route.fetch()).text();await route.fulfill({contentType:'text/javascript',body:`import {createState as fixtureCreate} from './simulation.js'; if(!sessionStorage.fixtureDone){localStorage.setItem('${KEY}',JSON.stringify(fixtureCreate(Date.now()-3600000)));sessionStorage.fixtureDone='1';}\n`+original});});

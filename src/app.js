@@ -91,7 +91,7 @@ function panelContent() {
 }
 function selectPerson(id) {
   selected=id;scene.selected=id;lastPersonHTML='';
-  if(id&&window.innerWidth<740){currentPanel=null;lastPanelHTML='';}
+  if(id){currentPanel=null;lastPanelHTML='';}
   renderUI(true);
 }
 function renderUI(force=false) {
@@ -114,7 +114,7 @@ function renderUI(force=false) {
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b)return;
-  if(b.dataset.panel){currentPanel=currentPanel===b.dataset.panel?null:b.dataset.panel;lastPanelHTML='';if(window.innerWidth<740)selectPerson(null);renderUI(true);}
+  if(b.dataset.panel){currentPanel=currentPanel===b.dataset.panel?null:b.dataset.panel;lastPanelHTML='';selectPerson(null);renderUI(true);}
   if(b.dataset.close==='panel'){currentPanel=null;renderUI(true);}
   if(b.dataset.close==='person')selectPerson(null);
   if(b.dataset.person){selectPerson(b.dataset.person);scene.focus(b.dataset.person,state);}
@@ -128,7 +128,7 @@ document.addEventListener('visibilitychange',()=>{if(leader&&document.hidden)sav
 window.addEventListener('pageshow',e=>{if(e.persisted)takeOwnership();});
 state=load();takeOwnership();
 setInterval(()=>{if(!leader)takeOwnership();},3000);
-if(window.innerWidth<500)$('hint').textContent='左右拖动探索 · 横屏可看全院';
+$('hint').textContent='拖动观察 · 双指缩放';
 setTimeout(()=>$('hint').classList.add('faded'),18000);
 function frame(tick) {
   if(state){if(leader&&!catchingUp){const result=advanceTo(state,Date.now(),1000);if(!result.caughtUp)catchUp(Date.now());if(Date.now()-lastSave>3000)save();}scene.draw(state,tick);renderUI();}
