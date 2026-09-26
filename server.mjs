@@ -1,0 +1,26 @@
+import http from 'node:http';
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
+const root = fileURLToPath(new URL('.', import.meta.url));
+const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8', '.png': 'image/png', '.svg': 'image/svg+xml', '.json': 'application/json' };
+const port = Number(process.env.PORT || 4173);
+http.createServer(async (req, res) => {
+  try {
+    const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+    const relative = pathname === '/' ? 'index.html' : pathname.slice(1);
+    // Serve only the application, not repository metadata or local credentials.
+    if (!(relative === 'index.html' || relative === 'style.css' || relative.startsWith('src/') || relative.startsWith('assets/')) ||
+        relative.split('/').some(p => p === '..' || p.startsWith('.'))) {
+      res.writeHead(404).end('Not found'); return;
+    }
+    const file = path.resolve(root, relative);
+    if (!file.startsWith(root)) { res.writeHead(404).end('Not found'); return; }
+    const body = await readFile(file);
+    res.writeHead(200, { 'Content-Type': mime[path.extname(file)] || 'application/octet-stream',
+      'Cache-Control': 'no-cache', 'X-Content-Type-Options': 'nosniff' });
+    res.end(body);
+  } catch { res.writeHead(404).end('Not found'); }
+}).listen(port, '0.0.0.0', () => console.log('梅奥诊所 → http://localhost:' + port));
