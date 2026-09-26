@@ -8,18 +8,18 @@ import {createState,advanceTo,phaseLabel} from '/src/simulation.js';
 import {ClinicScene} from '/src/scene.js';
 const start=1790000000000,id='patient-1';
 function initial(){const s=createState(start,20260926);s.patients=[s.patients[0]];s.patients[0].kind='care';s.nextArrival=start+3600000;return s;}
-let state=initial(),seconds=0,playing=false,following=false,last=performance.now();
+let state=initial(),seconds=0,playing=false,following=null,last=performance.now();
 const canvas=document.querySelector('canvas'),slider=document.querySelector('#time'),status=document.querySelector('#status'),play=document.querySelector('#play');
-const scene=new ClinicScene(canvas,()=>{},()=>{following=false});scene.selected=id;
+const scene=new ClinicScene(canvas,()=>{},()=>{following=null});scene.selected=id;
 function seek(t){seconds=t;state=initial();advanceTo(state,start+t*1000);slider.value=t;}
-const stages=[['到院',2]];const scan=initial();let previous='';
+const stages=[['到院',2],['护士备物',16,'nurse']];const scan=initial();let previous='';
 for(let t=0;t<=300;t+=.1){advanceTo(scan,start+t*1000);const p=scan.patients.find(p=>p.id===id);if(!p)break;
- if(p.phase!==previous){previous=p.phase;if(p.phase==='consultation')stages.push(['走向诊室',t+2],['开始接诊',(p.serviceAt-start)/1000+1]);if(p.phase==='nursing')stages.push(['进入护理',t+.5],['护理中',(p.serviceAt-start)/1000+2]);if(p.phase==='leaving')stages.push(['起身离院',t+.3],['离院行走',t+3]);}}
-for(const [label,t] of stages){const b=document.createElement('button');b.textContent=label;b.onclick=()=>{playing=false;play.textContent='播放';seek(t);};document.querySelector('#moments').append(b);}
+ if(p.phase!==previous){previous=p.phase;if(p.phase==='registration')stages.push(['前台核对',(p.serviceAt-start)/1000+2,'reception']);if(p.phase==='consultation')stages.push(['走向诊室',t+2],['开始接诊',(p.serviceAt-start)/1000+1],['医生记录',(p.serviceAt-start)/1000+7,'doctor1']);if(p.phase==='nursing')stages.push(['进入护理',t+.5],['护理中',(p.serviceAt-start)/1000+2]);if(p.phase==='leaving')stages.push(['起身离院',t+.3],['离院行走',t+3]);}}
+for(const [label,t,target] of stages){const b=document.createElement('button');b.textContent=label;b.onclick=()=>{playing=false;play.textContent='播放';seek(t);following=target||null;scene.selected=target||id;};document.querySelector('#moments').append(b);}
 slider.oninput=()=>seek(Number(slider.value));play.onclick=()=>{playing=!playing;play.textContent=playing?'暂停':'播放';};
-document.querySelector('#focus').onclick=()=>{following=true;};document.querySelector('#all').onclick=()=>{following=false;scene.reset();};
+document.querySelector('#focus').onclick=()=>{following=id;};document.querySelector('#all').onclick=()=>{following=null;scene.reset();};
 function draw(now){if(playing){seconds=Math.min(300,seconds+(now-last)/1000);advanceTo(state,start+seconds*1000);slider.value=seconds;}last=now;
  const p=state.patients.find(p=>p.id===id);status.textContent=seconds.toFixed(1)+' 秒 · '+(p?phaseLabel(p,state.time):'已离院');
- if(following&&p)scene.focus(id,state);scene.draw(state,state.time);requestAnimationFrame(draw);}
+ if(following)scene.focus(following,state);scene.draw(state,state.time);requestAnimationFrame(draw);}
 requestAnimationFrame(draw);
 </script></html>

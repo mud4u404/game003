@@ -1,4 +1,5 @@
-import { createState, advanceTo, restoreState, snapshot, STAFF, CASES, PROJECT, MINUTE, HOUR, phaseLabel, applyManagementAction, setAuthority } from './simulation.js';
+import { staffActivity, patientIntent } from './activity.js';
+import { createState, advanceTo, restoreState, snapshot, STAFF, CASES, PROJECT, MINUTE, HOUR, applyManagementAction, setAuthority } from './simulation.js';
 import { ClinicScene } from './scene.js';
 const $ = id => document.getElementById(id);
 const KEY = 'meiao-clinic-v1';
@@ -65,12 +66,7 @@ function mutate(action) {
 }
 function panel(title,subtitle,body) {return `<button class="close" data-close="panel" aria-label="关闭面板">×</button><span class="eyebrow">MEIAO / COMMUNITY CLINIC</span><h2>${title}</h2><p class="subtle">${subtitle}</p>${body}`;}
 function ledger(rows) {return '<dl class="ledger">'+rows.map(([key,val])=>`<div><dt>${key}</dt><dd>${val}</dd></div>`).join('')+'</dl>';}
-function staffStatus(id) {
-  if(id==='director')return '观察运营';
-  if(id==='reception')return state.patients.some(p=>p.phase==='registration'&&state.time>=p.serviceAt)?'登记中':'接待在岗';
-  if(id==='nurse')return state.patients.some(p=>p.phase==='nursing'&&state.time>=p.serviceAt)?'护理中':'护理在岗';
-  return state.patients.some(p=>p.phase==='consultation'&&state.time>=p.serviceAt&&p.room===(id==='doctor1'?1:2))?'接诊中':'等待接诊';
-}
+function staffStatus(id) { return staffActivity(state,id).label; }
 function panelContent() {
   const m=state.metrics;
   if(currentPanel==='hospital') return panel('一间诊所的日常','从基础门诊开始，慢慢建立信任。',ledger([
@@ -106,7 +102,7 @@ function renderUI(force=false) {
   if(selected){
     const p=state.patients.find(p=>p.id===selected),staff=STAFF.find(p=>p.id===selected);
     let html='<button class="close" data-close="person" aria-label="关闭人物信息">×</button>';
-    if(p)html+=`<span class="eyebrow">来到诊所的人</span><h2>${esc(p.name)}<small>${p.age} 岁</small></h2><span class="tag">${phaseLabel(p, state.time)}</span><p>${esc(p.thought)}</p><p class="small-note">${p.phase==='waiting'?'已候诊 '+Math.floor((state.time-p.waitStarted)/MINUTE)+' 分钟':CASES.find(c=>c.id===p.kind).label}</p>`;
+    if(p)html+=`<span class="eyebrow">来到诊所的人</span><h2>${esc(p.name)}<small>${p.age} 岁</small></h2><span class="tag">${patientIntent(p, state.time)}</span><p>${esc(p.thought)}</p><p class="small-note">${p.phase==='waiting'?'已候诊 '+Math.floor((state.time-p.waitStarted)/MINUTE)+' 分钟':CASES.find(c=>c.id===p.kind).label}</p>`;
     else if(staff)html+=`<span class="eyebrow">${staff.role}</span><h2>${staff.name}</h2><span class="tag">${staffStatus(staff.id)}</span><p>${staff.id==='director'?esc(state.directorThought):staff.description}</p>`;
     else {const past=state.history.find(p=>p.id===selected);html+=`<span class="eyebrow">本次到访已结束</span><h2>${esc(past?.name||'来访者')}</h2><p>${esc(past?.outcome||'已离开诊所')}，团队继续照护下一位患者。</p>`;}
     if(lastPersonHTML!==html){$('person').innerHTML=html;lastPersonHTML=html;}
@@ -131,7 +127,12 @@ setInterval(()=>{if(!leader)takeOwnership();},3000);
 $('hint').textContent='拖动观察 · 双指缩放';
 setTimeout(()=>$('hint').classList.add('faded'),18000);
 function frame(tick) {
-  if(state){if(leader&&!catchingUp){const result=advanceTo(state,Date.now(),1000);if(!result.caughtUp)catchUp(Date.now());if(Date.now()-lastSave>3000)save();}scene.draw(state,tick);renderUI();}
+  if(state){
+    // Observer tabs advance their own deterministic view every frame. Only the lock
+    // owner saves; waiting for three-second storage snapshots caused stop/start motion.
+    if(!catchingUp){const result=advanceTo(state,Date.now(),1000);if(!result.caughtUp)catchUp(Date.now());if(leader&&Date.now()-lastSave>3000)save();}
+    scene.draw(state,tick);renderUI();
+  }
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);

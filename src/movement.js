@@ -1,16 +1,17 @@
+import { FIXED_SEATS, waitingSeat, seatFloor } from './seating.js';
 // Fixed-clinic navigation and deterministic choreography shared by the engine and renderer.
 export const WALK_SPEED = 70;
 export const STAND_MS = 650;
 export const SIT_MS = 550;
 export const ROOM_POS = { 1: [255, 270], 2: [515, 270] };
-export const STAFF_POS = { doctor1: [173, 210], doctor2: [432, 210], nurse: [249, 543], reception: [172, 791], director: [545, 551] };
+export const STAFF_POS = { doctor1: seatFloor(FIXED_SEATS.doctor1), doctor2: seatFloor(FIXED_SEATS.doctor2), nurse: [249, 543], reception: seatFloor(FIXED_SEATS.reception), director: [545, 551] };
 export const NURSING_POS = [201, 583];
 export const NURSE_CARE_POS = [245, 590];
 export const ENTRY = [335, 1008];
 export const DESK = [190, 883];
-export const seatPosition = i => [[340, 405, 490, 555][i % 4], 712 + Math.floor(i / 4) * 52];
+export const seatPosition = i => { const s=waitingSeat(i); return [s.x,s.y]; };
 export const seatFeet = i => { const [x,y] = seatPosition(i); return [x,y+27]; };
-export const registrationSlot = i => [[260,880],[287,898],[323,946],[351,979]][Math.min(i,3)];
+export const registrationSlot = i => [[255,880],[287,879],[287,845],[287,811]][Math.min(i,3)];
 export const nursingSlot = i => [160 + i * 42, 692];
 const BOXES = [
   // Room walls, including the side corridor walls missing from the old rendering.

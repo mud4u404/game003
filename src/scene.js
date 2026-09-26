@@ -1,19 +1,12 @@
+import { nursePose } from './staff-behavior.js';
+import { staffActivity, destinationLabel } from './activity.js';
+import { FIXED_SEATS, actorSeat, seatedFeet } from './seating.js';
 import { STAFF } from './simulation.js';
 import { ArtLibrary, patientAppearance, STAFF_APPEARANCE } from './appearance.js';
 const P = { grass: '#9cb27c', lawn: '#d5dfc8', ink: '#647665', wall: '#e9ebdc', edge: '#bcc8b2', floor: '#e4d8c2', blue: '#a2b7b6', dark: '#526860', wood: '#c8b895' };
-import { patientPose, STAFF_POS, NURSE_CARE_POS, seatPosition as seat,
-  planRoute, routeLength, sampleMotion, settledMotion, WALK_SPEED } from './movement.js';
+import { patientPose, STAFF_POS, seatPosition as seat,
+  sampleMotion, settledMotion } from './movement.js';
 export function patientPosition(p, s) { return patientPose(p, s.time).position; }
-function nursePose(s) {
-  const active = s.patients.find(p => p.phase === 'nursing');
-  const leaving = s.patients.find(p => p.phase === 'leaving' && p.previousPhase === 'nursing');
-  const from = active ? STAFF_POS.nurse : NURSE_CARE_POS;
-  const to = active ? NURSE_CARE_POS : STAFF_POS.nurse;
-  if (!active && !leaving) return sampleMotion(settledMotion(STAFF_POS.nurse,s.time),s.time);
-  const points = planRoute(from,to), length = routeLength(points), duration = length/WALK_SPEED*1000;
-  const start = active ? Math.max(active.phaseAt,active.serviceAt-duration-600) : leaving.phaseAt;
-  return sampleMotion({points,length,at:start,start,end:start+duration,ready:start+duration},s.time);
-}
 export class ClinicScene {
   constructor(canvas, select, interact) {
     this.art = new ArtLibrary();
@@ -43,8 +36,9 @@ export class ClinicScene {
     const end = e => {
       if (!this.dragged && this.pointers.size === 1 && e.type === 'pointerup') {
         const point = this.worldPoint(...this.clientPoint(e.clientX, e.clientY));
-        const hit = this.hits.filter(h => Math.hypot(h.x - point[0], h.y - 20 - point[1]) < Math.max(28, 23 / this.scale))
-          .sort((a,b) => Math.hypot(a.x-point[0],a.y-20-point[1])-Math.hypot(b.x-point[0],b.y-20-point[1]))[0];
+        const pad=8/this.scale;
+        const hit = this.hits.filter(h=>Math.abs(h.x-point[0])<=h.width/2+pad && point[1]>=h.y-h.height-pad && point[1]<=h.bottom+pad)
+          .sort((a,b)=>b.y-a.y)[0];
         this.select(hit?.id || null);
       }
       this.pointers.delete(e.pointerId);
@@ -78,7 +72,7 @@ export class ClinicScene {
   }
   reset() { this.zoom = 1; this.pan = [0,0]; }
   focus(id, s) {
-    const p = s.patients.find(p => p.id === id), xy = p ? patientPosition(p,s) : STAFF_POS[id];
+    const p = s.patients.find(p => p.id === id), xy = p ? patientPosition(p,s) : id==='nurse'?nursePose(s).position:STAFF_POS[id];
     if (!xy) return;
     this.zoom = 1.6;
     this.pan = [(340-xy[0])*this.scale, (550-xy[1])*this.scale-this.height*.18];
@@ -128,8 +122,17 @@ export class ClinicScene {
     if (actor && this.art.ready) {
       const look = staff ? STAFF_APPEARANCE[actor.id] : patientAppearance(actor);
       const pose = actor.pose;
-      const sit = staff ? (actor.id.startsWith('doctor') || actor.id === 'reception' ? 1 : 0) : pose.sit;
+      const support = actorSeat(actor,pose.rising);
+      // A seated pose must always have a physical supporting seat.
+      const sit = support ? staff ? 1 : pose.sit : 0;
+      const spriteHeight = look.height*(1-.13*sit);
+      if(sit>0) {
+        const seated = seatedFeet(support,spriteHeight);
+        x += (seated[0]-x)*sit; y += (seated[1]-y)*sit;
+      }
       const width = look.height * .95 * look.widthScale;
+      const visibleBottom=staff ? actor.id==='reception'?Math.min(y,791):actor.id.startsWith('doctor')?Math.min(y,215):y : y;
+      this.hits.push({id:actor.id,x,y,width:width*.75,height:spriteHeight,bottom:visibleBottom});
       const seatedPhase = !staff && pose.rising ? actor.previousPhase : actor.phase;
       const seatedFacesRight = [3,4,5].includes(look.seatedIndex);
       const flip = walk ? pose.direction[0] < -.05 : staff ?
@@ -143,23 +146,25 @@ export class ClinicScene {
       const c=this.ctx, breathe=Math.sin(tick/920+(look.rhythm||0))*.3;
       const drawSprite=(atlas,index,height,opacity)=>{
         if(opacity<=0)return; c.save(); c.globalAlpha=opacity;
-        this.art.draw(c,atlas,index,x-width/2,y-height+breathe,width,height,flip);c.restore();
+        if(actor.id==='nurse' && ['care','preparing'].includes(actor.activity?.mode)) {
+          c.translate(x,y);c.rotate((actor.activity.mode==='care'?-1:1)*(.025+.015*Math.sin(tick/1100)));c.translate(-x,-y);
+        }
+        const idleRight=[0,1,3,4,5].includes(index),faceRight=staff ? actor.activity?.mode==='preparing' : seatedPhase==='nursing';
+        const direction=atlas==='work'?false:atlas==='idle'?idleRight!==faceRight:flip;
+        this.art.draw(c,atlas,index,x-width/2,y-height+breathe,width,height,direction);c.restore();
       };
       if (walk && (!staff || actor.id === 'nurse')) {
         const row=staff?7:look.index-5, frame=Math.floor(pose.distance/11)%4;
         drawSprite('walk',row*4+frame,look.height,1);
+      } else if(staff && ['doctor1','doctor2','reception'].includes(actor.id) && actor.activity?.mode!=='available') {
+        const row={doctor1:0,doctor2:1,reception:2}[actor.id];
+        drawSprite('work',row*3+actor.activity.frame,spriteHeight,1);
       } else {
         const sitting = sit > .5;
-        const atlas = sitting ? staff&&actor.id.startsWith('doctor')?'characters':'seated' : staff&&actor.id==='nurse'?'walk':'characters';
-        const index = sitting ? staff ? actor.id==='reception'?7:look.seatedIndex : look.seatedIndex : staff&&actor.id==='nurse'?29:look.index;
+        const atlas = sitting ? staff&&actor.id.startsWith('doctor')?'characters':'seated' : !staff||actor.id==='nurse'?'idle':'characters';
+        const index = sitting ? staff ? actor.id==='reception'?7:look.seatedIndex : look.seatedIndex : !staff?look.index-5:actor.id==='nurse'?7:look.index;
         // One body at a time: lift/lower over the transition without translucent double heads.
-        drawSprite(atlas,index,look.height*(1-.13*sit),1);
-      }
-      // Small hand/pen movement only when a patient has arrived and work has begun.
-      if(actor.working && !walk) {
-        const pulse=Math.sin(tick/230)*2, handY=y-look.height*.37;
-        this.line(x+8,handY-5,x+16+pulse,handY,'#d5b49a',3);
-        if(actor.id !== 'nurse') this.line(x+15+pulse,handY-3,x+19+pulse,handY+2,'#415364',1.3);
+        drawSprite(atlas,index,spriteHeight,1);
       }
       return;
     }
@@ -181,6 +186,9 @@ export class ClinicScene {
   }
   draw(s, tick) {
     const c = this.ctx;
+    if(this.frameBucket!==Math.floor(s.time/100)) {
+      this.frameBucket=Math.floor(s.time/100);this.canvas.dataset.sceneTime=String(s.time);
+    }
     c.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     c.clearRect(0, 0, this.width, this.height);
     this.box(0, 0, this.width, this.height, P.grass);
@@ -202,13 +210,13 @@ export class ClinicScene {
     const module = (dx, dy, draw) => { c.save(); c.translate(dx, dy); this.moduleY=dy; draw(); this.moduleY=0; c.restore(); };
     module(-133, -102, () => {
       this.room(187, 261, '全科诊室', 1);
-      this.desk(256, 318, 92); this.chair(302, 307, '#8ca5a1'); this.chair(388, 345);
+      this.desk(256, 318, 92);
       this.bed(203, 270); this.cabinet(366, 253, 64, 39); this.plant(413, 404, .67);
     });
     module(-134, -102, () => {
       this.room(448, 260, s.secondRoom ? '第二诊室' : s.project ? '诊室 · 筹备中' : '预留诊室', 2, s.secondRoom ? '#e2d5bd' : '#c8ccb4');
       if (s.secondRoom) {
-        this.desk(516, 318, 92); this.chair(562, 307, '#8ca5a1'); this.chair(649, 345);
+        this.desk(516, 318, 92);
         this.bed(463, 270); this.cabinet(627, 253, 61, 39); this.plant(674, 405, .67);
       } else {
         this.box(509, 277, 131, 90, '#b9c0ad', 4);
@@ -224,7 +232,7 @@ export class ClinicScene {
     });
     module(-654, 208, () => {
       this.room(708, 260, '基础护理', 3, '#d4d4cf');
-      this.bed(737,278); this.chair(855,348);
+      this.bed(737,278);
       this.prop('furniture',7,887,240,75,77);
       this.prop('furniture',5,911,348,43,58);
     });
@@ -242,6 +250,10 @@ export class ClinicScene {
     }
     this.text('门 诊', 569, 386, 12, '#66737a', 'right');
     this.text('照 护 与 院 务', 569, 696, 11, '#66737a', 'right');
+    for (const [id,seat] of Object.entries(FIXED_SEATS)) {
+      if (!s.secondRoom && (id==='doctor2'||id==='consultation2')) continue;
+      this.chair(seat.x,seat.y);
+    }
     for (let i=0;i<16;i++) this.chair(...seat(i));
     // Reception sits by the entrance; the right aisle remains unobstructed.
     this.prop('furniture',4,81,751,185,105);
@@ -255,10 +267,8 @@ export class ClinicScene {
 
     const actors = STAFF.filter(a=>a.id!=='doctor2'||s.secondRoom).map(a=>{
       const pose=a.id==='nurse'?nursePose(s):sampleMotion(settledMotion(STAFF_POS[a.id],s.time),s.time);
-      const working=s.patients.some(p=>s.time>=p.serviceAt && (
-        a.id==='reception'&&p.phase==='registration'||a.id==='nurse'&&p.phase==='nursing'||
-        a.id==='doctor1'&&p.phase==='consultation'&&p.room===1||a.id==='doctor2'&&p.phase==='consultation'&&p.room===2));
-      return {...a,pose,pos:pose.position,staff:true,walk:pose.moving,working,variant:STAFF.indexOf(a)};
+      const activity=staffActivity(s,a.id),working=['working','care'].includes(activity.mode);
+      return {...a,pose,pos:pose.position,staff:true,walk:pose.moving,working,activity,variant:STAFF.indexOf(a)};
     });
     for (const p of s.patients) {
       const pose=patientPose(p,s.time);
@@ -266,9 +276,27 @@ export class ClinicScene {
     }
     for (const a of actors) {
       this.layers.push({depth:a.pos[1],draw:()=>this.person(...a.pos,a.color,a.staff,a.variant,a.walk,a.id===this.selected,tick,a)});
-      this.hits.push({id:a.id,x:a.pos[0],y:a.pos[1]});
+      if(!this.art.ready)this.hits.push({id:a.id,x:a.pos[0],y:a.pos[1],width:32,height:52,bottom:a.pos[1]});
+    }
+    const selectedPatient=s.patients.find(p=>p.id===this.selected);
+    if(selectedPatient && selectedPatient.motion && s.time<selectedPatient.motion.end) {
+      const pose=patientPose(selectedPatient,s.time),m=selectedPatient.motion;
+      let remaining=pose.distance, next=1;
+      while(next<m.points.length){const a=m.points[next-1],b=m.points[next],d=Math.hypot(b[0]-a[0],b[1]-a[1]);if(remaining<=d)break;remaining-=d;next++;}
+      c.save();c.setLineDash([4,7]);c.lineWidth=2;c.strokeStyle='#436b87a0';c.beginPath();c.moveTo(...pose.position);
+      for(const point of m.points.slice(next))c.lineTo(...point);c.stroke();c.restore();
+      const end=m.points.at(-1);c.strokeStyle='#436b87';c.lineWidth=2;c.beginPath();c.ellipse(end[0],end[1],13,6,0,0,Math.PI*2);c.stroke();
     }
     this.layers.sort((a,b)=>a.depth-b.depth).forEach(layer=>layer.draw());
+    this.text('接 待',172,841,12,'#526475','center');
+    const labeled=[];
+    for(const a of actors.filter(a=>!a.staff && a.walk || a.staff && a.id==='nurse' && (a.walk||a.activity?.mode==='preparing')).sort((a,b)=>Number(b.id===this.selected)-Number(a.id===this.selected))) {
+      if(labeled.length>=3 || labeled.some(p=>Math.hypot(p[0]-a.pos[0],p[1]-a.pos[1])<110))continue;
+      const label=a.staff?(a.activity.label.includes('备物')||a.activity.mode==='preparing'?'备物':a.activity.label.includes('返回')?'归位':'护理'):destinationLabel(a);
+      const h=a.staff?STAFF_APPEARANCE[a.id].height:patientAppearance(a).height,font=Math.max(12,Math.min(20,9/this.scale)),y=a.pos[1]-h-12,w=label.length*font+16;
+      this.box(a.pos[0]-w/2,y-font,w,font+8,'#edf0e9ed',4);this.text(label,a.pos[0],y,font,'#40576b','center',500);
+      labeled.push(a.pos);
+    }
     // Door leaves swing aside as people approach; clear passages are kept in the navigation mesh.
     for (const [x,y] of [[238,342],[498,342],[247,652],[433,652]]) {
       const near=actors.filter(a=>a.walk).reduce((d,a)=>Math.min(d,Math.hypot(a.pos[0]-x,a.pos[1]-y)),Infinity);

@@ -30,13 +30,13 @@ export class ArtLibrary {
   }
   draw(ctx, atlas, index, x, y, width, height, flip = false) {
     if (!this.ready) return false;
-    const { image, bounds, rowHeights } = this.atlases[atlas];
+    const { image, bounds, rowHeights, columns=4, anchors } = this.atlases[atlas];
     const [sx, sy, sw, sh] = bounds[index];
-    const ratio = rowHeights ? height / rowHeights[Math.floor(index/4)] : Math.min(width / sw, height / sh), w = sw * ratio, h = sh * ratio;
+    const ratio = rowHeights ? height / rowHeights[Math.floor(index/columns)] : Math.min(width / sw, height / sh), w = sw * ratio, h = sh * ratio;
     ctx.save();
     ctx.translate(x + width / 2, y + height);
     if (flip) ctx.scale(-1, 1);
-    ctx.drawImage(image, sx, sy, sw, sh, -w/2, -h, w, h);
+    ctx.drawImage(image, sx, sy, sw, sh, -w*(anchors?.[index]??.5), -h, w, h);
     ctx.restore();
     return true;
   }

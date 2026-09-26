@@ -1,3 +1,4 @@
+import { createNurseTask, advanceNurseTask, syncNurseTask } from './staff-behavior.js';
 import { movePatient, settledMotion, atDestination, patientPose, ROOM_POS, ENTRY, DESK, seatFeet, registrationSlot, nursingSlot, NURSING_POS, WALK_SPEED } from './movement.js';
 // Time and randomness belong to the simulation, never to rendering or UI refreshes.
 export const VERSION = 2;
@@ -79,9 +80,13 @@ function waitingSeat(s) {
 }
 function dispatch(s) {
   if (!s.patients.some(p => p.phase === 'registration')) {
-    const p = s.patients.find(p => p.phase === 'registerQueue' && atDestination(p, s.time));
-    if (p) enter(p, 'registration', s.time, 14_000);
+    const p = s.patients.find(p => ['arriving','registerQueue'].includes(p.phase));
+    if (p?.phase === 'registerQueue' && atDestination(p,s.time)) enter(p, 'registration', s.time, 14_000);
   }
+  // Queue advances into the newly vacated spot; nobody waits in the street.
+  s.patients.filter(p=>['arriving','registerQueue'].includes(p.phase)).forEach((p,i)=>{
+    if(p.queueSlot!==i){p.queueSlot=i;enter(p,p.phase,s.time,p.phase==='arriving'?0:null);}
+  });
   for (let room = 1; room <= (s.secondRoom ? 2 : 1); room++) {
     if (s.patients.some(p => p.room === room && (p.phase === 'consultation' || p.roomReleasedAt > s.time))) continue;
     const p = s.patients.filter(p => p.phase === 'waiting' && (atDestination(p, s.time) || s.time <= p.motion.end)).sort((a, b) => a.waitStarted - b.waitStarted)[0];
@@ -95,6 +100,7 @@ function dispatch(s) {
     const p = s.patients.find(p => p.phase === 'nursingQueue' && atDestination(p, s.time));
     if (p) enter(p, 'nursing', s.time, 42_000);
   }
+  syncNurseTask(s);
 }
 function finishVisit(s, p, referred = false) {
   if (referred) {
@@ -181,7 +187,7 @@ export function createState(now = Date.now(), seed = 20260926) {
     cash: 180000, secondRoom: false, authority: true, project: null, pressureChecks: 0,
     lastReview: now, directorThought: '先稳定基础门诊，持续观察需求，再决定是否启用第二诊室。',
     metrics: { demand: 0, completed: 0, referred: 0, capacityRedirected: 0, revenue: 0, operating: 0, investment: 0, waitTotal: 0, waitCount: 0 },
-    patients: [], history: [], demandTrace: [], log: []
+    patients: [], history: [], demandTrace: [], log: [], nurseTask: createNurseTask(now)
   };
   // An explicit opening cohort, present whether the player is watching or not.
   for (let i = 0; i < 4; i++) demand(s, now);
@@ -198,9 +204,10 @@ export function advanceTo(s, target, eventLimit = 200_000) {
   let count = 0;
   while (count < eventLimit) {
     const patientDue = s.patients.reduce((min, p) => Math.min(min, p.due ?? Infinity, p.motionDue ?? Infinity, p.roomReleasedAt ?? Infinity), Infinity);
-    const next = Math.min(s.nextArrival, s.nextCost, s.nextReview, s.project?.completesAt ?? Infinity, patientDue);
+    const next = Math.min(s.nextArrival, s.nextCost, s.nextReview, s.project?.completesAt ?? Infinity, s.nurseTask.due ?? Infinity, patientDue);
     if (next > target) { s.time = target; return { caughtUp: true, events: count }; }
     s.time = next;
+    advanceNurseTask(s);
     if (s.nextArrival === next) demand(s, next);
     if (s.nextCost === next) {
       const cost = s.secondRoom ? 19 : 12;
@@ -283,5 +290,13 @@ export function restoreState(serialized) {
         (p.roomReleasedAt != null && (!finite(p.roomReleasedAt) || p.roomReleasedAt < s.time)) ||
         (p.due !== null && p.due < p.serviceAt)) throw new Error('存档动作时间不完整');
   }
+  // Optional v2 addition: old saves retain patient progress and initialize staff chores.
+  if(!s.nurseTask) { s.nurseTask=createNurseTask(s.time); syncNurseTask(s); }
+  const task=s.nurseTask,m=task.motion;
+  if(!['available','supplyWalk','preparing','returning','approach','care'].includes(task.phase) ||
+      (task.due!==null && (!finite(task.due)||task.due<s.time)) ||
+      !m || ![m.at,m.start,m.end,m.ready,m.length].every(finite) || m.length<0 || m.start>m.end ||
+      !Array.isArray(m.points) || m.points.length<2 || m.points.some(p=>!Array.isArray(p)||p.length!==2||!p.every(finite)))
+    throw new Error('员工动作存档不完整');
   return s;
 }

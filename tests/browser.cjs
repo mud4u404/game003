@@ -26,6 +26,8 @@ const KEY = 'meiao-clinic-v1';
     assert.equal(await page.getByRole('switch').getAttribute('aria-checked'),'false');
     await page.screenshot({path:path.join(output,'director-desktop.png')});
     const follower=await context.newPage();await follower.goto(URL);await follower.getByText('观察模式',{exact:true}).waitFor();
+    const followerTime=Number(await follower.locator('#scene').getAttribute('data-scene-time'));
+    await follower.waitForFunction(before=>Number(document.querySelector('#scene').dataset.sceneTime)>before+150,followerTime,{timeout:1500});
     await follower.getByRole('button',{name:'院长',exact:true}).click();assert.equal(await follower.getByRole('switch').isDisabled(),true);
     await page.close();await follower.getByText('自主运行',{exact:true}).waitFor({timeout:10000});
     assert.equal(await follower.getByRole('switch').isEnabled(),true);
@@ -36,7 +38,7 @@ const KEY = 'meiao-clinic-v1';
     // The stage is centered and the canvas has a header offset: client coordinates must be translated.
     const canvasBox=await follower.locator('#scene').boundingBox();
     const scale=Math.min(canvasBox.width/690,canvasBox.height/1060);
-    await follower.touchscreen.tap(canvasBox.x+canvasBox.width/2+(173-340)*scale,canvasBox.y+canvasBox.height/2+(210-20-550)*scale);
+    await follower.touchscreen.tap(canvasBox.x+canvasBox.width/2+(173-340)*scale,canvasBox.y+canvasBox.height/2+(241-20-550)*scale);
     await follower.locator('#person').getByRole('heading',{name:'林岚'}).waitFor();
     await follower.keyboard.press('Escape');
     await follower.screenshot({path:path.join(output,'clinic-desktop.png')});
