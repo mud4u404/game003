@@ -34,3 +34,27 @@ A vertical 9:16 mobile game screenshot of a hospital management simulation, stri
 
 - 用选定风格，让 ChatGPT 生成统一的素材图（人物各角色和姿势、家具、设备、地面材质），透明背景，固定等轴角度和光照方向。
 - 游戏引擎（T001 的等轴骨架）改为摆放这些素材，而不是用代码绘制人物和家具。
+
+---
+
+## 2026-09-28 用户决定：v02 画风 + v03 等轴视角
+
+A/B 两张生图风格接近、3D 白模小样（`../v05/`）被用户否定（“小人太丑”“不如原来的风格”）。最终方向：**画风用 v02（`../v02/01-clinic-2d.png`），视角用 v03 的等轴 2.5D（`../v03/c-isometric.png`）**。
+
+### D：v02 画风的等轴效果图
+
+使用时把 `art/concepts/v02/01-clinic-2d.png` 作为风格参考图一起发给 ChatGPT。
+
+```
+Use the attached image as the STYLE reference: soft hand-painted 2D game illustration, clean dark outlines, flat colors with gentle shading, warm beige and light grey floor tiles, grey wall caps, navy blue furniture accents, wooden doors, potted plants, green grass around the building, calm and tidy. Keep exactly this painting style, color palette and level of detail.
+
+Change the camera to an isometric 2:1 view (like a classic hospital management game), cutaway so the walls are lowered and the interiors are visible. Vertical 9:16 mobile game screenshot.
+
+Scene: a small hospital with a doctor's consultation room (desk, monitor, exam couch), a laboratory (benches, analyzers, fridge), a waiting hall with a triage desk and rows of navy seats, an X-ray room with the X-ray table and a lead-glass control booth, and a ward with three beds. Outside: grass, trees, a road, a parking lot and an emergency entrance with an ambulance.
+
+People: natural adult body proportions (about 6.5 to 7 heads tall), NOT chibi, no oversized heads, no blush, simple calm faces. Doctors in white coats, nurses in teal scrubs, technicians in blue, varied patients (some elderly), some seated, some walking, one in a wheelchair.
+
+Minimal UI: a thin slate-blue top bar and a row of six simple icons at the bottom in the same style as the reference, no readable text. Serious, professional, pleasant.
+```
+
+选定后的做法（待效果图确认）：地面、墙、房间由游戏引擎按 v02 配色绘制；人物和家具设备用 ChatGPT 按同一风格、同一等轴角度生成素材，透明背景。
