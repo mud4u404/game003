@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>效果图 B 插画风</title>
+<style>
+html,body{margin:0;background:#20262f;font-family:"WenQuanYi Zen Hei",sans-serif;color:#fff}
+.phone{position:relative;width:390px;height:844px;overflow:hidden;background:#7fae62}
+.top{position:absolute;left:0;top:0;right:0;height:56px;background:#3c4858;display:flex;align-items:center;justify-content:space-between;padding:0 16px;box-sizing:border-box;z-index:3;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.name{font-size:18px;letter-spacing:2px}
+.sub{font-size:11px;color:#c3ccd8;margin-top:3px}
+.cash{font-size:16px;letter-spacing:.5px}
+.bell{position:relative;width:34px;height:34px;border-radius:8px;background:#2c3747;margin-left:12px;display:flex;align-items:center;justify-content:center}
+.bell b{position:absolute;right:-4px;top:-4px;min-width:16px;height:16px;border-radius:8px;background:#e0644a;font-size:10px;display:flex;align-items:center;justify-content:center}
+canvas{position:absolute;left:0;top:56px;width:390px;height:724px}
+.sign{position:absolute;z-index:2;font-size:10px;padding:3px 7px;border-radius:10px;background:rgba(44,55,71,.88);color:#fff}
+.card{position:absolute;left:10px;right:10px;bottom:74px;z-index:3;background:#fff;color:#2a3140;border-radius:14px;box-shadow:0 6px 18px rgba(20,30,40,.35);padding:12px 14px}
+.card .h{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.card .n{font-size:16px;font-weight:bold}
+.card .m{font-size:11px;color:#6b7482;margin-left:6px;font-weight:normal}
+.tag{font-size:11px;background:#fde3d6;color:#a23d1c;padding:3px 8px;border-radius:10px}
+.row{display:flex;font-size:12px;line-height:1.6}
+.row i{font-style:normal;color:#8993a1;width:34px;flex-shrink:0}
+.up{color:#c0392b}
+.nav{position:absolute;left:0;right:0;bottom:0;height:66px;background:#3c4858;display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:7px 8px;box-sizing:border-box;z-index:3}
+.nav div{display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;color:#c3ccd8;gap:3px;border-radius:9px}
+.nav div.on{background:#2a3546;color:#fff}
+.nav svg{width:20px;height:20px}
+</style>
+</head>
+<body>
+<div class="phone">
+<div class="top">
+<div><div class="name">仁和医院</div><div class="sub">第 12 天 · 周三 10:42</div></div>
+<div style="display:flex;align-items:center"><div class="cash">¥386,200</div>
+<div class="bell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4z"/><path d="M10 21h4"/></svg><b>3</b></div></div>
+</div>
+<canvas id="c" width="1170" height="2172"></canvas>
+<div class="sign" style="left:14px;top:200px">诊室</div>
+<div class="sign" style="left:236px;top:200px">检验科</div>
+<div class="sign" style="left:14px;top:346px">候诊大厅 · 分诊</div>
+<div class="sign" style="left:14px;top:528px">放射科</div>
+<div class="sign" style="left:326px;top:528px">病房</div>
+<div class="card">
+<div class="h"><div class="n">王建国<span class="m">男 · 58 岁 · 门诊</span></div><div class="tag">III 级 紧急</div></div>
+<div class="row"><i>主诉</i>右下腹痛 8 小时，伴恶心</div>
+<div class="row"><i>检查</i>血常规 WBC 13.2×10⁹/L <span class="up">&nbsp;↑&nbsp;</span>· 超声 阑尾 9 mm</div>
+<div class="row"><i>诊断</i><b>急性阑尾炎</b>（确诊）</div>
+<div class="row"><i>处置</i>本院无手术室 → 转诊市一院普外科</div>
+</div>
+<div class="nav">
+<div class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 21V8l8-4 8 4v13z"/><path d="M12 8v6M9 11h6M10 21v-4h4v4"/></svg>医院</div>
+<div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6v3H9zM8.5 11h7M8.5 15h5"/></svg>汇报</div>
+<div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M3 21h18M5 21V11h6v10M13 21V5h6v16M7 14h2M15 8h2M15 12h2M15 16h2"/></svg>建设</div>
+<div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2a5 5 0 0 1 6 4.8"/></svg>人事</div>
+<div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>规则</div>
+<div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 7.5 12 12l3.5-4.5M8.5 12.5h7M8.5 15.5h7M12 12v6"/></svg>资金</div>
+</div>
+</div>
+<script>
+const cv=document.getElementById('c'),g=cv.getContext('2d');
+g.scale(6,6);g.lineJoin='round';
+const OL='rgba(52,58,70,.85)',LW=.32;
+function path(fn,fill,stroke,lw){g.beginPath();fn();if(fill){g.fillStyle=fill;g.fill();}if(stroke){g.strokeStyle=stroke;g.lineWidth=lw||LW;g.stroke();}}
+function rr(x,y,w,h,rad,fill,stroke){path(()=>g.roundRect(x,y,w,h,rad),fill,stroke);}
+function ell(x,y,rx,ry,fill,stroke){path(()=>g.ellipse(x,y,rx,ry,0,0,Math.PI*2),fill,stroke);}
+function soft(fn){g.save();g.shadowColor='rgba(40,45,55,.28)';g.shadowBlur=7;g.shadowOffsetY=5;fn();g.restore();}
+function tiles(x,y,w,h,base,line,sz){g.fillStyle=base;g.fillRect(x,y,w,h);g.fillStyle=line;
+ for(let tx=sz;tx<w;tx+=sz)g.fillRect(x+tx,y,.18,h);for(let ty=sz;ty<h;ty+=sz)g.fillRect(x,y+ty,w,.18);}
+// 3/4 俯视柔和体块
+function box(x,y,w,d,h,top,front,rad){rad=rad??1;
+ soft(()=>rr(x,y,w,d+h,rad,front));
+ rr(x,y,w,d+h,rad,front,OL);
+ rr(x+.15,y+.15,w-.3,d,rad*.8,top);
+ g.fillStyle='rgba(255,255,255,.35)';g.fillRect(x+rad,y+.35,w-rad*2,.35);
+}
+function person(x,y,o){
+ const seated=o.pose==='seatF'||o.pose==='seatB',back=o.pose==='back'||o.pose==='seatB';
+ ell(x,y,4.2,1.4,'rgba(30,35,45,.22)');
+ const yb=seated?y-10:y-12.2;
+ if(!seated){const s=o.pose==='walk'?1:0;
+  rr(x-2.5,y-5.2-s*.6,2.1,5+s*.6,.9,o.pants,OL);rr(x+.4,y-5.2+s*.4,2.1,5-s*.4,.9,o.pants,OL);
+  rr(x-2.7,y-1.1-s*.6,2.5,1.4,.6,'#2e3038');rr(x+.3,y-1.1,2.5,1.4,.6,'#2e3038');}
+ else if(o.pose==='seatF'){rr(x-3,yb+6.2,6,2.8,1.1,o.pants,OL);rr(x-2.8,y-1.4,2.3,1.4,.6,'#2e3038');rr(x+.5,y-1.4,2.3,1.4,.6,'#2e3038');}
+ const coat=o.coat;
+ rr(x-4.7,yb+1.2,1.8,5.2,.9,coat||o.shirt,OL);rr(x+2.9,yb+1.2,1.8,5.2,.9,coat||o.shirt,OL);
+ if(!back){ell(x-3.8,yb+6.6,.9,.9,o.skin);ell(x+3.8,yb+6.6,.9,.9,o.skin);}
+ rr(x-3.5,yb,7,coat&&!seated?8.8:7.2,2.4,coat||o.shirt,OL);
+ g.fillStyle='rgba(0,0,0,.10)';g.beginPath();g.roundRect(x+1.2,yb+.6,2,coat&&!seated?7.8:6.2,1);g.fill();
+ if(coat&&!back){path(()=>{g.moveTo(x-1.3,yb+.2);g.lineTo(x,yb+2.6);g.lineTo(x+1.3,yb+.2);},o.shirt);g.fillStyle='rgba(60,70,85,.5)';g.fillRect(x-.08,yb+2.6,.16,5);
+  if(o.steth){g.strokeStyle='#3b4452';g.lineWidth=.35;g.beginPath();g.moveTo(x-1.6,yb+.4);g.quadraticCurveTo(x-2.2,yb+4,x-.6,yb+4.4);g.stroke();ell(x-.4,yb+4.5,.55,.55,'#8a96a6');}}
+ if(o.cross&&!back){g.fillStyle='#fff';g.fillRect(x-2.6,yb+2,1.6,.5);g.fillRect(x-2.05,yb+1.45,.5,1.6);}
+ const hy=yb-3.2;
+ ell(x,hy,3.7,3.6,back?o.hair:o.skin,OL);
+ if(!back){path(()=>{g.ellipse(x,hy-.5,3.7,3.1,0,Math.PI*1.02,Math.PI*1.98);g.quadraticCurveTo(x+2.4,hy-.6,x+1.2,hy-1.1);g.quadraticCurveTo(x-.5,hy-.3,x-3.6,hy-.2);},o.hair,OL);
+  ell(x-1.25,hy+.9,.42,.5,'#2a2522');ell(x+1.25,hy+.9,.42,.5,'#2a2522');ell(x-2.2,hy+1.9,.6,.35,'rgba(230,120,110,.35)');ell(x+2.2,hy+1.9,.6,.35,'rgba(230,120,110,.35)');}
+ else {g.fillStyle='rgba(255,255,255,.18)';g.beginPath();g.ellipse(x-1.2,hy-1.4,1.3,.8,-.5,0,Math.PI*2);g.fill();}
+ if(o.cap){rr(x-3,hy-4.2,6,1.8,.8,o.cap,OL);}
+}
+const SK='#f1cda9';
+const doc={hair:'#2e2622',skin:SK,shirt:'#7fb3d9',pants:'#34465e',coat:'#f7f9fb',steth:1};
+const doc2={hair:'#5a3d2a',skin:'#e8bf98',shirt:'#e6eef5',pants:'#3b3f4a',coat:'#f7f9fb'};
+const nur={hair:'#2a2226',skin:SK,shirt:'#4a9b94',pants:'#3f8a84',cross:1};
+const tec={hair:'#1f1c1c',skin:'#e3b891',shirt:'#5e82b0',pants:'#34465e'};
+const pt=[{hair:'#3a2a22',skin:SK,shirt:'#c65a47',pants:'#3e4a5e'},{hair:'#9a9a9a',skin:'#e8c29c',shirt:'#4f7fb8',pants:'#4b4038'},{hair:'#2a2320',skin:SK,shirt:'#d6a23f',pants:'#3e4a5e'},{hair:'#5a3a28',skin:'#e3b891',shirt:'#7b9a58',pants:'#2f3542'},{hair:'#1d1d24',skin:SK,shirt:'#8a6fb0',pants:'#4a4a52'},{hair:'#c9c2b8',skin:'#ecc6a0',shirt:'#5f8c8a',pants:'#4b4038'}];
+const P=(o,pose)=>Object.assign({},o,{pose});
+function plant(x,y){box(x,y+6,6,2.5,4,'#c79a66','#a57a4c',1.2);
+ const L=[[3,3,2.2,3.6,-.5],[1.4,4,1.8,3,-1],[4.6,4,1.8,3,1],[3,1.8,1.6,3,0],[1.2,2.4,1.5,2.6,-.9],[4.8,2.4,1.5,2.6,.9]];
+ for(const [dx,dy,rx,ry,a] of L)path(()=>g.ellipse(x+dx,y+dy,rx,ry,a,0,Math.PI*2),'#4f9446','rgba(40,70,40,.7)',.25);
+ for(const [dx,dy,rx,ry,a] of L.slice(0,3))path(()=>g.ellipse(x+dx-.3,y+dy-.6,rx*.45,ry*.45,a,0,Math.PI*2),'#6fb65e');}
+function monitor(x,y){rr(x+3,y+5.2,2,1.4,.3,'#3b4452');rr(x,y,8,5.6,.8,'#2e3440',OL);rr(x+.7,y+.7,6.6,4,.4,'#5d8fb3');g.fillStyle='rgba(255,255,255,.35)';g.fillRect(x+1.2,y+1.2,2.5,.5);}
+function chair(x,y){soft(()=>rr(x,y-2.5,8,9.5,1.6,'#2c4466'));rr(x,y-2.5,8,4,1.6,'#3a5a86',OL);rr(x,y+1,8,6,1.6,'#2f4a6e',OL);g.fillStyle='rgba(255,255,255,.15)';g.fillRect(x+1.2,y+1.6,5.6,.5);}
+function door(x,y){rr(x,y-.3,12,9.2,.6,'#b98a55',OL);rr(x+1,y+.6,10,7.6,.5,'#c9996a');g.fillStyle='#8f6a40';g.fillRect(x+5.9,y+.6,.25,7.6);ell(x+9.2,y+4.6,.45,.45,'#f2d479');ell(x+2.8,y+4.6,.45,.45,'#f2d479');}
+
+// ---------- 室外 ----------
+g.fillStyle='#7fae62';g.fillRect(0,0,195,362);
+for(let i=0;i<90;i++){const x=(i*53.3)%195,y=(i*37.7)%362;g.strokeStyle='rgba(60,110,50,.45)';g.lineWidth=.35;g.beginPath();g.moveTo(x,y);g.lineTo(x-.6,y-1.6);g.moveTo(x+.8,y);g.lineTo(x+1.2,y-1.4);g.stroke();}
+tiles(0,262,195,13,'#dcd9d1','#c7c3b9',6.5);g.fillStyle='#a7a39a';g.fillRect(0,274.5,195,1.5);
+g.fillStyle='#4d525b';g.fillRect(0,276,195,86);g.fillStyle='#e8e5dc';for(let x=4;x<195;x+=22)g.fillRect(x,300,12,1.4);
+for(let x=72;x<124;x+=6.5)g.fillRect(x,278,4,20);
+// ---------- 地面 ----------
+tiles(7,16,89,68,'#f1e5cd','#e2d3b5',8.5);
+tiles(99,16,89,68,'#e6e8eb','#d3d7dc',8.5);
+tiles(7,93,181,79,'#f3e9d6','#e3d5bb',8.5);
+tiles(7,181,89,69,'#e8e5ee','#d6d1df',8.5);
+tiles(99,181,89,69,'#d6e8d3','#bfd6ba',8.5);
+// 窗光
+g.fillStyle='rgba(255,255,240,.22)';for(const y of [110,190]){g.beginPath();g.moveTo(188,y);g.lineTo(188,y+20);g.lineTo(160,y+34);g.lineTo(160,y+10);g.fill();}
+// 导向线
+rr(9,159.5,118,1.6,.8,'#6fa3c9');rr(125,100,1.6,61,.8,'#6fa3c9');rr(9,163.5,58,1.6,.8,'#7fbf8f');
+// ---------- 墙 ----------
+const CAP='#59616c',FACE='#d3d6da';
+function hwall(x,y,w){g.fillStyle=CAP;g.fillRect(x,y,w,3.2);g.fillStyle=FACE;g.fillRect(x,y+3.2,w,5.8);g.fillStyle='#e8eaed';g.fillRect(x,y+3.2,w,.6);g.fillStyle='rgba(0,0,0,.12)';g.fillRect(x,y+8.4,w,.6);g.fillStyle='rgba(40,45,55,.12)';g.fillRect(x,y+9,w,1.2);}
+function vwall(x,y,h){g.fillStyle=CAP;g.fillRect(x,y,3.2,h);}
+hwall(4,6,187);vwall(4,6,256);vwall(187.8,6,256);vwall(96,6,79);vwall(96,172,80);
+hwall(4,84,187);hwall(4,172,187);hwall(4,250,187);
+for(const y of [110,190]){rr(187.6,y,3.6,20,.5,'#9cc3dd',OL);g.fillStyle='#d6ebf7';g.fillRect(188.6,y+2,.8,7);}
+door(62,84);door(140,84);door(30,172);door(150,172);
+rr(117,250,28,9.2,.6,'#6f7884',OL);rr(118.4,251,12,7.6,.5,'#9cc3dd');rr(132,251,12,7.6,.5,'#9cc3dd');g.fillStyle='#e0f0f9';g.fillRect(119.5,252,2,5);g.fillRect(133,252,2,5);
+for(const x of [12,40,160]){rr(x,253,22,4.4,.6,'#9cc3dd',OL);g.fillStyle='#e0f0f9';g.fillRect(x+2,254,7,.8);}
+rr(121,262.5,20,4,1,'#3c4048');
+plant(110,258);plant(146,258);
+// ---------- 诊室 ----------
+box(12,13,24,6.5,4.5,'#f1f3f5','#cfd4da');g.fillStyle='#9aa3ad';g.fillRect(15,18.5,7,.4);g.fillRect(25,18.5,7,.4);
+box(62,13,13,6.5,4.5,'#f1f3f5','#cfd4da');rr(65,14.2,7,3.8,1.2,'#b9cfdf',OL);ell(68.5,14.4,.5,.5,'#8a96a6');
+box(10,33,11.5,25,4,'#2f4a6e','#233955',1.5);rr(11,34,9.5,5.5,1.4,'#f7f9fb',OL);g.fillStyle='rgba(255,255,255,.12)';g.fillRect(12,41,1,15);
+person(50,36.5,P(doc,'front'));
+box(34,32,32,10,5,'#f6f5f1','#d4d2ca',1.2);monitor(38,26.5);
+rr(55,34,7,4,.5,'#fbf8f0',OL);g.fillStyle='#a19a8a';g.fillRect(56,35.3,5,.35);g.fillRect(56,36.4,3.5,.35);
+ell(47,65.5,7.5,3.2,'rgba(242,212,121,.35)','#f2c94c');
+chair(44,57);person(48,65,P(pt[0],'seatB'));
+box(79,50,8,7,3,'#3b4452','#2a2f3a',3.5);
+plant(84,15);
+// ---------- 检验科 ----------
+box(102,13,50,8,5,'#f7f9fb','#d3d9e0');
+box(105,9.5,6,4,4,'#3b4452','#2a2f3a',.8);ell(108,9.4,1.3,1.3,'#5e82b0',OL);
+['#d9573f','#6fa3c9','#d6a23f','#7b9a58','#8a6fb0'].forEach((c,i)=>{rr(116+i*3,11,2,5.5,.9,'#fff',OL);rr(116.3+i*3,13,1.4,3.2,.6,c);});
+box(134,10,10,6,4,'#e3e7ec','#b6bec8',2);ell(139,13,2.2,1.6,'#9aa3ad',OL);
+box(168,9,16,8,17,'#f1f3f5','#d0d5db',1.4);g.fillStyle='#9aa3ad';g.fillRect(170,22,12,.4);g.fillRect(181,24,.6,5);
+box(122,44,40,10,5,'#f7f9fb','#d3d9e0');box(128,40,9,4,4,'#e3e7ec','#b6bec8');rr(130,40.8,5,2,.4,'#7fbf8f');
+rr(145,46,11,3,.6,'#b9cfdf',OL);
+person(141,69.5,P(tec,'back'));
+chair(104,58);rr(112,59,6,2,.8,'#eef0f2',OL);person(108,67,P(pt[3],'seatF'));
+plant(176,62);
+// ---------- 大厅 ----------
+person(33,107.5,P(nur,'front'));
+box(14,106,46,9,6,'#f6f5f1','#d4d2ca',1.4);monitor(21,100.5);rr(44,108,8,2.5,.5,'#fbf8f0',OL);
+person(40,134,P(pt[4],'back'));person(28,137,P(pt[1],'back'));
+const seat=[[106,124,2],[116,124,-1],[126,124,5],[136,124,-1],[146,124,1],[156,124,-1],[106,148,-1],[116,148,0],[126,148,-1],[136,148,-1],[146,148,4],[156,148,-1]];
+for(const [x,y,p] of seat){chair(x,y);}
+for(const [x,y,p] of seat){if(p>=0)person(x+4,y+8,P(pt[p],'seatF'));}
+person(84,147,P(doc2,'walk'));
+person(172,173,P(pt[5],'walk'));
+plant(174,96);plant(66,96);
+box(172,117,10,5,11,'#f1f3f5','#d0d5db',1.2);rr(173.6,124,6.8,4.5,.6,'#6fa3c9',OL);
+// ---------- 放射科 ----------
+g.fillStyle='rgba(120,110,150,.12)';g.fillRect(62,181,2,69);
+box(16,204,34,12,5,'#f1f3f5','#cfd4da',1.4);rr(18,205,30,10,1.4,'#2f4a6e');rr(19,206,8,4,1.2,'#f7f9fb');
+box(52,186,6,4,22,'#e3e7ec','#b6bec8',.8);box(24,189,34,4.5,3,'#e3e7ec','#b6bec8',.8);
+box(26,193.5,10,6,5,'#f7f9fb','#d3d9e0',1.4);ell(31,196.5,2,1.4,'#f2d479',OL);
+box(76,181.5,12,5,17,'#f1f3f5','#d0d5db',1);rr(78,186,8,9,.8,'#b6bec8',OL);
+g.fillStyle=CAP;g.fillRect(64,226,32,2);g.fillRect(64,226,2,24);rr(66,227.6,30,3.4,.4,'#9cc3dd');g.fillStyle='#e0f0f9';g.fillRect(68,228.4,9,.8);
+box(72,236,18,6,4,'#f6f5f1','#d4d2ca');monitor(74,231);
+person(81,249,P(tec,'back'));
+rr(32,168.5,8,2.2,1,'#e0644a',OL);
+// ---------- 病房 ----------
+function bed(x,y,p){box(x,y,14,24,4,'#f1f3f5','#cfd4da',1.6);rr(x+2,y+1,10,6,1.6,'#fbfcfd',OL);
+ ell(x+7,y+4.2,2.8,2.7,p.hair,OL);ell(x+7,y+5.2,2.2,1.8,p.skin);ell(x+6.1,y+5.3,.3,.3,'#2a2522');ell(x+7.9,y+5.3,.3,.3,'#2a2522');
+ rr(x+1,y+8,12,15,1.4,'#7fb3d9',OL);g.fillStyle='#b4d4ea';g.fillRect(x+1.4,y+8.4,11.2,2);g.fillStyle='rgba(0,0,0,.08)';g.fillRect(x+8,y+11,1.5,11);}
+bed(104,188,pt[1]);bed(130,188,pt[2]);bed(156,188,pt[5]);
+box(120,190,6,5,5,'#c79a66','#a57a4c');box(146,190,6,5,5,'#c79a66','#a57a4c');
+g.strokeStyle='#9aa3ad';g.lineWidth=.5;g.beginPath();g.moveTo(173.5,185);g.lineTo(173.5,201);g.moveTo(171,185);g.lineTo(176,185);g.stroke();rr(173.2,186,3.2,4.4,1,'#d6ecf7',OL);
+g.fillStyle='#b7c9b3';g.fillRect(100,222,86,.6);
+person(143,240,P(nur,'front'));
+</script>
+</body>
+</html>

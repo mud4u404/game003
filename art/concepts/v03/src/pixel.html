@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>效果图 A 像素风</title>
+<style>
+html,body{margin:0;background:#1b2330;font-family:"WenQuanYi Zen Hei",sans-serif;color:#eef2f6}
+.phone{position:relative;width:390px;height:844px;overflow:hidden;background:#6f9f55}
+.top{position:absolute;left:0;top:0;right:0;height:56px;background:#2c3747;border-bottom:4px solid #1b2330;display:flex;align-items:center;justify-content:space-between;padding:0 14px;box-sizing:border-box;z-index:3}
+.name{font-size:17px;font-weight:bold;letter-spacing:2px}
+.sub{font-size:11px;color:#a9b6c6;margin-top:2px}
+.cash{font-size:15px;font-weight:bold;color:#f2d479;letter-spacing:1px}
+.bell{position:relative;width:34px;height:30px;background:#3d4b5f;box-shadow:0 0 0 2px #1b2330,inset 0 -3px 0 #2c3747;display:flex;align-items:center;justify-content:center;font-size:12px;margin-left:10px}
+.bell b{position:absolute;right:-6px;top:-6px;width:16px;height:16px;background:#d9573f;box-shadow:0 0 0 2px #1b2330;font-size:10px;display:flex;align-items:center;justify-content:center}
+canvas{position:absolute;left:0;top:56px;width:390px;height:724px;image-rendering:pixelated}
+.sign{position:absolute;z-index:2;font-size:10px;padding:2px 5px;background:#2c3747;color:#eef2f6;box-shadow:0 0 0 2px #1b2330}
+.card{position:absolute;left:10px;right:10px;bottom:72px;z-index:3;background:#f4efe4;color:#2a2f3a;box-shadow:0 0 0 3px #1b2330,inset 0 -4px 0 #d9d0bd;padding:10px 12px 12px}
+.card .h{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.card .n{font-size:16px;font-weight:bold}
+.card .m{font-size:11px;color:#5d6470;margin-left:6px;font-weight:normal}
+.tag{font-size:11px;background:#d9573f;color:#fff;padding:2px 6px;box-shadow:0 0 0 2px #1b2330}
+.row{display:flex;font-size:12px;line-height:1.55}
+.row i{font-style:normal;color:#8a7a5c;width:34px;flex-shrink:0}
+.up{color:#c0392b;font-weight:bold}
+.nav{position:absolute;left:0;right:0;bottom:0;height:64px;background:#2c3747;border-top:4px solid #1b2330;display:grid;grid-template-columns:repeat(6,1fr);z-index:3}
+.nav div{display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;color:#a9b6c6;gap:4px}
+.nav div.on{color:#f2d479;background:#3d4b5f}
+.nav canvas{position:static;width:18px;height:18px;image-rendering:pixelated}
+</style>
+</head>
+<body>
+<div class="phone">
+<div class="top">
+<div><div class="name">仁和医院</div><div class="sub">第 12 天 · 周三 10:42</div></div>
+<div style="display:flex;align-items:center"><div class="cash">¥386,200</div><div class="bell">报<b>3</b></div></div>
+</div>
+<canvas id="c" width="195" height="362"></canvas>
+<div class="sign" style="left:16px;top:198px">诊室</div>
+<div class="sign" style="left:238px;top:198px">检验科</div>
+<div class="sign" style="left:16px;top:346px">候诊大厅 · 分诊</div>
+<div class="sign" style="left:16px;top:526px">放射科</div>
+<div class="sign" style="left:318px;top:530px">病房</div>
+<div class="card">
+<div class="h"><div class="n">王建国<span class="m">男 · 58 岁 · 门诊</span></div><div class="tag">III 级 紧急</div></div>
+<div class="row"><i>主诉</i>右下腹痛 8 小时，伴恶心</div>
+<div class="row"><i>检查</i>血常规 WBC 13.2×10⁹/L&nbsp;<span class="up">↑</span>&nbsp;· 超声 阑尾 9 mm</div>
+<div class="row"><i>诊断</i><b>急性阑尾炎</b>（确诊）</div>
+<div class="row"><i>处置</i>本院无手术室 → 转诊市一院普外科</div>
+</div>
+<div class="nav">
+<div class="on"><canvas width="9" height="9"></canvas>医院</div><div><canvas width="9" height="9"></canvas>汇报</div><div><canvas width="9" height="9"></canvas>建设</div><div><canvas width="9" height="9"></canvas>人事</div><div><canvas width="9" height="9"></canvas>规则</div><div><canvas width="9" height="9"></canvas>资金</div>
+</div>
+</div>
+<script>
+const cv=document.getElementById('c'),g=cv.getContext('2d');
+const OL='#262b36';
+function r(x,y,w,h,c){g.fillStyle=c;g.fillRect(x,y,w,h);}
+function tiles(x,y,w,h,a,b,line,sz){
+  r(x,y,w,h,a);
+  for(let ty=0;ty<h;ty+=sz)for(let tx=0;tx<w;tx+=sz){
+    if(((tx/sz)+(ty/sz))%2===0)r(x+tx,y+ty,Math.min(sz,w-tx),Math.min(sz,h-ty),b);
+  }
+  for(let tx=0;tx<w;tx+=sz)r(x+tx,y,1,h,line);
+  for(let ty=0;ty<h;ty+=sz)r(x,y+ty,w,1,line);
+}
+// 3/4 俯视体块：顶面+正面，带描边与投影
+function box(x,y,w,d,h,top,front,hi){
+  r(x+1,y+d+h+1,w,2,'rgba(20,24,30,.22)');r(x+w+1,y+2,2,d+h,'rgba(20,24,30,.22)');
+  r(x-1,y-1,w+2,d+h+2,OL);
+  r(x,y,w,d,top);if(hi)r(x,y,w,1,hi);
+  r(x,y+d,w,h,front);r(x,y+d,w,1,'rgba(0,0,0,.12)');
+}
+// 精灵：字符表 + 调色板，自动描边
+function spr(rows,pal,x,y,flip){
+  const H=rows.length,W=rows[0].length;
+  const at=(i,j)=>{if(j<0||i<0||j>=H||i>=W)return '.';const ch=rows[j][flip?W-1-i:i];return ch;};
+  g.fillStyle='rgba(20,24,30,.25)';g.fillRect(x,y+H,W,1);g.fillRect(x+1,y+H+1,W-2,1);
+  for(let j=0;j<H;j++)for(let i=0;i<W;i++){
+    if(at(i,j)!=='.')continue;
+    if(at(i-1,j)!=='.'||at(i+1,j)!=='.'||at(i,j-1)!=='.'||at(i,j+1)!=='.')r(x+i,y+j,1,1,OL);
+  }
+  for(let j=0;j<H;j++)for(let i=0;i<W;i++){const ch=at(i,j);if(ch!=='.')r(x+i,y+j,1,1,pal[ch]);}
+}
+const FRONT=["..hhhh..",".hhhhhh.",".hssssh.",".sessesS","..ssssS.",".bbccbB.","bbbccbBB","sbbbbbBs",".bbbbbB.",".pp..pP.",".pp..pP.",".kk..kk."];
+const BACK =["..hhhh..",".hhhhhh.",".hhhhhH.",".hhhhhH.","..ssss..",".bbbbbB.","bbbbbbBB","sbbbbbBs",".bbbbbB.",".pp..pP.",".pp..pP.",".kk..kk."];
+const WALK =["..hhhh..",".hhhhhh.",".hssssh.",".sessesS","..ssssS.",".bbccbB.","bbbccbBB","sbbbbbBs",".bbbbbB.",".pp.pP..","pp...pP.","kk...kk."];
+const SEATF=["..hhhh..",".hhhhhh.",".hssssh.",".sessesS","..ssssS.",".bbccbB.","bbbccbBB","sbbbbbBs",".pppppP.",".kk..kk."];
+const SEATB=["..hhhh..",".hhhhhh.",".hhhhhH.",".hhhhhH.","..ssss..",".bbbbbB.","bbbbbbBB","sbbbbbBs",".bbbbbB."];
+function P(h,b,B,p,P2,c){return {h,H:shade(h),s:'#f1c9a2',S:'#d9a987',e:'#2a2320',b,B,c:c||b,p,P:P2||shade(p),k:'#2b2b33'};}
+function shade(hex){const n=parseInt(hex.slice(1),16);const f=v=>Math.max(0,Math.round(v*.78));return '#'+[(n>>16)&255,(n>>8)&255,n&255].map(f).map(v=>v.toString(16).padStart(2,'0')).join('');}
+const DOC=P('#2e2622','#f5f7f9','#c9d1da','#34465e',null,'#7fb3d9');
+const DOC2=P('#6b4a32','#f5f7f9','#c9d1da','#3b3f4a',null,'#e6eef5');
+const NUR=P('#2a2226','#4a9b94','#357570','#3f8a84',null,'#dff1ee');
+const TEC=P('#1f1c1c','#5e82b0','#48688f','#34465e',null,'#dfe9f5');
+const pts=[P('#3a2a22','#c65a47','#9e4636','#3e4a5e'),P('#8c8c8c','#4f7fb8','#3d6391','#4b4038'),P('#2a2320','#d6a23f','#ab8130','#3e4a5e'),P('#5a3a28','#7b9a58','#607a44','#2f3542'),P('#1d1d24','#8a6fb0','#6d578c','#4a4a52'),P('#b9b1a6','#5f8c8a','#4a6e6c','#4b4038')];
+
+// ---------- 室外 ----------
+r(0,0,195,362,'#6f9f55');
+for(let i=0;i<70;i++){const x=(i*53)%195,y=(i*37)%262;r(x,y,1,2,'#86b766');r(x+2,y+1,1,1,'#5d8a46');}
+// 人行道与街道
+tiles(0,262,195,12,'#d8d6cf','#cfccc4','#bdbab1',6);
+r(0,274,195,2,'#9a978f');r(0,276,195,86,'#4a4f58');
+for(let x=4;x<195;x+=22)r(x,300,12,2,'#e6e3da');
+for(let x=70;x<124;x+=6)r(x,278,4,20,'#e6e3da');
+// 树
+function tree(x,y){r(x+3,y+11,3,4,'#6b4a2e');r(x-1,y+14,11,2,'rgba(20,24,30,.25)');
+ r(x,y+1,9,10,OL);r(x+1,y,7,12,OL);r(x+1,y+1,7,10,'#3f7a3c');r(x+1,y+1,5,6,'#4f9446');r(x+2,y+2,2,2,'#6bb35a');}
+// ---------- 建筑 ----------
+// 地面
+tiles(7,16,89,68,'#efe3cb','#ebdcc0','#e0cfb0',8);      // 诊室 米色
+tiles(99,16,89,68,'#e2e5e9','#dadee3','#cdd2d8',8);     // 检验科 浅灰
+tiles(7,93,181,79,'#f1e7d3','#ece0c8','#e1d3b7',8);     // 大厅
+tiles(7,181,89,69,'#e3e0ea','#dcd8e4','#cfcad9',8);     // 放射科
+tiles(99,181,89,69,'#d7e6d4','#cfe0cb','#c1d5bd',8);    // 病房 薄荷
+// 大厅导向地标线
+r(7,160,120,2,'#6fa3c9');r(125,160,2,-60+0,'#6fa3c9');
+r(7,164,60,2,'#7fbf8f');
+// 墙：顶盖(深) + 正面(浅)
+const CAP='#4f5864',FACE='#c8ccd2',FACE2='#b7bcc4';
+function hwall(x,y,w){r(x,y,w,3,CAP);r(x,y+3,w,6,FACE);r(x,y+3,w,1,'#dfe2e6');r(x,y+8,w,1,FACE2);}
+function vwall(x,y,h){r(x,y,3,h,CAP);}
+hwall(4,6,187);            // 顶部外墙
+vwall(4,6,256);vwall(188,6,256);
+vwall(96,6,79);vwall(96,172,80);
+hwall(4,84,187);hwall(4,172,187);
+hwall(4,250,187);
+// 门（木门嵌在墙面）
+function door(x,y){r(x,y,12,9,OL);r(x+1,y,10,9,'#b98a55');r(x+1,y,10,1,'#d2a672');r(x+9,y+4,1,2,'#f2d479');r(x+1,y+8,10,1,'#8f6a40');}
+door(62,84);door(140,84);door(30,172);door(150,172);
+// 正门：玻璃门在底墙
+r(118,250,26,9,OL);r(119,251,11,8,'#8fb8d4');r(132,251,11,8,'#8fb8d4');r(120,252,3,5,'#c9e1f0');r(133,252,3,5,'#c9e1f0');
+// 底墙窗
+for(const x of [12,40,160]){r(x,253,22,5,OL);r(x+1,254,20,3,'#8fb8d4');r(x+2,254,6,1,'#c9e1f0');}
+// 门前地垫与植物
+r(122,262,18,4,'#3a3f48');
+// ---------- 诊室 ----------
+box(12,14,22,6,4,'#eef0f2','#c7ccd3','#ffffff');          // 靠墙柜
+r(15,18,6,1,'#9aa3ad');r(24,18,6,1,'#9aa3ad');
+box(62,14,12,6,4,'#eef0f2','#c7ccd3','#ffffff');r(66,15,4,3,'#9fb9cc');  // 洗手池
+box(10,34,11,24,4,'#2f4a6e','#233955');r(11,35,9,5,'#f5f7f9');           // 检查床
+spr(FRONT,DOC,45,22);                                                   // 医生（桌后）
+box(34,32,32,10,5,'#f2f2ef','#cfcfc8','#ffffff');                       // 诊桌
+box(40,26,9,2,6,'#2a2f3a','#3b4452');r(41,27,7,5,'#5d8fb3');r(42,28,3,1,'#9cc4e0'); // 显示器
+r(55,33,6,3,'#e8e2d4');r(56,34,4,1,'#a19a8a');                          // 病历
+box(44,56,8,6,4,'#2f4a6e','#233955');                                  // 患者椅
+spr(SEATB,pts[0],44,49);                                               // 被选中患者（背对）
+// 选中标记
+r(43,38,11,1,OL);r(43,39,11,1,OL);r(44,39,9,1,'#f2d479');r(44,40,9,1,OL);r(45,40,7,1,'#f2d479');r(45,41,7,1,OL);r(46,41,5,1,'#f2d479');r(46,42,5,1,OL);r(47,42,3,1,'#f2d479');r(47,43,3,1,OL);r(48,43,1,1,'#f2d479');r(48,44,1,1,OL);
+g.strokeStyle='#f2d479';g.lineWidth=1;g.strokeRect(41.5,62.5,14,5);
+box(80,50,7,7,3,'#3b4452','#2a2f3a');                                  // 圆凳
+// 盆栽
+function plant(x,y){box(x,y+6,6,3,4,'#b98a55','#8f6a40');r(x-1,y,8,7,OL);r(x,y+1,6,5,'#4f9446');r(x+1,y-1,4,3,OL);r(x+2,y,2,2,'#6bb35a');r(x+1,y+2,2,1,'#6bb35a');}
+plant(84,16);
+// ---------- 检验科 ----------
+box(102,14,50,7,5,'#f5f7f9','#cdd3da','#ffffff');                       // 靠墙实验台
+box(106,10,6,4,4,'#3b4452','#2a2f3a');r(108,9,2,2,'#5e82b0');           // 显微镜
+for(let i=0;i<5;i++){r(116+i*3,12,2,5,OL);r(116+i*3,13,2,3,['#d9573f','#6fa3c9','#d6a23f','#7b9a58','#8a6fb0'][i]);}
+box(134,11,10,6,4,'#dfe3e8','#aeb6c0');r(137,12,4,3,'#9aa3ad');         // 离心机
+box(168,10,16,8,16,'#eef0f2','#c7ccd3','#ffffff');r(170,21,12,1,'#9aa3ad');r(181,24,1,4,'#9aa3ad'); // 冰箱
+box(122,44,40,10,5,'#f5f7f9','#cdd3da','#ffffff');                       // 中岛
+box(128,40,8,4,4,'#dfe3e8','#aeb6c0');r(130,41,4,2,'#7fbf8f');           // 分析仪
+r(146,46,10,2,'#9fb9cc');
+spr(BACK,TEC,138,57);                                                   // 检验技师
+box(104,58,8,6,4,'#2f4a6e','#233955');r(112,58,6,2,'#eef0f2');          // 采血椅+扶手
+spr(SEATF,pts[3],104,51);
+plant(176,62);
+// ---------- 大厅 ----------
+spr(FRONT,NUR,30,95);                                                  // 分诊护士
+box(14,106,46,9,6,'#f2f2ef','#cfcfc8','#ffffff');                       // 分诊台
+box(22,101,8,2,5,'#2a2f3a','#3b4452');r(23,102,6,3,'#5d8fb3');
+r(44,108,8,2,'#e8e2d4');
+spr(BACK,pts[4],36,121);                                               // 排队患者
+spr(BACK,pts[1],24,124);
+// 候诊椅
+function chair(x,y){box(x,y,8,5,4,'#2f4a6e','#233955');r(x,y-3,8,3,OL);r(x+1,y-2,6,2,'#3b5b84');}
+const seat=[[106,124,2],[116,124,-1],[126,124,5],[136,124,-1],[146,124,1],[156,124,-1],[106,148,-1],[116,148,0],[126,148,-1],[136,148,-1],[146,148,4],[156,148,-1]];
+for(const [x,y,p] of seat){chair(x,y);if(p>=0)spr(SEATF,pts[p],x,y-8);}
+spr(WALK,DOC2,80,134);                                                 // 走动的医生
+spr(WALK,pts[5],168,160,true);                                         // 走入的患者
+plant(174,96);plant(66,96);
+box(172,118,10,5,10,'#eef0f2','#c7ccd3','#ffffff');r(174,125,6,4,'#6fa3c9');  // 自助机
+// ---------- 放射科 ----------
+r(62,181,2,69,'#d9d3e4');
+box(16,204,34,12,5,'#eef0f2','#c7ccd3','#ffffff');r(18,205,30,10,'#2f4a6e');r(19,206,8,4,'#f5f7f9'); // 检查床
+box(52,186,6,4,22,'#dfe3e8','#aeb6c0');                                  // 立柱
+box(24,190,34,4,3,'#dfe3e8','#aeb6c0');                                  // 横臂
+box(26,194,10,6,5,'#f5f7f9','#cdd3da');r(29,197,4,2,'#f2d479');         // 球管
+box(76,182,12,5,16,'#eef0f2','#c7ccd3');r(78,186,8,8,'#aeb6c0');          // 胸片架
+// 控制室（铅玻璃）
+r(64,226,32,2,CAP);r(64,226,2,24,CAP);r(66,228,30,3,'#9fc3de');r(68,229,8,1,'#d6ebf7');
+box(72,236,18,6,4,'#f2f2ef','#cfcfc8');r(74,233,6,3,'#2a2f3a');r(75,234,4,1,'#5d8fb3');
+spr(BACK,TEC,78,238);
+r(33,169,6,2,'#d9573f');                                                  // 射线警示灯
+// ---------- 病房 ----------
+function bed(x,y,p){box(x,y,14,24,4,'#eef0f2','#c7ccd3','#ffffff');r(x+2,y+1,10,6,'#f5f7f9');
+ r(x+4,y+2,6,5,OL);r(x+5,y+2,4,3,p.h);r(x+5,y+5,4,2,p.s);
+ r(x+1,y+8,12,15,'#6fa3c9');r(x+1,y+8,12,2,'#9cc4e0');r(x+1,y+22,12,1,'#4f7fa3');}
+bed(104,188,pts[1]);bed(130,188,pts[2]);bed(156,188,pts[5]);
+box(120,190,6,5,5,'#b98a55','#8f6a40');box(146,190,6,5,5,'#b98a55','#8f6a40');
+// 输液架
+r(173,184,1,16,'#9aa3ad');r(171,184,5,1,'#9aa3ad');r(174,185,3,4,OL);r(174,186,2,2,'#cfe8f5');
+r(100,222,86,1,'#b7c9b3');for(let x=100;x<186;x+=6)r(x,222,1,2,'#8faa8a'); // 帘轨
+spr(FRONT,NUR,140,226);
+// 右侧窗（外墙顶盖上的玻璃）
+for(const y of [110,190]){r(188,y,3,20,'#8fb8d4');r(189,y+2,1,6,'#c9e1f0');}
+// 室外装饰
+
+
+const ICONS=[
+ ["...###...","..#####..",".#######.","###.#.###","###...###","###.#.###","#########","##.#.#.##","##.#.#.##"],
+ [".######..",".#....##.",".#.##..#.",".#......#",".#.####.#",".#......#",".#.###..#",".#......#",".########"],
+ ["......##.",".....###.","....###..","#..###...","##.##....",".###.....","..##.....",".#.##....","#...#...."],
+ ["...###...","..#####..","..#####..","...###...",".........",".#######.","#########","#########","#########"],
+ ["#########","#.......#","#.#####.#","#.......#","#.####..#","#.......#","#.#####.#","#.......#","#########"],
+ ["..#####..",".#######.","##.#.#.##","###.#.###","#.......#","###.#.###","###.#.###",".#######.","..#####.."]];
+document.querySelectorAll('.nav canvas').forEach((c,k)=>{const x=c.getContext('2d');const col=getComputedStyle(c.parentNode).color;x.fillStyle=col;ICONS[k].forEach((row,j)=>[...row].forEach((ch,i)=>{if(ch==='#')x.fillRect(i,j,1,1);}));});
+</script>
+</body>
+</html>

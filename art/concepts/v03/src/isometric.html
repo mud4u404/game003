@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>效果图 C 等轴 2.5D</title>
+<style>
+html,body{margin:0;background:#20262f;font-family:"WenQuanYi Zen Hei",sans-serif;color:#fff}
+.phone{position:relative;width:390px;height:844px;overflow:hidden;background:#86b36a}
+.top{position:absolute;left:0;top:0;right:0;height:56px;background:rgba(31,40,52,.92);display:flex;align-items:center;justify-content:space-between;padding:0 16px;box-sizing:border-box;z-index:3}
+.name{font-size:18px;letter-spacing:2px}
+.sub{font-size:11px;color:#b9c4d2;margin-top:3px}
+.cash{font-size:16px;color:#ffd978}
+.bell{position:relative;width:34px;height:34px;border-radius:8px;background:#2f3b4d;margin-left:12px;display:flex;align-items:center;justify-content:center}
+.bell b{position:absolute;right:-4px;top:-4px;min-width:16px;height:16px;border-radius:8px;background:#e0644a;font-size:10px;display:flex;align-items:center;justify-content:center}
+canvas{position:absolute;left:0;top:56px;width:390px;height:724px}
+.card{position:absolute;left:10px;right:10px;bottom:74px;z-index:3;background:rgba(250,251,252,.97);color:#27303d;border-radius:12px;box-shadow:0 6px 18px rgba(20,30,40,.35);padding:12px 14px;border-top:3px solid #e0644a}
+.card .h{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.card .n{font-size:16px;font-weight:bold}
+.card .m{font-size:11px;color:#6b7482;margin-left:6px;font-weight:normal}
+.tag{font-size:11px;background:#e0644a;color:#fff;padding:3px 8px;border-radius:4px}
+.row{display:flex;font-size:12px;line-height:1.6}
+.row i{font-style:normal;color:#8993a1;width:34px;flex-shrink:0}
+.up{color:#c0392b}
+.nav{position:absolute;left:0;right:0;bottom:0;height:66px;background:#1f2834;display:grid;grid-template-columns:repeat(6,1fr);z-index:3}
+.nav div{display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;color:#9eabbb;gap:3px}
+.nav div.on{color:#fff;box-shadow:inset 0 3px 0 #4fb3a9}
+.nav svg{width:20px;height:20px}
+</style>
+</head>
+<body>
+<div class="phone">
+<div class="top">
+<div><div class="name">仁和医院</div><div class="sub">第 12 天 · 周三 10:42</div></div>
+<div style="display:flex;align-items:center"><div class="cash">¥386,200</div>
+<div class="bell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4z"/><path d="M10 21h4"/></svg><b>3</b></div></div>
+</div>
+<canvas id="c" width="1170" height="2172"></canvas>
+<div class="card">
+<div class="h"><div class="n">王建国<span class="m">男 · 58 岁 · 门诊</span></div><div class="tag">III 级 紧急</div></div>
+<div class="row"><i>主诉</i>右下腹痛 8 小时，伴恶心</div>
+<div class="row"><i>检查</i>血常规 WBC 13.2×10⁹/L <span class="up">&nbsp;↑&nbsp;</span>· 超声 阑尾 9 mm</div>
+<div class="row"><i>诊断</i><b>急性阑尾炎</b>（确诊）</div>
+<div class="row"><i>处置</i>本院无手术室 → 转诊市一院普外科</div>
+</div>
+<div class="nav">
+<div class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 21V8l8-4 8 4v13z"/><path d="M12 8v6M9 11h6M10 21v-4h4v4"/></svg>医院</div>
+<div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6v3H9zM8.5 11h7M8.5 15h5"/></svg>汇报</div>
+<div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M3 21h18M5 21V11h6v10M13 21V5h6v16M7 14h2M15 8h2M15 12h2M15 16h2"/></svg>建设</div>
+<div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2a5 5 0 0 1 6 4.8"/></svg>人事</div>
+<div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>规则</div>
+<div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 7.5 12 12l3.5-4.5M8.5 12.5h7M8.5 15.5h7M12 12v6"/></svg>资金</div>
+</div>
+</div>
+<script>
+const cv=document.getElementById('c'),g=cv.getContext('2d');
+g.scale(3,3);g.lineJoin='round';g.lineCap='round';
+const HW=25,HH=12.5,ZS=30,OX=195,OY=190;
+const S=(x,y,z=0)=>[OX+(x-y)*HW,OY+(x+y)*HH-z*ZS];
+const OL='rgba(45,52,64,.75)';
+function poly(pts,fill,stroke,lw){g.beginPath();pts.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.closePath();if(fill){g.fillStyle=fill;g.fill();}if(stroke){g.strokeStyle=stroke;g.lineWidth=lw||.5;g.stroke();}}
+function quad(x,y,w,d,z,fill,stroke,lw){poly([S(x,y,z),S(x+w,y,z),S(x+w,y+d,z),S(x,y+d,z)],fill,stroke,lw);}
+function shade(hex,f){const n=parseInt(hex.slice(1),16);const c=v=>Math.max(0,Math.min(255,Math.round(v*f)));return '#'+[(n>>16)&255,(n>>8)&255,n&255].map(c).map(v=>v.toString(16).padStart(2,'0')).join('');}
+function box(x,y,z,w,d,h,col,o={}){
+ const top=o.top||shade(col,1.08),L=o.left||shade(col,.9),R=o.right||shade(col,.76);
+ poly([S(x,y+d,z),S(x+w,y+d,z),S(x+w,y+d,z+h),S(x,y+d,z+h)],L,OL,.45);
+ poly([S(x+w,y,z),S(x+w,y+d,z),S(x+w,y+d,z+h),S(x+w,y,z+h)],R,OL,.45);
+ quad(x,y,w,d,z+h,top,OL,.45);
+}
+function shadowQ(x,y,w,d){quad(x+.08,y+.12,w+.12,d+.12,0,'rgba(30,40,50,.18)');}
+function ell(x,y,rx,ry,fill,stroke,lw){g.beginPath();g.ellipse(x,y,rx,ry,0,0,Math.PI*2);if(fill){g.fillStyle=fill;g.fill();}if(stroke){g.strokeStyle=stroke;g.lineWidth=lw||.5;g.stroke();}}
+function rr(x,y,w,h,r,fill,stroke,lw){g.beginPath();g.roundRect(x,y,w,h,r);if(fill){g.fillStyle=fill;g.fill();}if(stroke){g.strokeStyle=stroke;g.lineWidth=lw||.5;g.stroke();}}
+// 人物（屏幕坐标，脚底）
+function person(px,py,o){const x=px,y=py,sc=1.7;g.save();g.translate(x,y);g.scale(sc,sc);
+ const seated=o.pose==='seat',back=o.back;const L2=.32;
+ ell(0,0,4.3,1.8,'rgba(25,30,40,.25)');
+ const yb=seated?-9.5:-12.4;
+ if(!seated){const s=o.walk?1:0;rr(-2.5,-5.3-s*.6,2.1,5.2+s*.6,.9,o.pants,OL,L2);rr(.4,-5.3+s*.4,2.1,5-s*.4,.9,o.pants,OL,L2);
+  rr(-2.8,-1.2-s*.6,2.6,1.4,.6,'#2e3038');rr(.3,-1.2,2.6,1.4,.6,'#2e3038');}
+ else{rr(-3,yb+6.4,6,2.6,1.1,o.pants,OL,L2);}
+ const coat=o.coat,top=coat||o.shirt;
+ rr(-4.7,yb+1.2,1.8,5.3,.9,top,OL,L2);rr(2.9,yb+1.2,1.8,5.3,.9,top,OL,L2);
+ if(!back){ell(-3.8,yb+6.7,.9,.9,o.skin);ell(3.8,yb+6.7,.9,.9,o.skin);}
+ rr(-3.5,yb,7,coat&&!seated?8.9:7.2,2.4,top,OL,L2);
+ g.fillStyle='rgba(0,0,0,.1)';g.beginPath();g.roundRect(1.2,yb+.6,2,coat&&!seated?7.9:6.2,1);g.fill();
+ if(coat&&!back){g.beginPath();g.moveTo(-1.3,yb+.2);g.lineTo(0,yb+2.6);g.lineTo(1.3,yb+.2);g.fillStyle=o.shirt;g.fill();
+  if(o.steth){g.strokeStyle='#3b4452';g.lineWidth=.35;g.beginPath();g.moveTo(-1.6,yb+.4);g.quadraticCurveTo(-2.2,yb+4,-.6,yb+4.4);g.stroke();ell(-.4,yb+4.5,.55,.55,'#8a96a6');}}
+ if(o.cross&&!back){g.fillStyle='#fff';g.fillRect(-2.6,yb+2,1.6,.5);g.fillRect(-2.05,yb+1.45,.5,1.6);}
+ const hy=yb-3.2;ell(0,hy,3.7,3.6,back?o.hair:o.skin,OL,L2);
+ if(!back){g.beginPath();g.ellipse(0,hy-.5,3.7,3.1,0,Math.PI*1.02,Math.PI*1.98);g.quadraticCurveTo(2.4,hy-.6,1.2,hy-1.1);g.quadraticCurveTo(-.5,hy-.3,-3.6,hy-.2);g.fillStyle=o.hair;g.fill();g.strokeStyle=OL;g.lineWidth=L2;g.stroke();
+  ell(-1.25,hy+.9,.42,.5,'#2a2522');ell(1.25,hy+.9,.42,.5,'#2a2522');}
+ g.restore();}
+const SK='#f1cda9';
+const doc={hair:'#2e2622',skin:SK,shirt:'#7fb3d9',pants:'#34465e',coat:'#f7f9fb',steth:1};
+const doc2={hair:'#5a3d2a',skin:'#e8bf98',shirt:'#e6eef5',pants:'#3b3f4a',coat:'#f7f9fb'};
+const nur={hair:'#2a2226',skin:SK,shirt:'#4a9b94',pants:'#3f8a84',cross:1};
+const tec={hair:'#1f1c1c',skin:'#e3b891',shirt:'#5e82b0',pants:'#34465e'};
+const pt=[{hair:'#3a2a22',skin:SK,shirt:'#c65a47',pants:'#3e4a5e'},{hair:'#9a9a9a',skin:'#e8c29c',shirt:'#4f7fb8',pants:'#4b4038'},{hair:'#2a2320',skin:SK,shirt:'#d6a23f',pants:'#3e4a5e'},{hair:'#5a3a28',skin:'#e3b891',shirt:'#7b9a58',pants:'#2f3542'},{hair:'#1d1d24',skin:SK,shirt:'#8a6fb0',pants:'#4a4a52'},{hair:'#c9c2b8',skin:'#ecc6a0',shirt:'#5f8c8a',pants:'#4b4038'}];
+const W=(o,extra)=>Object.assign({},o,extra);
+
+// ---------- 地面与室外 ----------
+g.fillStyle='#86b36a';g.fillRect(0,0,390,724);
+for(let i=0;i<160;i++){const x=(i*71.3)%390,y=(i*43.7)%724;g.strokeStyle='rgba(70,120,55,.5)';g.lineWidth=.6;g.beginPath();g.moveTo(x,y);g.lineTo(x-1,y-3);g.moveTo(x+1.5,y);g.lineTo(x+2.2,y-2.6);g.stroke();}
+// 道路（楼前右侧）
+quad(12.6,-12,2.6,34,0,'#50555e');
+for(let y=-12;y<22;y+=1.6)quad(13.83,y,.14,.8,0,'#e8e5dc');
+quad(12.1,-12,.5,34,0,'#cfccc4');quad(15.2,-12,.5,34,0,'#cfccc4');
+// 停车场（楼后左侧）
+quad(-5.2,0,4.4,9,0,'#6a6f78');
+for(let y=.5;y<9;y+=1.4)quad(-5.2,y,1.8,.07,0,'#e8e5dc');
+// 院区铺装
+quad(-.7,-.7,10.4,10.4,0,'#d9d6ce');
+quad(9,2.6,3.3,4.2,0,'#d2cfc7');
+for(let x=9.4;x<12.3;x+=.7)quad(x,2.6,.02,4.2,0,'rgba(0,0,0,.08)');
+// 急诊车道标线
+quad(10,3,2.1,.08,0,'#e0644a');quad(10,6.3,2.1,.08,0,'#e0644a');
+// ---------- 楼层地面 ----------
+function floor(x,y,w,d,a,b){quad(x,y,w,d,0,a);g.save();
+ for(let i=.5;i<w;i+=.5){poly([S(x+i,y),S(x+i,y+d)],null,b,.35);}
+ for(let j=.5;j<d;j+=.5){poly([S(x,y+j),S(x+w,y+j)],null,b,.35);}g.restore();}
+floor(0,0,4,4,'#efe4cf','rgba(170,140,100,.25)');
+floor(4,0,5,4,'#e3e7eb','rgba(110,125,140,.25)');
+floor(0,4,9,2,'#f1eadc','rgba(170,140,100,.22)');
+floor(0,6,4,3,'#e7e3ef','rgba(120,110,150,.25)');
+floor(4,6,5,3,'#d8eadd','rgba(90,140,100,.25)');
+// 大厅导向线
+poly([S(.3,5.1),S(8.7,5.1)],null,'#5f9ccc',1.2);poly([S(.3,5.35),S(3.5,5.35)],null,'#6fbf8a',1.2);
+// ---------- 可排序对象 ----------
+const D=[];const add=(k,fn)=>D.push({k,fn});
+const WALL='#eef0f2',CAPC='#5a626d',DADO='#cfe3de';
+function wallY(x0,x1,y,h,opt={}){ // 沿 x 方向的墙，位于 y
+ for(let x=x0;x<x1-1e-6;x+=.5){const w=Math.min(.5,x1-x);add(x+w/2+y-.05,()=>{
+  box(x,y-.14,0,w,.14,h,WALL,{left:opt.face||'#e9ebee',right:'#c9ced4',top:CAPC});
+  if(opt.dado&&h>.6)poly([S(x,y,0),S(x+w,y,0),S(x+w,y,.38),S(x,y,.38)],DADO);
+  if(opt.win&&opt.win(x))poly([S(x+.08,y,.55),S(x+w-.08,y,.55),S(x+w-.08,y,1.02),S(x+.08,y,1.02)],'#a9cfe6','rgba(60,90,110,.6)',.4);
+ });}}
+function wallX(y0,y1,x,h,opt={}){
+ for(let y=y0;y<y1-1e-6;y+=.5){const d=Math.min(.5,y1-y);add(x+y+d/2-.05,()=>{
+  box(x-.14,y,0,.14,d,h,WALL,{left:'#e3e6e9',right:opt.face||'#dfe2e6',top:CAPC});
+  if(opt.dado&&h>.6)poly([S(x,y,0),S(x,y+d,0),S(x,y+d,.38),S(x,y,.38)],shade(DADO,.93));
+  if(opt.win&&opt.win(y))poly([S(x,y+.08,.55),S(x,y+d-.08,.55),S(x,y+d-.08,1.02),S(x,y+.08,1.02)],'#a0c6de','rgba(60,90,110,.6)',.4);
+ });}}
+const FULL=1.2,LOW=.34;
+wallY(0,9,0,FULL,{dado:1,win:x=>(x>=5&&x<8)});
+wallX(0,9,0,FULL,{dado:1,win:y=>(y>=6.5&&y<8)});
+// 内墙（半高剖切），带门洞
+wallY(0,1.5,4,LOW);wallY(2.5,6,4,LOW);wallY(7,9,4,LOW);
+wallX(0,4,4,LOW);
+wallY(0,2,6,LOW);wallY(3,6.5,6,LOW);wallY(7.5,9,6,LOW);
+wallX(6,9,4,LOW);
+// 前墙（剖切更低），正门在大厅东端
+wallY(0,9,9,.16);wallX(0,4,9,.16);wallX(6,9,9,.16);
+add(9+4.2,()=>{box(8.95,4,0,.1,.12,.9,'#9aa3ad');box(8.95,5.88,0,.1,.12,.9,'#9aa3ad');quad(8.95,4,.1,2,.9,'#9aa3ad');poly([S(9,4.12,0),S(9,5.88,0),S(9,5.88,.9),S(9,4.12,.9)],'rgba(160,205,230,.45)','rgba(60,90,110,.5)',.4);});
+// 雨棚与急诊标识
+
+// ---------- 诊室 ----------
+add(.4+.9,()=>{shadowQ(.25,.3,.6,1.8);box(.25,.3,0,.6,1.8,.3,'#2f4a6e',{top:'#3a5a86'});box(.3,.35,.3,.5,.45,.06,'#f7f9fb');});
+add(1.8+.7,()=>{box(1.4,.15,0,1.6,.4,.42,'#e8eaed');});
+add(3.2+.4,()=>{box(3.1,.15,0,.7,.4,.42,'#e8eaed');quad(3.25,.22,.4,.26,.43,'#a9c7da');});
+add(2.2+1.3-.4,()=>{const p=S(2.3,1.05);person(p[0],p[1],doc);});
+add(2.1+1.6,()=>{shadowQ(1.5,1.3,1.4,.65);box(1.5,1.3,0,1.4,.65,.42,'#f4f3ef',{top:'#fbfaf6'});
+ box(1.75,1.35,.42,.08,.4,.3,'#2e3440',{right:'#5d8fb3'});quad(2.3,1.55,.35,.25,.43,'#fbf8f0',OL,.3);});
+add(2.25+2.35,()=>{const p=S(2.3,2.35);ell(p[0],p[1],14,6,'rgba(242,201,76,.28)','#f2c94c',.9);box(2.05,2.15,0,.45,.45,.2,'#2f4a6e');const q=S(2.28,2.4);person(q[0],q[1],W(pt[0],{pose:'seat',back:1}));});
+add(3.5+.6,()=>{box(3.2,.5,0,.5,.45,.25,'#c79a66');const p=S(3.45,.55,.25);ell(p[0],p[1]-6,7,5,'#4f9446',OL,.4);ell(p[0]-2,p[1]-8,3,2.5,'#6fb65e');});
+// ---------- 检验科 ----------
+add(6.5+.3,()=>{box(4.4,.15,0,3.2,.45,.42,'#f3f5f7',{top:'#fbfcfd'});
+ box(4.6,.2,.42,.25,.25,.28,'#3b4452');
+ ['#d9573f','#6fa3c9','#d6a23f','#7b9a58'].forEach((c,i)=>{box(5.2+i*.16,.28,.42,.1,.1,.2,c);});
+ box(6.2,.2,.42,.45,.3,.18,'#dfe3e8');});
+add(8.2+.4,()=>{box(7.9,.15,0,.8,.55,1.05,'#eef0f2');poly([S(8.7,.3,.9),S(8.7,.6,.9)],null,'#8a96a6',.8);});
+add(6.4+2.2,()=>{shadowQ(5.3,1.9,2,.6);box(5.3,1.9,0,2,.6,.42,'#f3f5f7',{top:'#fbfcfd'});box(5.6,1.95,.42,.45,.35,.22,'#e3e7ec');quad(5.68,2,.28,.2,.64,'#7fbf8f');box(6.6,2.05,.42,.5,.3,.05,'#b9cfdf');});
+add(6.2+2.9,()=>{const p=S(6.2,2.9);person(p[0],p[1],W(tec,{back:1}));});
+add(4.6+3,()=>{box(4.35,2.6,0,.5,.5,.22,'#2f4a6e');box(4.85,2.65,.22,.3,.1,.05,'#eef0f2');const p=S(4.6,3.1);person(p[0],p[1],W(pt[3],{pose:'seat'}));});
+add(8.4+3.3,()=>{box(8.2,3.1,0,.45,.45,.25,'#c79a66');const p=S(8.42,3.32,.25);ell(p[0],p[1]-6,7,5,'#4f9446',OL,.4);ell(p[0]-2,p[1]-8,3,2.5,'#6fb65e');});
+// ---------- 大厅 ----------
+add(1.8+4.5,()=>{const p=S(1.4,4.35);person(p[0],p[1],nur);});
+add(1.4+5,()=>{shadowQ(.5,4.6,2.2,.55);box(.5,4.6,0,2.2,.55,.46,'#f4f3ef',{top:'#fbfaf6'});box(.9,4.62,.46,.08,.35,.26,'#2e3440',{right:'#5d8fb3'});});
+add(1.8+5.7,()=>{const p=S(1.8,5.65);person(p[0],p[1],W(pt[4],{back:1}));});
+add(1.1+5.8,()=>{const p=S(1.05,5.8);person(p[0],p[1],W(pt[1],{back:1}));});
+function chairRow(x0,y,n,who){for(let i=0;i<n;i++){const x=x0+i*.55;add(x+.25+y+.25,()=>{box(x,y,0,.48,.45,.18,'#2f4a6e',{top:'#3a5a86'});box(x,y,.18,.48,.1,.3,'#2f4a6e',{top:'#3a5a86'});
+ if(who[i]>=0){const p=S(x+.25,y+.32);person(p[0],p[1],W(pt[who[i]],{pose:'seat'}));}});}}
+chairRow(4.2,4.35,6,[2,-1,5,-1,1,-1]);chairRow(4.2,5.2,6,[-1,0,-1,-1,4,-1]);
+add(3.4+5.4,()=>{const p=S(3.4,5.4);person(p[0],p[1],W(doc2,{walk:1}));});
+add(8.6+4.9,()=>{const p=S(8.5,4.9);person(p[0],p[1],W(pt[5],{walk:1}));});
+add(8.4+4.4,()=>{box(8.3,4.15,0,.4,.3,.85,'#eef0f2');poly([S(8.7,4.2,.45),S(8.7,4.4,.45),S(8.7,4.4,.7),S(8.7,4.2,.7)],'#6fa3c9');});
+// ---------- 放射科 ----------
+add(1.5+7.2,()=>{shadowQ(.6,6.9,2,.75);box(.6,6.9,0,2,.75,.36,'#eef0f2');quad(.7,6.95,1.8,.6,.37,'#2f4a6e');quad(.75,7,.45,.5,.38,'#f7f9fb');});
+add(2.9+6.5,()=>{box(2.7,6.35,0,.25,.25,1.25,'#e3e7ec');box(1.1,6.4,1.1,1.85,.2,.12,'#e3e7ec');box(1.3,6.95,.78,.45,.45,.32,'#f5f7f9');const p=S(1.52,7.18,.78);ell(p[0],p[1],3,1.5,'#f2d479',OL,.4);});
+add(.3+8.3,()=>{box(.15,8,0,.35,.6,1,'#eef0f2');poly([S(.5,8.1,.35),S(.5,8.5,.35),S(.5,8.5,.85),S(.5,8.1,.85)],'#b6bec8',OL,.4);});
+// 控制室铅玻璃
+add(3+8.2,()=>{box(2.8,7.9,0,1.05,.08,.34,'#dfe2e6');poly([S(2.8,7.98,.34),S(3.85,7.98,.34),S(3.85,7.98,.95),S(2.8,7.98,.95)],'rgba(150,200,225,.5)','rgba(60,90,110,.6)',.4);
+ box(3,8.3,0,.8,.4,.38,'#f4f3ef');box(3.2,8.32,.38,.06,.3,.24,'#2e3440',{right:'#5d8fb3'});});
+add(3.4+8.9,()=>{const p=S(3.4,8.85);person(p[0],p[1],W(tec,{back:1}));});
+add(2.4+6.02,()=>{box(2.2,5.96,.34,.5,.06,.1,'#e0644a');});
+// ---------- 病房 ----------
+function bed(x,y,p){add(x+.35+y+1,()=>{shadowQ(x,y,.75,1.5);box(x,y,0,.75,1.5,.36,'#eef0f2');box(x+.1,y+.08,.36,.55,.38,.08,'#fbfcfd');
+ const h=S(x+.37,y+.3,.45);ell(h[0],h[1]-1,4.6,4.2,p.hair,OL,.4);ell(h[0]-.3,h[1]+.4,3.6,2.8,p.skin);
+ box(x+.05,y+.6,.36,.65,.85,.06,'#7fb3d9',{top:'#9cc6e3'});});
+ add(x+1.2+y+.3,()=>{box(x+.95,y+.1,0,.35,.35,.4,'#c79a66');});}
+bed(4.5,6.3,pt[1]);bed(5.9,6.3,pt[2]);bed(7.3,6.3,pt[5]);
+add(8.7+6.5,()=>{const a=S(8.6,6.4,0),b=S(8.6,6.4,1.1);poly([a,b],null,'#9aa3ad',1);rr(b[0]-2,b[1],4,6,1.2,'#d6ecf7',OL,.4);});
+add(6.4+8.2,()=>{const p=S(6.4,8.2);person(p[0],p[1],nur);});
+// ---------- 室外物件 ----------
+function car(x,y,c,dir){add(x+y+.6,()=>{shadowQ(x,y,dir?1.4:.7,dir?.7:1.4);const w=dir?1.4:.7,d=dir?.7:1.4;box(x,y,0,w,d,.32,c);box(x+(dir?.3:.08),y+(dir?.08:.3),.32,dir?.75:.54,dir?.54:.75,.22,'#bcd3e2',{top:shade(c,1.1)});});}
+car(-4.9,.8,'#c65a47',1);car(-4.9,3.6,'#4f7fb8',1);car(-4.9,6.4,'#d9d6ce',1);
+// 救护车
+add(10.3+4.6+.8,()=>{shadowQ(10.3,4.2,1.9,.8);box(10.3,4.2,0,1.9,.8,.62,'#f7f9fb');box(11.8,4.25,.1,.4,.7,.42,'#e8ecf0',{top:'#a9cfe6'});
+ poly([S(10.3,5,.25),S(11.8,5,.25),S(11.8,5,.33),S(10.3,5,.33)],'#e0644a');poly([S(12.2,4.2,.25),S(12.2,5,.25),S(12.2,5,.33),S(12.2,4.2,.33)],'#e0644a');
+ const c=S(10.9,4.6,.63);g.fillStyle='#e0644a';g.fillRect(c[0]-3,c[1]-1,6,2);g.fillRect(c[0]-1,c[1]-3,2,6);
+ box(10.9,4.5,.62,.3,.2,.1,'#5f9ccc');
+ for(const [wx,wy] of [[10.6,5],[11.8,5]]){const w=S(wx,wy,.08);ell(w[0],w[1],3.2,3.6,'#2e3038');ell(w[0],w[1],1.4,1.6,'#9aa3ad');}});
+function tree(x,y,s){s=s||1;add(x+y+.4,()=>{const b=S(x,y);ell(b[0]+3,b[1]+1,12*s,5*s,'rgba(25,35,25,.22)');rr(b[0]-1.5*s,b[1]-12*s,3*s,12*s,1,'#7a5536');
+ ell(b[0],b[1]-22*s,12*s,11*s,'#3f7a3c',OL,.4);ell(b[0]-4*s,b[1]-19*s,7*s,6*s,'#4a8c44');ell(b[0]+3*s,b[1]-26*s,6*s,5*s,'#5aa351');ell(b[0]-3*s,b[1]-27*s,3.5*s,3*s,'#76bf66');});}
+tree(1,-2.2);tree(3.4,-2.6,1.1);tree(6,-2,.9);tree(8.4,-2.5,1.05);tree(-2.4,-1.8,1.1);tree(10.8,-.8,.95);tree(10.6,8.3);tree(-1.8,10.6,1.1);tree(1.6,11,.95);tree(-6.4,-.8);tree(-6.2,8.2,1.05);tree(12.2,9.8,.9);tree(5.2,-5,1.1);tree(-1.5,-5.2);tree(9.6,-4.6);tree(2.6,-6.2,1.05);tree(7.2,-7);tree(-3.6,-4.4,.95);tree(0,-8.4);tree(4.6,-9.2,1.1);tree(-5.8,-6.6);tree(11.5,-7.5,1.05);
+// 排序并绘制
+D.sort((a,b)=>a.k-b.k).forEach(d=>d.fn());
+// 选中患者名牌 & 房间名牌
+function chip(x,y,z,text,bg){const p=S(x,y,z);g.font='9px "WenQuanYi Zen Hei"';const w=g.measureText(text).width+10;rr(p[0]-w/2,p[1]-8,w,14,7,bg||'rgba(31,40,52,.85)');g.fillStyle='#fff';g.textAlign='center';g.textBaseline='middle';g.fillText(text,p[0],p[1]-1);}
+chip(2.3,2.35,1.55,'王建国 · III 级','#e0644a');
+chip(.7,3.75,0,'诊室');chip(5.6,3.6,0,'检验科');chip(3.2,5.9,0,'候诊大厅');chip(1.6,8.7,0,'放射科');chip(7.8,8.8,0,'病房');chip(10.9,6.4,0,'急诊入口','rgba(224,100,74,.9)');
+</script>
+</body>
+</html>
