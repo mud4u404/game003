@@ -137,7 +137,11 @@
 - **术语**：已覆盖病种、检查及主要专业表达，81个独立释义保守标待核验。测试无法证明自然语言专业词已穷尽；请重点审核鉴别疾病释义及出处是否充分，必要时增补专门来源。
 - **运营**：检查/治疗id仅能力抽象，不代表满足现实执业和建设标准；手术只描述外院接续，本批没有完整手术资源包。费用只算本院初评，不得再与检查费用无条件相加。具体检查顺序、条件、复测和转诊资源消耗留后续任务，经审查后决定。
 
-交付到同一PR #3，正文更新为逐条自查并标记可审查；最终评论由接力脚本发布，本轮不重复留言。没有合并PR。任务状态“待审查”不表示上述未核医学事项已完成审查。
+实现提交 `479b33fad51a7b382dddbd20d6341505a8d736a2` 已推送：`git push origin codex/T002-knowledge-base` 成功；`git rev-parse HEAD`、`git rev-parse origin/codex/T002-knowledge-base` 与 `git ls-remote origin refs/heads/codex/T002-knowledge-base` 当时三者一致，工作区干净。首次commit因专用副本没有作者身份失败，使用仅本次命令生效的 `git -c user.name=Codex -c user.email=codex@openai.com commit ...` 重试成功；没有写入全局或本地Git配置。
+
+**未完成：PR正文写入与标记可审查。** `gh pr edit 3 --repo mud4u404/game003 --body-file /private/tmp/t002-pr-body.md` 返回GraphQL `Resource not accessible by personal access token (updatePullRequest)`；REST `gh api repos/mud4u404/game003/pulls/3 --method PATCH --input /private/tmp/t002-pr-request.json` 也返回HTTP 403。`gh pr ready 3 --repo mud4u404/game003` 返回同类 `markPullRequestReadyForReview` 权限错误。这是GitHub当前授权限制，不是自动批准审查拒绝；未更改凭据/服务/仓库外配置。完整正文已保存为 `tasks/T002-self-check.md`，请Claude或具备权限的接力流程同步。PR仍为草稿，任务单状态为“待审查”。
+
+上述交付状态另作仅文档的跟进提交并推送，最终提交号与远程核对结果见本轮交付回复。最终评论由接力脚本发布，本轮不重复留言，没有合并PR。“待审查”不表示未核医学事项已完成审查。
 
 
 ## 审查记录（Claude 填写）
