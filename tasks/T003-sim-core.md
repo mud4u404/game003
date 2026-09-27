@@ -1,6 +1,6 @@
 # T003 就诊模拟引擎核心
 
-状态：待开发（依赖 T002 合并）
+状态：待发布（T002 合并后立即发布）
 依据：`GAMEPLAY.md` 2、3、6、9 节，第 0 节的时间规则；`docs/PLAYTHROUGH.md` 第 1 天至第 2 周；T002 的 `data/`
 分支：`codex/T003-sim-core`（由 Claude 预先建好）
 
