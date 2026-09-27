@@ -13,6 +13,20 @@
 
 新电脑可使用 `git clone https://github.com/mud4u404/game003.git` 获取项目。文件夹名称不影响仓库连接；当前创建者的本地目录名是 `medical`。
 
+## 新版 T001 等轴场景（待审查）
+
+新版按 `GAMEPLAY.md` v1.1 和 `docs/WORKFLOW.md` 重做，当前 T001 只实现画面基础。旧原型仍保留在 `/`，新版入口为 `http://localhost:4173/v2/`。两者都使用 `npm start`，需要 Node.js 20+，无需安装运行依赖或构建。
+
+新版使用方案 C 的五个房间和室外场景，支持鼠标/单指拖动、滚轮/双指缩放、人物点选；点空白或关闭按钮取消选择。其余管理入口显示“即将开放”。顶栏时间、资金、未读数为静态示意；没有患者流、时间推进或存档，不读取旧原型的浏览器存档。
+
+`npm run verify` 同时检查旧代码和 `v2/src/`，运行旧回归及 `tests/v2/` 单元测试。可选的正常入口浏览器验收需要在外部工具目录安装 Playwright 和 Chrome，先启动服务，再运行：
+
+```sh
+PLAYWRIGHT_MODULE=/absolute/path/to/playwright node tests/v2/browser.cjs
+```
+
+该检查使用独立浏览器上下文，在 390×844、DPR 3 下保存默认、放大、点选三张截图至 `art/screens/T001/`，验证模拟移动端触控和桌面操作、静止时不重绘，并检查旧入口可打开。它不代表手机真机测试。场景数据格式和实际验收记录见 `tasks/T001-iso-scene.md`。
+
 ## 运行与验证
 
 需要 Node.js 20 或更高版本。应用无第三方依赖，不需要 `npm install`。
