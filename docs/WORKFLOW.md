@@ -61,6 +61,14 @@
 - ChatGPT 每次开始工作前，先查看自己的 PR 上是否有 Claude 的新评论，有就先处理。
 - 如果 ChatGPT 在 ChatGPT Codex 云端连接了这个 GitHub 仓库，PR 评论里的 `@codex` 可以直接触发它开始修改，整个循环不需要用户转述。在本机运行时，需要用户对它说一句“看一下 PR 上 Claude 的审查意见”。
 
+**本机接力脚本 `tools/codex-relay.mjs`（让本机的 ChatGPT 也能自动接手）**
+- 在用户电脑上后台运行，每分钟查看 GitHub 上带 `<!-- relay:codex -->` 标记、由允许的账号发出的新评论（Claude 的任务或审查意见都带这个标记）。
+- 发现后在本机调用 Codex CLI（默认 `codex exec --full-auto`）处理：切到对应分支、完成要求、推送。处理结束后脚本在同一个 PR 上留言附上结果，Claude 立即收到通知。
+- 一次只处理一条，按顺序排队；状态和日志在 `tools/.relay/`（已加入 `.gitignore`）。
+- 启动：`node tools/codex-relay.mjs`。可选环境变量：`CODEX_CMD`（Codex 命令，推送需要网络权限时在这里调整）、`RELAY_INTERVAL_SEC`（默认 60）、`RELAY_AUTHORS`（允许的发送账号，默认仓库所有者）。
+- 首次使用由 ChatGPT 在本机验证：Codex CLI 的非交互参数、沙箱内能否 `git push`、`gh` 是否已登录，并设置为开机自动运行。验证结果写进 `HANDOFF.md`。
+- 这样整个循环不需要用户转述：Claude 发任务或审查 → 脚本唤醒 ChatGPT → ChatGPT 推送并留言 → Claude 立即审查。
+
 **审查通过后**：Claude 在 PR 评论里写明“通过，可以合并”，并通知用户。用户合并后，Claude 发布下一张任务单。
 
 ## 规则
