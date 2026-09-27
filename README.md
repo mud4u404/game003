@@ -69,3 +69,7 @@ PLAYWRIGHT_MODULE=/absolute/path/to/playwright node tests/browser.cjs
 `assets/dev/founding-review.html` 是不读写存档的筹建验收夹具，复用实际筹建组件和模拟器；只供开发检查，不能当作交付页面。
 
 0.3筹备中的档案会保留方案、现金与借款，升级为可立即开业；已在接诊的档案不重置日历或补发预约。无需清空浏览器存档。
+
+## 本机自动接力
+
+在 macOS 上运行 `node tools/install-codex-relay.mjs` 可安装登录后自动启动的 PR 接力服务。使用独立 Git 副本，默认每分钟检查允许账号发出的接力评论。安装前需登录 Codex CLI、gh，并配置 Git SSH 推送。命令、状态文件、停止方式及测试见 [本机接力说明](docs/CODEX_RELAY.md)。

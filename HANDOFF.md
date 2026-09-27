@@ -10,6 +10,30 @@
 - 已知问题与限制：旧 `/` 正常加载，但原有 favicon.ico 404 仍在；旧接诊阻塞未重新定位，不作修复声明。本轮没有真机手机性能或 Safari/Firefox 证据，也没有重跑旧版完整接诊流程。新顶栏是静态示意，病历是占位内容；当前排序验收面向固定布局，未来自由建设应约束体积穿插。
 - 下一步：Claude 在 PR 审查代码、三张截图及任务单执行记录；有修改意见则继续同分支修正，用户决定合并。`tasks/README.md` 及 T001 状态已改为待审查。接力分支 `codex/T001-iso-scene`；不直接合并 main。
 
+## 最新接力：本机 Codex 自动接力安装（2026-09-28）
+
+- 当前目标：用户要求安装 `tools/codex-relay.mjs`，核实 CLI、沙箱推送、gh 登录，并配置开机后自动后台运行。本轮不开发游戏。
+- 接力分支：`codex/relay-setup`，从最新 main `5e60339` 的独立工作树开始；T001 分支及原开发目录保持原状。本分支完成后通过 PR 审查，不直接合并 main。
+- 已完成：脚本默认命令改为 `codex exec --approve-for-me -c sandbox_workspace_write.network_access=true`；支持带空格的 CODEX_CMD（推荐 JSON argv），任务通过 stdin 传入，最终答复单独保存。增加单实例锁、分页、原子状态保存、通知失败重试与通知去重；进程中断不自动重跑可能已执行的改动。仅接受允许账号在同仓库开放 codex/* PR 的标记评论，完成时核对分支/工作区/远程 HEAD；原始工具日志不发到 GitHub。
+- 隔离与安装：新增 `tools/install-codex-relay.mjs`，固定执行文件路径，安装用户级 LaunchAgent `com.mud4u404.game003.codex-relay`。使用 `~/Library/Application Support/game003-relay/workspace` 独立 SSH clone，脚本固定副本位于其上一级，状态/日志在 `state/`；不会在 `/Volumes/TV/game/medical` 切换分支。plist 在 `~/Library/LaunchAgents/`，无令牌/私钥。安装说明和停用命令见 `docs/CODEX_RELAY.md`。
+
+### 实机验证结果
+
+- 已执行 `git pull --ff-only` 并读取 main 的最新“本机接力脚本”章节。`codex --version` 为 **0.158.0-alpha.2.1**；`codex exec --help` 确認支持 `--approve-for-me`、`-C`、`--output-last-message` 和 stdin。当前版本没有在帮助中提供旧 `--full-auto`。`codex sandbox --help` 显示本机语法为 `codex sandbox [COMMAND]`；最初按旧文档执行 `codex sandbox macos --help` 失败，随后按本机帮助修正，未冒充通过。
+- `codex login status`：Logged in using ChatGPT。`gh auth status`：已登录 github.com 账号 mud4u404，使用系统钥匙串；后台进程也已成功查询 GitHub，查询游标按分钟推进。
+- 默认 workspace-write 加 network_access 后：`git push --dry-run origin main` 成功；`git update-index --refresh` 因 `.git/index.lock` 受保护失败。实际 `git push origin main`（无新提交）返回 0 / Everything up-to-date，但附带 origin/main.lock 的 update_ref failed，不能据此宣称完全成功。
+- 两次真实 `codex exec --approve-for-me ... --ephemeral` 诊断完成：索引刷新、真实无变更推送都在自动批准提升权限后重试成功；第二次 `git push origin main` 只输出 Everything up-to-date，无引用错误。没有创建测试提交、修改游戏文件或改变远程 main。未使用关闭沙箱的绕过选项。
+- `node tools/install-codex-relay.mjs` 安装成功；重装时曾遇 launchd 异步卸载造成 bootstrap 5，已增加有限重试，随后连续安装/重装成功。`plutil -lint ~/Library/LaunchAgents/com.mud4u404.game003.codex-relay.plist` 通过；`launchctl print gui/501/com.mud4u404.game003.codex-relay` 确认为 running，重载后 PID 更新为 99045。第二进程连接同一状态目录被活动锁拒绝。后台 stderr 为空，轮询状态正常推进。
+- `npm run verify`：旧游戏语法检查与 **61/61** 回归通过；新接力语法检查及 **5/5** 接力测试通过，共 66 项。接力集成测试使用本地 gh/git/Codex 替身，验证分页输入、通知发送失败后只重发通知、不重复运行任务、不泄露 stderr；没有向 GitHub 发伪造的 Claude 测试评论。`git diff --check` 通过。
+
+### 已知限制、下一步
+
+- 已配置为 **macOS 开机登录该用户后自动启动**，无需终端或桌面聊天窗口；不是登录前的系统服务，睡眠/关机时不执行。实际重启整台电脑未测试，已测试 launchd 安装与重新加载。
+- 尚未收到真实带标记的 Claude 评论，故没有宣称已完成真实“评论→游戏修改→回复”全链路；当前证据是实机 CLI、后台 GitHub 轮询、沙箱批准/推送和本地流程测试。首次启动以安装时间为游标，不追溯先前评论。
+- CLI 诊断出现 WebSocket 超时后自动回落 HTTPS，最终执行成功，但可能增加启动延迟；现有可选 Hyper3D MCP 登录过期告警未阻断首个探针，第二个探针通过单次配置关闭该无关 MCP 后运行。未更改用户全局登录或配置。
+- 已阅读 `docs/QUALITY_GATE.md`；本轮只改运维脚本与文档，未重新执行游戏正常入口/玩家可理解性验收，不作任何游戏修复声明。未改旧入口、游戏逻辑或玩家档案。
+- 下一步：Claude 审查本 PR；以后在任务 PR 上由 mud4u404 发 `<!-- relay:codex -->` 标记的新评论即可接力。后台实际执行在独立 clone，不会唤醒当前桌面聊天。遇自动审查拒绝或脏工作区时记录未完成，由 Claude/用户决定，不强制推送或清理现场。
+
 ## 历史接力：设计文档合并到 main，T001 交给 ChatGPT（2026-09-28）
 
 - 用户同意把设计分支合并到 `main`，并宣布开始重做游戏。分工：Claude 设计与审查，ChatGPT 按任务单开发（`docs/WORKFLOW.md`）。

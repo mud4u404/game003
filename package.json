@@ -8,7 +8,9 @@
     "start": "node server.mjs",
     "test": "node --test tests/*.test.mjs tests/v2/*.test.mjs",
     "check": "node --check src/opening.js && node --check src/business.js && node --check src/founding-ui.js && node --check src/town-scene.js && node --check src/identity.js && node --check src/medical.js && node --check src/audio.js && node --check src/staff-behavior.js && node --check src/activity.js && node --check src/seating.js && node --check src/movement.js && node --check src/appearance.js && node --check src/simulation.js && node --check src/scene.js && node --check src/app.js && node --check server.mjs && node tests/v2/check-syntax.mjs",
-    "verify": "npm run check && npm test"
+    "verify": "npm run check && npm test && npm run check:relay && npm run test:relay",
+    "check:relay": "node --check tools/codex-relay.mjs && node --check tools/install-codex-relay.mjs",
+    "test:relay": "node --test tests/relay/*.test.mjs"
   },
   "engines": {
     "node": ">=20"
