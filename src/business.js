@@ -1,12 +1,13 @@
+import {communityRequests,eligibleRequests,validateOpening,countInitialRequests} from './opening.js';
 // Fictional planning/economic parameters, not real rents, bank offers or licensing decisions.
 // Regulatory and clinical scope: docs/FOUNDING.md. World time always advances 1:1.
 export const DAY=86400000, MONTH=30*DAY, RESERVE=30000;
 export const SITES=[
-  {id:'willow',name:'柳岸街铺',area:96,rooms:3,rent:4800,deposit:9600,fitout:32000,access:48,prepare:30*60000,x:180,y:345,
+  {id:'willow',name:'柳岸街铺',area:96,rooms:3,rent:4800,deposit:9600,fitout:32000,access:48,x:180,y:345,
     district:'老社区',note:'步行方便，周边已有社区卫生服务站。面积紧凑，第二诊室与药房只能选其一。',outlook:'稳定居住人群；能否建立随诊关系仍需观察。'},
-  {id:'station',name:'站前医疗单元',area:148,rooms:4,rent:8500,deposit:17000,fitout:52000,access:65,prepare:60*60000,x:440,y:590,
+  {id:'station',name:'站前医疗单元',area:148,rooms:4,rent:8500,deposit:17000,fitout:52000,access:65,x:440,y:590,
     district:'交通节点',note:'公交可达，租金较高。可容纳第二诊室和独立药房。',outlook:'潜在到访更分散，便利性不等于固定客源。'},
-  {id:'garden',name:'新苑底商',area:220,rooms:5,rent:12000,deposit:24000,fitout:83000,access:72,prepare:90*60000,x:470,y:285,
+  {id:'garden',name:'新苑底商',area:220,rooms:5,rent:12000,deposit:24000,fitout:83000,access:72,x:470,y:285,
     district:'新建居住区',note:'可预留独立采样单元；前期资金占用大，周边入住仍在增长。',outlook:'预留更多容量，也承担更多空置成本。'}
 ];
 export const MODELS=[
@@ -34,7 +35,7 @@ export const LOANS=[
 ];
 export const siteOf=id=>SITES.find(x=>x.id===id);
 export const candidate=id=>CANDIDATES.find(x=>x.id===id);
-export function initVenture(now){return {version:1,stage:'planning',draft:{site:null,model:null,services:[],staff:{},loan:'none'},plan:null,site:null,readyAt:null,openedAt:null,signedAt:null,nextBill:null,loan:null,relocation:null,ledger:[],serial:0,debtPaid:0,arrears:0,world:{outside:0,closed:0,unavailable:0},message:'先看场地和周边，再决定第一家诊所的方向。'};}
+export function initVenture(now,seed=20260926){return {version:2,openingRequests:communityRequests(seed,now),openingDue:null,clockOffset:0,stage:'planning',draft:{site:null,model:null,services:[],staff:{},loan:'none'},plan:null,site:null,readyAt:null,openedAt:null,signedAt:null,nextBill:null,loan:null,relocation:null,ledger:[],serial:0,debtPaid:0,arrears:0,world:{outside:0,closed:0,unavailable:0},message:'先看场地和周边，再决定第一家诊所的方向。'};}
 export function businessNote(s,title,detail){s.log.unshift({id:++s.eventSequence,at:s.time,title,detail,kind:'management'});s.log.length=Math.min(48,s.log.length);}
 function entry(s,category,amount,label){const v=s.venture;v.ledger.unshift({id:++v.serial,at:s.time,category,amount,label});v.ledger.length=Math.min(100,v.ledger.length);}
 export function cashOut(s,amount,label,category='investment'){
@@ -70,17 +71,41 @@ export function configureDraft(s,kind,value){const v=s.venture;if(!v||v.stage!==
 }
 export function signPlan(s){const v=s.venture;if(v.stage!=='planning')return {ok:false,reason:'已经签约，不能重复扣款'};
   const q=quotePlan(s);if(q.issues.length)return {ok:false,reason:q.issues[0]};
-  const site=siteOf(v.draft.site);v.plan=structuredClone(v.draft);v.site=site.id;v.signedAt=s.time;v.readyAt=s.time+site.prepare;v.nextBill=s.time+DAY;v.stage='fitting';
+  const site=siteOf(v.draft.site);v.plan=structuredClone(v.draft);v.site=site.id;v.signedAt=s.time;v.readyAt=s.time;v.nextBill=s.time+DAY;v.stage='ready';
+  activateInitialFacilities(s);
   if(q.loan.amount){v.loan={offer:q.loan.id,original:q.loan.amount,principal:q.loan.amount,remaining:q.loan.months,nextDue:s.time+MONTH,interestPaid:0,interestDue:0,principalDue:0};s.cash+=q.loan.amount;entry(s,'borrowing',q.loan.amount,'创业贷款到账（模拟合同）');}
   for(const [label,amount] of q.rows)cashOut(s,amount,label);
-  v.message='租约和筹建预算已确定，团队正在准备房间、设备与接续安排。';
-  businessNote(s,'筹建方案已签约',site.name+'，'+MODELS.find(x=>x.id===v.plan.model).name+'。一次性投入 ¥'+q.upfront+'，准备结束后由你决定开业。');return {ok:true};
+  v.message='方案已落实，团队与设施可以接诊。开业前的施工、采购与到岗以开业交接说明概括，不设置现实倒计时。';
+  businessNote(s,'筹建方案已签约',site.name+'，'+MODELS.find(x=>x.id===v.plan.model).name+'。一次性投入 ¥'+q.upfront+'，配置已落实，可直接开业。');return {ok:true};
 }
 export function openVenture(s){const v=s.venture;if(v.stage!=='ready')return {ok:false,reason:'筹建尚未完成'};
-  v.stage='open';v.openedAt=s.time;v.message='团队按已确定的范围自主接诊。营业时间：工作日 09:00—17:00。';
-  businessNote(s,'梅奥开始接诊','房间、团队和服务已按方案启用。患者由城镇需求自然到访，营业时段外的新预约安排到下一工作日。');return {ok:true};
+  v.stage='open';v.openedAt=s.time;v.clockOffset=Date.UTC(2026,8,28,1)-s.time;v.openingDue=s.time;
+  v.openingRequests=eligibleRequests(s);const count=v.openingRequests.length;v.message='开业日 09:00。'+(count?count+'位社区预约患者将陆续到院，接待与医护自主完成诊疗。':'暂没有符合范围的开业预约，接待正在联络社区。');
+  businessNote(s,'梅奥开始接诊','房间、团队和服务已按方案启用。开业预约来自筹建前已有的社区需求；后续自然到访不因扩建增加。医院日历从周一09:00开始，之后与现实等速推进。');return {ok:true};
 }
-export function ventureDue(s){const v=s.venture;return v?Math.min(v.stage==='fitting'?v.readyAt:Infinity,v.nextBill??Infinity,v.loan?.nextDue??Infinity,v.relocation?.due??Infinity):Infinity;}
+export function launchVenture(s){
+  if(s.venture?.stage==='planning'){const signed=signPlan(s);if(!signed.ok)return signed;}
+  return openVenture(s);
+}
+function activateInitialFacilities(s){
+  const f=s.medical.pharmacy;f.enabled=s.venture.plan.services.includes('pharmacy');f.stock=f.enabled?24:0;
+}
+export const clinicAt=(s,at=s.time)=>at+(s.venture?.clockOffset||0);
+export function migrateFounding(s){
+  const v=s.venture;if(!v||v.version!==1)return;
+  // Upgrade once, without charging again, moving the simulation clock or opening for the owner.
+  const preOpening=['planning','fitting','ready'].includes(v.stage);
+  const awaitingFirstVisit=v.stage==='open'&&!s.patients.length&&!s.medical.records.length&&!s.medical.pending.length&&!s.metrics.completed&&!s.metrics.referred;
+  v.version=2;v.clockOffset=0;v.openingDue=null;
+  v.openingRequests=preOpening||awaitingFirstVisit?communityRequests(s.rng,s.time):[];
+  countInitialRequests(s);
+  if(awaitingFirstVisit){v.clockOffset=Date.UTC(2026,8,28,1)-s.time;v.openingRequests=eligibleRequests(s);v.openingDue=s.time;v.message='首次接诊不再受现实周末或夜间阻挡，团队开始接待已有社区预约。';}
+  if(v.stage==='fitting'||v.stage==='ready'){
+    v.stage='ready';v.readyAt=s.time;activateInitialFacilities(s);
+    v.message='原筹备倒计时已取消。已选场地、团队、服务和资金安排保留，现在可以直接开业。';
+  }
+}
+export function ventureDue(s){const v=s.venture;return v?Math.min(v.stage==='fitting'?v.readyAt:Infinity,v.openingDue??Infinity,v.nextBill??Infinity,v.loan?.nextDue??Infinity,v.relocation?.due??Infinity):Infinity;}
 export function monthlyFixed(s){const v=s.venture;if(!v.plan)return 0;return siteOf(v.site).rent+Object.values(v.plan.staff).map(candidate).filter(Boolean).reduce((a,p)=>a+p.monthly,0)+2400+(s.secondRoom?16000:0)+(s.medical.annex?8500:0);}
 export function advanceVenture(s){const v=s.venture;if(!v)return;
   if(v.stage==='fitting'&&v.readyAt===s.time){v.stage='ready';v.message='房间与团队准备就绪，开业前请复核配置和资金。';
@@ -103,10 +128,10 @@ export function advanceVenture(s){const v=s.venture;if(!v)return;
     v.message='已迁入'+to.name+'，原病历、随访、团队和债务继续保留。';businessNote(s,'迁址交接完成',v.message);
   }
 }
-export function acceptingAt(s,at=s.time){if(!s.venture)return true;const v=s.venture;if(v.stage!=='open'||s.cash<0)return false;const d=new Date(at+8*3600000),h=d.getUTCHours(),day=d.getUTCDay();return day>=1&&day<=5&&h>=9&&h<17;}
+export function acceptingAt(s,at=s.time){if(!s.venture)return true;const v=s.venture;if(v.stage!=='open'||s.cash<0)return false;const d=new Date(clinicAt(s,at)+8*3600000),h=d.getUTCHours(),day=d.getUTCDay();return day>=1&&day<=5&&h>=9&&h<17;}
 export function nextAdmission(s,at){if(!s.venture)return at;const v=s.venture;let t=Math.max(at,v.relocation?.due??at);if(acceptingAt({...s,venture:{...v,stage:'open'}},t))return t;
-  const d=new Date(t+8*3600000);let day=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate(),1);if(t>=day)day+=DAY;
-  while([0,6].includes(new Date(day+8*3600000).getUTCDay()))day+=DAY;return day;
+  const virtual=clinicAt(s,t),d=new Date(virtual+8*3600000);let day=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate(),1);if(virtual>=day)day+=DAY;
+  while([0,6].includes(new Date(day+8*3600000).getUTCDay()))day+=DAY;return day-(v.clockOffset||0);
 }
 export function serviceAvailable(s,type){if(!s.venture)return true;const list=s.venture.plan?.services||[];return type==='urgent'||(type==='respiratory'?list.includes('consult'):list.includes('chronic'));}
 export function staffFor(s,base,onSite=false){if(!s.venture)return base;const v=s.venture;if(!['open','moving'].includes(v.stage))return [];
@@ -148,7 +173,8 @@ export function relocate(s,id){const v=s.venture,q=relocationQuote(s,id);if(!v||
   v.message='迁址交接中：当前患者完成照护，暂停接收新患者；报告继续回传，复诊顺延到新址恢复营业。';businessNote(s,'已安排迁址',v.message);return {ok:true};
 }
 export function validateVenture(s){const v=s.venture;if(!v)return;const int=n=>Number.isSafeInteger(n)&&n>=0,finite=Number.isFinite;
-  if(v.version!==1||!['planning','fitting','ready','open','moving'].includes(v.stage)||!v.draft||!Array.isArray(v.draft.services)||!Array.isArray(v.ledger)||v.ledger.length>100||!int(v.serial)||!int(v.debtPaid)||!int(v.arrears)||typeof v.message!=='string'||!v.world||!['outside','closed','unavailable'].every(k=>int(v.world[k])))throw Error('筹建档案不完整');
+  if(![1,2].includes(v.version)||!['planning','fitting','ready','open','moving'].includes(v.stage)||!v.draft||!Array.isArray(v.draft.services)||!Array.isArray(v.ledger)||v.ledger.length>100||!int(v.serial)||!int(v.debtPaid)||!int(v.arrears)||typeof v.message!=='string'||!v.world||!['outside','closed','unavailable'].every(k=>int(v.world[k])))throw Error('筹建档案不完整');
+  if(v.version===2){validateOpening(v);if(!finite(v.clockOffset)||v.openingDue!==null&&(!finite(v.openingDue)||v.openingDue<s.time||!['open','moving'].includes(v.stage)))throw Error('开业日历不完整');}
   const plan=p=>p&&(!p.site||siteOf(p.site))&&(!p.model||MODELS.some(x=>x.id===p.model))&&Array.isArray(p.services)&&new Set(p.services).size===p.services.length&&p.services.every(x=>SERVICES.some(y=>y.id===x))&&p.staff&&Object.entries(p.staff).every(([slot,id])=>candidate(id)?.slot===slot)&&LOANS.some(x=>x.id===p.loan);
   if(!plan(v.draft)||(v.stage!=='planning'&&(!plan(v.plan)||!siteOf(v.site)||!finite(v.signedAt)||!finite(v.readyAt)||!finite(v.nextBill)||v.nextBill<s.time))||v.stage==='fitting'&&v.readyAt<s.time)throw Error('筹建时间或配置不完整');
   if(v.stage!=='planning'&&(!v.plan.services.includes('consult')||!v.plan.model||!['doctor1','nurse','reception'].every(x=>candidate(v.plan.staff[x]))||v.plan.services.includes('pharmacy')&&!v.plan.staff.pharmacist||v.plan.services.includes('sampling')&&!v.plan.services.includes('chronic')))throw Error('营业配置缺少必要服务或岗位');

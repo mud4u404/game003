@@ -1,4 +1,4 @@
-import { configureDraft,signPlan,openVenture,staffFor,siteOf,candidate,acceptingAt,hireOperating,relocate,enableService } from './business.js';
+import { configureDraft,openVenture,staffFor,siteOf,clinicAt,acceptingAt,hireOperating,relocate,enableService,launchVenture } from './business.js';
 import { FoundingUI,businessPanel } from './founding-ui.js';
 import { patientSex } from './identity.js';
 import { CLINICAL_CASES, ANNEX, PHARMACY, clinicalStatus } from './medical.js';
@@ -14,7 +14,7 @@ let hasLegacy=false;try{hasLegacy=Boolean(localStorage.getItem('meiao-clinic-v1'
 const founding=new FoundingUI($('founding'));
 const freshState=()=>legacy?createState():createVenture();
 const money = n => '¥' + Math.round(n).toLocaleString('zh-CN');
-const time = n => new Date(n).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false});
+const time = n => new Date(state?.venture?.openedAt!=null?clinicAt(state,n):n).toLocaleTimeString('zh-CN',{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hour12:false});
 const esc = v => String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let state, leader = false, catchingUp = false, currentPanel = null, selected = null, lastUI = 0, lastSave = 0, persistent = true, preservedBadSave = false;
 let lastPanelHTML = '', lastPersonHTML = '', offlineBefore = null, startup = true;
@@ -114,8 +114,8 @@ function renderUI(force=false) {
   const now=performance.now();if(!force&&now-lastUI<600)return;lastUI=now;
   const preparing=Boolean(state.venture&&!['open','moving'].includes(state.venture.stage));
   $('game').classList.toggle('is-planning',preparing);$('founding').hidden=!preparing;
-  $('clock').textContent=time(state.time);$('day').textContent='第 '+(Math.floor((state.time-state.startedAt)/(24*HOUR))+1)+' 天';$('cash').textContent=money(state.cash);
-  $('live-label').textContent=catchingUp?'整理离线进展':!leader?'观察模式':!persistent?'临时运行':preparing?'筹建中':state.venture&&!acceptingAt(state)?'非接诊时段':'自主运行';$('director-dot').hidden=!state.project;
+  $('clock').textContent=time(state.time);$('day').textContent=(state.venture?.openedAt!=null?'营业第 ':'第 ')+(Math.floor((state.time-(state.venture?.openedAt??state.startedAt))/(24*HOUR))+1)+' 天';$('cash').textContent=money(state.cash);
+  $('live-label').textContent=catchingUp?'整理离线进展':!leader?'观察模式':!persistent?'临时运行':preparing?(state.venture.stage==='ready'?'可以开业':'方案配置中'):state.venture&&!acceptingAt(state)?'非接诊时段':'自主运行';$('director-dot').hidden=!state.project;
   if(state.venture){document.querySelector('.identity p').textContent=state.venture.site?siteOf(state.venture.site).name:'青禾镇 · 第一家诊所';document.querySelector('[data-panel="director"] span').textContent='经营';}
   if(preparing){$('panel').hidden=true;$('person').hidden=true;founding.render(state,leader&&!catchingUp,hasLegacy);return;}
   document.querySelectorAll('[data-panel]').forEach(b=>{const active=b.dataset.panel===currentPanel;b.classList.toggle('active',active);b.setAttribute('aria-expanded',String(active));});
@@ -137,7 +137,7 @@ document.addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b)return;
   if(b.dataset.planStep!==undefined){founding.go(b.dataset.planStep);renderUI(true);return;}
   if(b.dataset.planKind){mutate(()=>{const result=configureDraft(state,b.dataset.planKind,b.dataset.planValue);if(!result.ok)notice(result.reason);});return;}
-  if(b.dataset.ventureAction){mutate(()=>{const action=b.dataset.ventureAction,result=action==='sign'?signPlan(state):action==='open'?openVenture(state):action==='hire'?hireOperating(state,b.dataset.value):action==='move'?relocate(state,b.dataset.value):action==='service'?enableService(state,b.dataset.value):{ok:false,reason:'不支持的操作'};if(!result.ok)notice(result.reason);else{scene.reset();currentPanel=null;selected=null;lastPanelHTML='';}});return;}
+  if(b.dataset.ventureAction){mutate(()=>{const action=b.dataset.ventureAction,result=action==='sign'?launchVenture(state):action==='open'?openVenture(state):action==='hire'?hireOperating(state,b.dataset.value):action==='move'?relocate(state,b.dataset.value):action==='service'?enableService(state,b.dataset.value):{ok:false,reason:'不支持的操作'};if(!result.ok)notice(result.reason);else{if(action==='sign'||action==='open'){notice(state.venture.message);}scene.reset();currentPanel=null;selected=null;lastPanelHTML='';}});return;}
   if(b.dataset.panel){currentPanel=currentPanel===b.dataset.panel?null:b.dataset.panel;lastPanelHTML='';selectPerson(null);renderUI(true);}
   if(b.dataset.close==='panel'){currentPanel=null;renderUI(true);}
   if(b.dataset.close==='person')selectPerson(null);

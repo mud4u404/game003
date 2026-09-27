@@ -1,4 +1,5 @@
-import { initVenture, ventureDue, advanceVenture, acceptingAt, nextAdmission, serviceAvailable, investmentAllowed, validateVenture, siteOf, candidate } from './business.js';
+import {countInitialRequests} from './opening.js';
+import { initVenture, ventureDue, advanceVenture, acceptingAt, nextAdmission, serviceAvailable, investmentAllowed, validateVenture, siteOf, migrateFounding } from './business.js';
 import { GIVEN_PROFILES, patientSex } from './identity.js';
 import { createMedical, newClinicalCase, CLINICAL_CASES, ANNEX, LAB_HOURS, DAY, clinicalNote, clinicalStatus, recordPatient, scheduleClinical, medicalDue, validateMedical, createPharmacy, PHARMACY } from './medical.js';
 import { createNurseTask, advanceNurseTask, syncNurseTask } from './staff-behavior.js';
@@ -66,6 +67,19 @@ function demand(s, at) {
   p.motion = settledMotion(ENTRY, at);
   movePatient(p, 'arriving', at, registrationSlot(p.queueSlot), 0);
   s.patients.push(p);
+}
+function admitOpeningRequests(s){
+  const v=s.venture;if(!v||v.openingDue!==s.time)return;
+  if(!acceptingAt(s)){v.openingDue=Math.max(s.time+MINUTE,nextAdmission(s,s.time));return;}
+  const booked=v.openingRequests.splice(0,1);
+  v.openingDue=v.openingRequests.length?s.time+45000:null;
+  for(const request of booked){
+    const p=structuredClone(request);p.arrivedAt=s.time;p.phase='arriving';p.phaseAt=s.time;p.due=null;p.room=null;p.seat=null;p.waitStarted=null;
+    p.clinical.waitSince=s.time;p.clinical.trail=[];clinicalNote(p,s.time,'开业前社区预约，按本院已配置服务接诊。');
+    p.queueSlot=freeSlot(s,['arriving','registerQueue']);p.annexAccess=Boolean(s.medical.annex);p.motion=settledMotion(ENTRY,s.time);
+    movePatient(p,'arriving',s.time,registrationSlot(p.queueSlot),0);s.patients.push(p);
+  }
+  if(booked.length)note(s,'开业预约到院',booked.map(p=>p.name).join('、')+'按约到院，接待负责登记，医护按病情评估。');
 }
 function freeSlot(s, phases) {
   const occupied = new Set(s.patients.filter(p => phases.includes(p.phase)).map(p => p.queueSlot));
@@ -225,7 +239,7 @@ export function createState(now = Date.now(), seed = 20260926, options={}) {
   return s;
 }
 export function createVenture(now=Date.now(),seed=20260926){
-  const s=createState(now,seed,{empty:true});s.venture=initVenture(now);s.log=[];s.eventSequence=0;s.authority=false;return s;
+  const s=createState(now,seed,{empty:true});s.venture=initVenture(now,seed);countInitialRequests(s);s.log=[];s.eventSequence=0;s.authority=false;return s;
 }
 export function advanceTo(s, target, eventLimit = 200_000) {
   if (!Number.isFinite(target) || target <= s.time) return { caughtUp: true, events: 0 };
@@ -236,6 +250,7 @@ export function advanceTo(s, target, eventLimit = 200_000) {
     if (next > target) { s.time = target; return { caughtUp: true, events: count }; }
     s.time = next;
     advanceVenture(s);
+    admitOpeningRequests(s);
     advanceNurseTask(s);
     advanceClinical(s);
     if (s.nextArrival === next) demand(s, next);
@@ -335,6 +350,7 @@ export function restoreState(serialized) {
   if(s.medical&&s.medical.pharmacy===undefined)s.medical.pharmacy=createPharmacy();
   validateMedical(s);
   validateVenture(s);
+  migrateFounding(s);
   if(s.sampleTask){const t=s.sampleTask,m=t.motion;if(!m||![m.at,m.start,m.end,m.ready,m.length].every(finite)||m.start>m.end||!Array.isArray(m.points)||m.points.some(p=>!Array.isArray(p)||p.length!==2||!p.every(finite))||(t.due!==null&&(!finite(t.due)||t.due<s.time)))throw Error('采样岗位存档不完整');}
   return s;
 }
