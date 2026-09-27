@@ -1,0 +1,1016 @@
+[
+  {
+    "term": "急性阑尾炎",
+    "plain": "阑尾发炎会引起腹痛，有时先在肚子中间疼，后来右下腹更明显。延误可能造成破裂，需要及时外科评估。",
+    "sourceIds": [
+      "appendix_cn",
+      "appendix_wses"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "急性冠脉综合征",
+    "plain": "心脏供血突然出问题，可能表现为胸口压迫感、出汗或气短。小医院要尽快识别并联系急救，不能靠一次正常检查放心。",
+    "sourceIds": [
+      "acs_nice",
+      "chest_nice"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "急性胃肠炎",
+    "plain": "突然呕吐或腹泻会让身体丢失水分。多数轻症重点是补水，便血、剧痛或喝不下水需要进一步检查。",
+    "sourceIds": [
+      "gastro_diagnosis",
+      "gastro_treatment"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "急性荨麻疹",
+    "plain": "皮肤突然出现很痒的隆起，可能消退后又在别处出现。若同时呼吸困难或快要晕倒，就需要立即急救。",
+    "sourceIds": [
+      "urticaria_cn"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "社区获得性肺炎",
+    "plain": "在医院外得的肺部感染，可能引起咳嗽、发热和喘气。轻重差异很大，部分患者需要住院。",
+    "sourceIds": [
+      "cap_cn"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "桡骨远端骨折",
+    "plain": "这是靠近手腕的前臂骨折，摔倒撑地后常见。治疗后还要复查位置和恢复手腕活动。",
+    "sourceIds": [
+      "fracture_cn"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "原发性高血压",
+    "plain": "血压长期偏高可能伤害心脑和肾脏，即使没有不舒服也要管理。通常需要持续复查和治疗。",
+    "sourceIds": [
+      "htn_cn",
+      "htn_education"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "下尿路感染",
+    "plain": "尿痛和尿频可能来自膀胱感染。出现发热、腰痛或全身很不舒服时，要考虑感染范围更大。",
+    "sourceIds": [
+      "uti_nice"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "软组织损伤（扭挫伤）",
+    "plain": "扭伤和碰伤会伤到骨头周围的组织，引起疼痛和肿胀。看起来像扭伤也可能是骨折，需要判断是否拍片。",
+    "sourceIds": [
+      "sprain_nhs"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "2型糖尿病",
+    "plain": "身体调节血糖的能力出了问题，可能口渴多尿，也可能没有感觉。需要长期管理以减少器官受损。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "上呼吸道感染",
+    "plain": "鼻子和咽喉的急性感染，常见表现是鼻塞、流涕和嗓子疼。多数较轻，但呼吸困难或明显加重需要重新评估。",
+    "sourceIds": [
+      "uri_cn"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "血常规",
+    "plain": "看看血细胞的数量，帮助判断感染或贫血。单凭白细胞升高不能确定是细菌感染。",
+    "sourceIds": [
+      "cap_cn",
+      "appendix_cn"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "尿常规",
+    "plain": "查看尿中的细胞、糖和蛋白等线索。异常结果要结合症状，不能单独判定感染。",
+    "sourceIds": [
+      "diabetes_cn",
+      "uti_nice"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "血糖",
+    "plain": "测量静脉血里的糖。确诊糖尿病通常需要按条件检测和复查，不能只凭一次指尖读数。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "糖化血红蛋白",
+    "plain": "帮助了解近几个月的平均血糖。贫血等情况可能影响结果，需要医生解释。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "心电图",
+    "plain": "记录心脏的电活动，寻找心律和供血异常。一次正常不能排除心脏急症。",
+    "sourceIds": [
+      "acs_nice",
+      "chest_nice"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "肌钙蛋白（快速检测）",
+    "plain": "检查心肌是否受损。发病早期可能还没升高，一次阴性不能排除心梗。",
+    "sourceIds": [
+      "chest_nice"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "胸部X光",
+    "plain": "拍摄胸部影像，帮助寻找肺部炎症等异常。结果需要结合症状判断。",
+    "sourceIds": [
+      "cap_cn"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "四肢X光",
+    "plain": "拍摄受伤部位，观察骨折和骨头位置。症状持续而片子正常时仍可能需要复查。",
+    "sourceIds": [
+      "fracture_cn"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "腹部超声",
+    "plain": "用声波观察腹部器官。可能帮助发现阑尾异常，但没看清不等于没病。",
+    "sourceIds": [
+      "appendix_cn",
+      "appendix_wses"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "腹部CT",
+    "plain": "用多层X光影像查看腹部，帮助处理诊断不清的情况。是否使用造影剂由接诊团队判断。",
+    "sourceIds": [
+      "appendix_cn",
+      "appendix_wses"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "血压测量",
+    "plain": "测量血液对血管壁的压力。休息、姿势和多次测量会影响判断，单次升高不等于确诊。",
+    "sourceIds": [
+      "htn_cn"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "脉搏血氧测量",
+    "plain": "从手指估计血液携氧情况。读数要结合呼吸状态，不能代替医生检查。",
+    "sourceIds": [
+      "cap_cn"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "尿培养及药敏",
+    "plain": "培养尿里的细菌，帮助选择有效药物。不是每次尿路不适都要做。",
+    "sourceIds": [
+      "uti_nice"
+    ],
+    "reviewStatus": "draft"
+  },
+  {
+    "term": "白细胞",
+    "plain": "帮助身体抵御感染的一类血细胞；数量异常不一定就是细菌感染。",
+    "sourceIds": [
+      "cap_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "贫血",
+    "plain": "血液携带氧气的能力下降的一类情况，常需通过血液检查进一步确认。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "病原",
+    "plain": "造成感染的微生物，例如病毒或细菌。",
+    "sourceIds": [
+      "uri_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "抗菌药",
+    "plain": "用于对付细菌的药物；不能用来治疗普通病毒感染。",
+    "sourceIds": [
+      "uri_cn",
+      "uti_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "抗组胺药",
+    "plain": "阻断体内一种与过敏症状有关的信号，帮助减轻瘙痒和风团。",
+    "sourceIds": [
+      "urticaria_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "风团",
+    "plain": "皮肤突然隆起的一片肿块，常伴痒，可能消退又在别处出现。",
+    "sourceIds": [
+      "urticaria_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "严重过敏反应",
+    "plain": "可能迅速影响呼吸和循环的全身反应，需要立即急救，不能只当作皮肤痒。",
+    "sourceIds": [
+      "urticaria_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "瘀斑",
+    "plain": "皮下出血造成的一片青紫色改变，碰伤时可能出现。",
+    "sourceIds": [
+      "sprain_nhs"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "压痛",
+    "plain": "医生按压某个部位时出现的疼痛。",
+    "sourceIds": [
+      "appendix_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "腹膜刺激征",
+    "plain": "腹部检查提示腹腔内可能有严重炎症的表现，需要及时评估。",
+    "sourceIds": [
+      "appendix_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "脱水",
+    "plain": "丢失的水分超过补进去的水分，严重时会影响意识和循环。",
+    "sourceIds": [
+      "gastro_diagnosis",
+      "gastro_treatment"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "电解质",
+    "plain": "体液中维持神经、肌肉和水分平衡的一些盐类成分。",
+    "sourceIds": [
+      "gastro_treatment"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "缺氧",
+    "plain": "身体得到的氧气不足，需要寻找原因并及时处理。",
+    "sourceIds": [
+      "cap_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "循环不稳",
+    "plain": "心脏和血管不能稳定供血，可能表现为血压下降、发冷或晕厥。",
+    "sourceIds": [
+      "acs_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "静脉血浆葡萄糖",
+    "plain": "通过静脉抽血检测的血糖，是糖尿病诊断使用的指标之一。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "空腹",
+    "plain": "血糖检查中指至少8小时没有进食；具体准备按检查要求执行。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "随机血糖",
+    "plain": "不考虑上一餐时间测得的血糖，解释时必须结合症状与检测条件。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "应激性高血糖",
+    "plain": "身体遭遇感染或创伤等负担时暂时出现的高血糖，需要后续复查。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "代谢危象",
+    "plain": "身体调节糖和体液的功能发生严重紊乱，可能危及生命，需要急救。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "并发症",
+    "plain": "在原来疾病或治疗过程中出现的其他健康问题。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "分型",
+    "plain": "把相似的疾病进一步区分为不同类型，以便选择合适处理。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "继发性高血压",
+    "plain": "由其他疾病或原因引起的血压升高，需要寻找背后的原因。",
+    "sourceIds": [
+      "htn_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "白大衣性高血压",
+    "plain": "诊室测量偏高而院外测量并不持续偏高的一类情况，需要规范评估。",
+    "sourceIds": [
+      "htn_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "耐药",
+    "plain": "某种药物对相应细菌的作用减弱或无效。",
+    "sourceIds": [
+      "uti_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "药敏",
+    "plain": "测试细菌对不同抗菌药的反应，帮助医生选择药物。",
+    "sourceIds": [
+      "uti_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "尿痛",
+    "plain": "排尿时出现疼痛或烧灼感。",
+    "sourceIds": [
+      "uti_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "尿频尿急",
+    "plain": "排尿次数增多或突然强烈想排尿，不一定都由感染引起。",
+    "sourceIds": [
+      "uti_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "肾盂肾炎",
+    "plain": "感染影响到肾脏，可能发热、腰痛，通常需要比单纯膀胱感染更谨慎处理。",
+    "sourceIds": [
+      "uti_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "尿道炎",
+    "plain": "排尿通道发炎，也可能引起尿痛，需要与膀胱感染区分。",
+    "sourceIds": [
+      "uti_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "梗阻",
+    "plain": "通道被堵住，影响正常通过，例如尿液排出受阻。",
+    "sourceIds": [
+      "uti_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "复位",
+    "plain": "把偏离正常位置的骨头重新调整到合适位置。",
+    "sourceIds": [
+      "fracture_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "移位",
+    "plain": "骨折后的骨块偏离原来的位置。",
+    "sourceIds": [
+      "fracture_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "血运",
+    "plain": "血液供应到身体某处的情况；受伤后手指发凉可能提示问题。",
+    "sourceIds": [
+      "fracture_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "关节受累",
+    "plain": "损伤影响到了骨头连接并活动的部位，可能影响以后的活动功能。",
+    "sourceIds": [
+      "fracture_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "神经功能异常",
+    "plain": "感觉、力量或其他由神经控制的功能出现异常，需要进一步评估。",
+    "sourceIds": [
+      "htn_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "肌腱断裂",
+    "plain": "连接肌肉和骨头的组织断开，可能影响主动活动。",
+    "sourceIds": [
+      "sprain_nhs"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "心肌",
+    "plain": "构成心脏并负责收缩泵血的肌肉。",
+    "sourceIds": [
+      "acs_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "心梗",
+    "plain": "心脏供血严重受阻造成部分心肌损伤坏死，是需要急救的情况。",
+    "sourceIds": [
+      "acs_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "冠脉介入",
+    "plain": "通过血管内器械检查或处理心脏供血血管，需要专门团队与设备。",
+    "sourceIds": [
+      "acs_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "不稳定心绞痛",
+    "plain": "心脏供血不足引起的一类危险胸部不适，需要急症评估。",
+    "sourceIds": [
+      "acs_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "阴性",
+    "plain": "某项检查没有发现所寻找的异常，不代表一定没有疾病。",
+    "sourceIds": [
+      "chest_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "高敏检测",
+    "plain": "能测到更低浓度指标的检测方法；不等于所有快速检测都具备同样能力。",
+    "sourceIds": [
+      "chest_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "鉴别诊断",
+    "plain": "把可能引起相似表现的疾病逐一比较和排查。",
+    "sourceIds": [
+      "appendix_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "体征",
+    "plain": "医生检查时发现的表现，与患者自己感到的症状相对应。",
+    "sourceIds": [
+      "uri_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "造影剂",
+    "plain": "某些影像检查使用的辅助药物，帮助看清组织；使用前要评估适合程度。",
+    "sourceIds": [
+      "appendix_cn",
+      "appendix_wses"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "随访",
+    "plain": "一段时间后再次了解病情和治疗效果，决定是否调整方案。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "转诊",
+    "plain": "把患者交给具备所需能力的医疗机构继续评估或治疗，不等于已经治好。",
+    "sourceIds": [
+      "htn_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "复评",
+    "plain": "在病情变化或一段时间后重新检查和判断。",
+    "sourceIds": [
+      "cap_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "肺栓塞",
+    "plain": "肺部血管被堵住，可能引起胸痛和气短，需要紧急评估。",
+    "sourceIds": [
+      "chest_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "主动脉夹层",
+    "plain": "大血管的管壁发生撕裂分离，可能表现为剧烈胸痛，是急症。",
+    "sourceIds": [
+      "chest_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "心力衰竭",
+    "plain": "心脏供血能力不足以满足身体需要，可能引起气短等症状。",
+    "sourceIds": [
+      "cap_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "异位妊娠",
+    "plain": "孕囊长在子宫腔以外的位置，腹痛时必须考虑其可能，破裂可危及生命。",
+    "sourceIds": [
+      "appendix_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "舟骨骨折",
+    "plain": "手腕附近另一块小骨头的骨折，可能与腕部扭伤混淆。",
+    "sourceIds": [
+      "fracture_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "胃食管反流",
+    "plain": "胃里的内容物向上返流，可能引起烧心或胸部不适。",
+    "sourceIds": [
+      "chest_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "接触性皮炎",
+    "plain": "皮肤接触某些物质后产生的炎症，需要与其他皮疹区别。",
+    "sourceIds": [
+      "urticaria_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "消化道出血",
+    "plain": "食物经过的通道发生出血，可能表现为便血等，需要及时评估。",
+    "sourceIds": [
+      "gastro_diagnosis"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "肠梗阻",
+    "plain": "肠道内容物不能正常通过，可能腹痛、呕吐，需要进一步检查。",
+    "sourceIds": [
+      "gastro_diagnosis"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "尿路结石",
+    "plain": "尿液通路内形成的结石，可能引起疼痛或排尿异常。",
+    "sourceIds": [
+      "uti_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "输尿管结石",
+    "plain": "连接肾脏和膀胱的管道里出现结石，可能引起腹部或腰部疼痛。",
+    "sourceIds": [
+      "appendix_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "流行性感冒",
+    "plain": "流感病毒引起的呼吸道感染，不能把所有感冒样症状都当成普通感冒。",
+    "sourceIds": [
+      "uri_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "过敏性鼻炎",
+    "plain": "鼻部对某些物质发生反应，引起喷嚏、流涕等，容易与感冒混淆。",
+    "sourceIds": [
+      "uri_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "1型糖尿病",
+    "plain": "身体严重缺乏调节血糖所需的胰岛素的一类糖尿病，需要与2型区分。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "尿蛋白",
+    "plain": "尿中检出蛋白的线索，需要结合进一步检查判断原因。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "禁忌",
+    "plain": "某种病情或身体条件下不适合使用某项治疗的情况。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "晕厥",
+    "plain": "短暂失去意识，可能与供血不足等原因有关，需要评估。",
+    "sourceIds": [
+      "chest_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "骨折",
+    "plain": "骨头发生断裂，可能需要固定、复位或手术，并需要后续复查。",
+    "sourceIds": [
+      "fracture_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "骨折线",
+    "plain": "影像上可能显示骨头断裂的线状改变；是否骨折仍需专业判断。",
+    "sourceIds": [
+      "fracture_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "稳定性",
+    "plain": "骨折治疗中指骨块能否维持合适位置，影响固定和手术的选择。",
+    "sourceIds": [
+      "fracture_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "心律",
+    "plain": "心脏跳动的节奏，心电图可以帮助检查是否异常。",
+    "sourceIds": [
+      "chest_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "尿糖",
+    "plain": "尿中出现糖的检查线索，不能单凭它诊断糖尿病。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "肝肾功能",
+    "plain": "肝脏和肾脏处理体内物质的能力，会影响用药选择与安全。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "抗栓",
+    "plain": "减少血栓形成或发展的治疗，需要医生评估适应情况和出血风险。",
+    "sourceIds": [
+      "acs_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "溶栓",
+    "plain": "用药物帮助溶解某些堵塞血管的血栓，需要严格选择患者与监护。",
+    "sourceIds": [
+      "acs_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "氧疗",
+    "plain": "根据需要补充氧气的治疗，并非所有胸痛患者都需要。",
+    "sourceIds": [
+      "acs_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "桡骨",
+    "plain": "前臂靠拇指一侧的骨头，远端指靠近手腕的部分。",
+    "sourceIds": [
+      "fracture_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "膀胱炎",
+    "plain": "储存尿液的膀胱发生炎症，可能引起尿频和尿痛。",
+    "sourceIds": [
+      "uti_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "胸痛急救",
+    "plain": "对可能危及生命的胸部不适迅速评估和接续救治。",
+    "sourceIds": [
+      "chest_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "气促",
+    "plain": "觉得气不够用，或呼吸比平时急促。",
+    "sourceIds": [
+      "cap_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "特异体征",
+    "plain": "能够较有针对性地提示某种疾病的检查表现；没有它也不能直接排除疾病。",
+    "sourceIds": [
+      "uri_cn"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "分诊",
+    "plain": "到院后根据当前危险程度安排先后和去向，而不是简单按到院顺序排队。",
+    "sourceIds": [
+      "acs_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  },
+  {
+    "term": "初评",
+    "plain": "首次了解症状、查看身体状况并判断下一步检查或转诊。",
+    "sourceIds": [
+      "chest_nice"
+    ],
+    "reviewStatus": "draft",
+    "needsVerification": true,
+    "verificationNote": "依据相应病种资料起草的术语释义；逐条定义与原文对应关系尚待Claude核验。"
+  }
+]

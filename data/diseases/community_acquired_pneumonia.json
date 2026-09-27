@@ -1,0 +1,180 @@
+{
+  "id": "community_acquired_pneumonia",
+  "name": "社区获得性肺炎",
+  "icd10": "J18.9",
+  "department": "internal_medicine",
+  "relatedDepartments": [
+    "emergency"
+  ],
+  "population": {
+    "minimumAge": 18,
+    "scope": "非妊娠成人简化路径；儿童及妊娠患者不套用本条。"
+  },
+  "epidemiology": {
+    "annualIncidencePer100k": 800,
+    "metric": "annual_consultations_per_100k",
+    "ageWeights": {
+      "0–14": 0,
+      "15–44": 0.6,
+      "45–64": 1,
+      "65+": 2
+    },
+    "sexRatio": 1.1,
+    "seasonality": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "basis": "游戏估计：全部为虚构城市每10万人年就诊人次及相对权重，不是新发病例率或患病率；慢病包含复诊。年龄/性别需乘城市人口基数再归一化，18岁以下不生成；季节暂按均匀。"
+  },
+  "triage": {
+    "I": 0.01,
+    "II": 0.09,
+    "III": 0.65,
+    "IV": 0.25
+  },
+  "presentation": {
+    "chiefComplaints": [
+      "咳嗽发烧好几天了",
+      "走几步就喘，胸口不舒服"
+    ],
+    "symptoms": [
+      {
+        "name": "咳嗽",
+        "probability": 0.85
+      },
+      {
+        "name": "发热",
+        "probability": 0.7
+      },
+      {
+        "name": "气促",
+        "probability": 0.3
+      }
+    ],
+    "signs": [
+      "肺部可闻异常呼吸音",
+      "可有呼吸增快"
+    ]
+  },
+  "differentials": [
+    "upper_respiratory_infection",
+    "心力衰竭",
+    "肺栓塞"
+  ],
+  "workup": [
+    {
+      "examId": "chest_xray",
+      "purpose": "怀疑肺炎时评估肺部",
+      "typicalFinding": "可见新出现的肺部阴影；需结合表现",
+      "diagnosticValue": "supportive"
+    },
+    {
+      "examId": "cbc",
+      "purpose": "评估炎症等线索",
+      "typicalFinding": "白细胞可升高或正常，不能单独定病原",
+      "diagnosticValue": "supportive"
+    },
+    {
+      "examId": "pulse_oximetry",
+      "purpose": "评估呼吸受影响程度",
+      "typicalFinding": "重症可降低",
+      "diagnosticValue": "supportive"
+    }
+  ],
+  "diagnosis": {
+    "criteria": "结合急性呼吸道症状、查体与影像，排除其他原因；同时评估严重程度。",
+    "difficulty": 3,
+    "misdiagnosisRisks": [
+      "老人表现不典型而漏诊",
+      "把肺部阴影都当作感染"
+    ]
+  },
+  "treatment": [
+    {
+      "setting": "outpatient",
+      "description": "稳定轻症按病情和本地耐药情况选择抗菌治疗，安排复评。",
+      "requires": {
+        "departments": [
+          "internal_medicine"
+        ],
+        "equipment": [],
+        "staff": [
+          "physician"
+        ]
+      },
+      "duration": "按稳定情况和治疗反应决定"
+    },
+    {
+      "setting": "referral",
+      "description": "严重呼吸受损或无法安全门诊治疗时转诊。",
+      "requires": {
+        "departments": [
+          "emergency"
+        ],
+        "equipment": [
+          "resuscitation_kit"
+        ],
+        "staff": [
+          "emergency_physician",
+          "nurse"
+        ]
+      },
+      "duration": "立即评估接续，不能等待常规排队"
+    }
+  ],
+  "referral": "缺氧、循环不稳、意识改变或口服治疗困难时，转有住院及呼吸支持能力的医院。",
+  "outcomes": {
+    "timely": {
+      "recovered": 0.9,
+      "improved": 0.08,
+      "complication": 0.019,
+      "death": 0.001
+    },
+    "delayed": {
+      "recovered": 0.72,
+      "improved": 0.18,
+      "complication": 0.095,
+      "death": 0.005
+    },
+    "missed": {
+      "recovered": 0.55,
+      "improved": 0.2,
+      "complication": 0.23,
+      "death": 0.02
+    },
+    "basis": "游戏估计：用于将来平衡的占位概率，不是临床预后或因果效应；不得用于真实风险评估。",
+    "horizonDays": 30,
+    "scope": "假设完成接续医疗后的最终结局；转诊不是治愈。四类按死亡、并发症、恢复、好转优先互斥归类。"
+  },
+  "costCNY": [
+    120,
+    600
+  ],
+  "plain": "在医院外得的肺部感染，可能引起咳嗽、发热和喘气。轻重差异很大，部分患者需要住院。",
+  "businessNote": "老年人需要更仔细评估；门诊需影像与血氧评估渠道，重症依赖安全转诊。",
+  "sourceIds": [
+    "cap_cn",
+    "icd_who"
+  ],
+  "simplifications": [
+    "游戏估计：triage分布、症状出现概率、diagnosis.difficulty、费用区间和结局观察天数均无临床统计支持。",
+    "triage仅是未来抽样占位；真实分诊必须按当前生命体征和危险表现，不能由疾病名称或比例决定。",
+    "症状概率是边际概率，各症状可同时出现，不要求相加为1。",
+    "costCNY为本院一次初步门诊评估及基础处置的游戏估计，不含上级医院、手术、长期药物或后续复诊费用。",
+    "所有药物仅写类别与原则，不给剂量；用药选择需考虑禁忌、过敏、肝肾功能及本地规则。",
+    "未建模完整鉴别、合并疾病和特殊人群；workup是按条件选择的候选集，不是每人必做清单。",
+    "ICD-10映射未逐码核对，见icd_who.needsVerification；不代表结算编码。",
+    "成人指南不外推儿童；病原及抗菌药敏感性未细分。"
+  ],
+  "reviewStatus": "draft"
+}

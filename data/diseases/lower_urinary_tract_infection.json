@@ -1,0 +1,155 @@
+{
+  "id": "lower_urinary_tract_infection",
+  "name": "下尿路感染",
+  "icd10": "N30.0",
+  "department": "internal_medicine",
+  "relatedDepartments": [
+    "urology",
+    "emergency"
+  ],
+  "population": {
+    "minimumAge": 18,
+    "scope": "非妊娠成人简化路径；儿童及妊娠患者不套用本条。"
+  },
+  "epidemiology": {
+    "annualIncidencePer100k": 4000,
+    "metric": "annual_consultations_per_100k",
+    "ageWeights": {
+      "0–14": 0,
+      "15–44": 1.2,
+      "45–64": 1,
+      "65+": 1
+    },
+    "sexRatio": 0.25,
+    "seasonality": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "basis": "游戏估计：全部为虚构城市每10万人年就诊人次及相对权重，不是新发病例率或患病率；慢病包含复诊。年龄/性别需乘城市人口基数再归一化，18岁以下不生成；季节暂按均匀。"
+  },
+  "triage": {
+    "I": 0.001,
+    "II": 0.009,
+    "III": 0.19,
+    "IV": 0.8
+  },
+  "presentation": {
+    "chiefComplaints": [
+      "小便时刺痛",
+      "总想上厕所，每次只有一点"
+    ],
+    "symptoms": [
+      {
+        "name": "尿痛",
+        "probability": 0.8
+      },
+      {
+        "name": "尿频尿急",
+        "probability": 0.85
+      }
+    ],
+    "signs": [
+      "可有下腹压痛",
+      "检查有无发热和腰部压痛"
+    ]
+  },
+  "differentials": [
+    "肾盂肾炎",
+    "尿道炎",
+    "尿路结石"
+  ],
+  "workup": [
+    {
+      "examId": "urinalysis",
+      "purpose": "结合症状寻找感染线索",
+      "typicalFinding": "可见白细胞；单独异常不等于有症状感染",
+      "diagnosticValue": "supportive"
+    },
+    {
+      "examId": "urine_culture",
+      "purpose": "男性、反复或治疗失败等情况在用药前留样",
+      "typicalFinding": "可检出细菌并提供药敏",
+      "diagnosticValue": "supportive"
+    }
+  ],
+  "diagnosis": {
+    "criteria": "根据尿痛尿频等定位症状并结合检查；排查上尿路感染和其他病因。",
+    "difficulty": 2,
+    "misdiagnosisRisks": [
+      "把发热腰痛也当简单膀胱炎",
+      "把无症状尿液异常当作需用药的感染"
+    ]
+  },
+  "treatment": [
+    {
+      "setting": "outpatient",
+      "description": "根据人群、本地耐药、既往培养及禁忌选择抗菌药，未改善需复评。",
+      "requires": {
+        "departments": [
+          "internal_medicine"
+        ],
+        "equipment": [],
+        "staff": [
+          "physician"
+        ]
+      },
+      "duration": "按病情和药物决定，不统一固定疗程"
+    }
+  ],
+  "referral": "发热腰痛、全身明显恶化或疑梗阻，转有急诊或泌尿专科能力的医院。",
+  "outcomes": {
+    "timely": {
+      "recovered": 0.9,
+      "improved": 0.08,
+      "complication": 0.019,
+      "death": 0.001
+    },
+    "delayed": {
+      "recovered": 0.72,
+      "improved": 0.18,
+      "complication": 0.095,
+      "death": 0.005
+    },
+    "missed": {
+      "recovered": 0.55,
+      "improved": 0.2,
+      "complication": 0.23,
+      "death": 0.02
+    },
+    "basis": "游戏估计：用于将来平衡的占位概率，不是临床预后或因果效应；不得用于真实风险评估。",
+    "horizonDays": 30,
+    "scope": "假设完成接续医疗后的最终结局；转诊不是治愈。四类按死亡、并发症、恢复、好转优先互斥归类。"
+  },
+  "costCNY": [
+    40,
+    300
+  ],
+  "plain": "尿痛和尿频可能来自膀胱感染。出现发热、腰痛或全身很不舒服时，要考虑感染范围更大。",
+  "businessNote": "女性就诊较多；需尿检及培养渠道，反复感染和男性患者需要更谨慎评估。",
+  "sourceIds": [
+    "uti_nice",
+    "icd_who"
+  ],
+  "simplifications": [
+    "游戏估计：triage分布、症状出现概率、diagnosis.difficulty、费用区间和结局观察天数均无临床统计支持。",
+    "triage仅是未来抽样占位；真实分诊必须按当前生命体征和危险表现，不能由疾病名称或比例决定。",
+    "症状概率是边际概率，各症状可同时出现，不要求相加为1。",
+    "costCNY为本院一次初步门诊评估及基础处置的游戏估计，不含上级医院、手术、长期药物或后续复诊费用。",
+    "所有药物仅写类别与原则，不给剂量；用药选择需考虑禁忌、过敏、肝肾功能及本地规则。",
+    "未建模完整鉴别、合并疾病和特殊人群；workup是按条件选择的候选集，不是每人必做清单。",
+    "ICD-10映射未逐码核对，见icd_who.needsVerification；不代表结算编码。",
+    "以急性膀胱炎暂映射N30.0，不代表全部下尿路感染。",
+    "国外抗菌药选择不可直接移植；本条不列药名剂量，国内路径与耐药依据待审。"
+  ],
+  "reviewStatus": "draft"
+}

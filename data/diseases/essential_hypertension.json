@@ -1,0 +1,157 @@
+{
+  "id": "essential_hypertension",
+  "name": "原发性高血压",
+  "icd10": "I10",
+  "department": "internal_medicine",
+  "relatedDepartments": [
+    "cardiology",
+    "emergency"
+  ],
+  "population": {
+    "minimumAge": 18,
+    "scope": "非妊娠成人简化路径；儿童及妊娠患者不套用本条。"
+  },
+  "epidemiology": {
+    "annualIncidencePer100k": 18000,
+    "metric": "annual_consultations_per_100k",
+    "ageWeights": {
+      "0–14": 0,
+      "15–44": 0.3,
+      "45–64": 1.5,
+      "65+": 2.5
+    },
+    "sexRatio": 1,
+    "seasonality": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "basis": "游戏估计：全部为虚构城市每10万人年就诊人次及相对权重，不是新发病例率或患病率；慢病包含复诊。年龄/性别需乘城市人口基数再归一化，18岁以下不生成；季节暂按均匀。"
+  },
+  "triage": {
+    "I": 0.001,
+    "II": 0.009,
+    "III": 0.09,
+    "IV": 0.9
+  },
+  "presentation": {
+    "chiefComplaints": [
+      "体检说我血压高",
+      "我来复查血压，平时没什么感觉"
+    ],
+    "symptoms": [
+      {
+        "name": "头晕",
+        "probability": 0.2
+      },
+      {
+        "name": "无明显不适",
+        "probability": 0.7
+      }
+    ],
+    "signs": [
+      "规范复测血压持续升高"
+    ]
+  },
+  "differentials": [
+    "继发性高血压",
+    "白大衣性高血压"
+  ],
+  "workup": [
+    {
+      "examId": "blood_pressure",
+      "purpose": "规范多次测量以确认持续升高",
+      "typicalFinding": "不同日期仍升高；需排除测量影响",
+      "diagnosticValue": "essential"
+    },
+    {
+      "examId": "ecg",
+      "purpose": "按病情评估心脏受累线索",
+      "typicalFinding": "可正常或有异常，不能单独确定病因",
+      "diagnosticValue": "supportive"
+    }
+  ],
+  "diagnosis": {
+    "criteria": "以规范多次血压测量及必要的院外测量确认，排查继发原因；不凭一次读数诊断。",
+    "difficulty": 2,
+    "misdiagnosisRisks": [
+      "紧张引起的单次升高误作长期高血压",
+      "漏查继发原因"
+    ]
+  },
+  "treatment": [
+    {
+      "setting": "outpatient",
+      "description": "生活方式管理、个体化降压用药和长期随访。",
+      "requires": {
+        "departments": [
+          "internal_medicine"
+        ],
+        "equipment": [
+          "bp_monitor"
+        ],
+        "staff": [
+          "physician",
+          "nurse"
+        ]
+      },
+      "duration": "长期管理，不以一次就诊表示治愈"
+    }
+  ],
+  "referral": "血压升高伴胸痛、急性呼吸困难或神经功能异常立即转急诊；疑继发或难控制者转专科。",
+  "outcomes": {
+    "timely": {
+      "recovered": 0,
+      "improved": 0.96,
+      "complication": 0.039,
+      "death": 0.001
+    },
+    "delayed": {
+      "recovered": 0,
+      "improved": 0.85,
+      "complication": 0.145,
+      "death": 0.005
+    },
+    "missed": {
+      "recovered": 0,
+      "improved": 0.7,
+      "complication": 0.29,
+      "death": 0.01
+    },
+    "basis": "游戏估计：用于将来平衡的占位概率，不是临床预后或因果效应；不得用于真实风险评估。",
+    "horizonDays": 90,
+    "scope": "假设完成接续医疗后的最终结局；转诊不是治愈。四类按死亡、并发症、恢复、好转优先互斥归类。"
+  },
+  "costCNY": [
+    20,
+    200
+  ],
+  "plain": "血压长期偏高可能伤害心脑和肾脏，即使没有不舒服也要管理。通常需要持续复查和治疗。",
+  "businessNote": "中老年长期随访需求较多；稳定管理依赖可靠测量、用药复核及转诊渠道。",
+  "sourceIds": [
+    "htn_cn",
+    "htn_education",
+    "icd_who"
+  ],
+  "simplifications": [
+    "游戏估计：triage分布、症状出现概率、diagnosis.difficulty、费用区间和结局观察天数均无临床统计支持。",
+    "triage仅是未来抽样占位；真实分诊必须按当前生命体征和危险表现，不能由疾病名称或比例决定。",
+    "症状概率是边际概率，各症状可同时出现，不要求相加为1。",
+    "costCNY为本院一次初步门诊评估及基础处置的游戏估计，不含上级医院、手术、长期药物或后续复诊费用。",
+    "所有药物仅写类别与原则，不给剂量；用药选择需考虑禁忌、过敏、肝肾功能及本地规则。",
+    "未建模完整鉴别、合并疾病和特殊人群；workup是按条件选择的候选集，不是每人必做清单。",
+    "ICD-10映射未逐码核对，见icd_who.needsVerification；不代表结算编码。",
+    "未写具体诊断和控制阈值：国内指南全文与现行版本仍需核验。",
+    "慢病recovered恒为0，好转代表控制改善，不能表示根治；90天观察仅为游戏提案。"
+  ],
+  "reviewStatus": "draft"
+}

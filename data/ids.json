@@ -1,0 +1,158 @@
+{
+  "departments": [
+    {
+      "id": "internal_medicine",
+      "name": "内科"
+    },
+    {
+      "id": "surgery",
+      "name": "外科"
+    },
+    {
+      "id": "emergency",
+      "name": "急诊"
+    },
+    {
+      "id": "cardiology",
+      "name": "心内科"
+    },
+    {
+      "id": "endocrinology",
+      "name": "内分泌科"
+    },
+    {
+      "id": "urology",
+      "name": "泌尿外科"
+    },
+    {
+      "id": "orthopedics",
+      "name": "骨科"
+    },
+    {
+      "id": "dermatology",
+      "name": "皮肤科"
+    }
+  ],
+  "rooms": [
+    {
+      "id": "consultation",
+      "name": "诊室"
+    },
+    {
+      "id": "laboratory",
+      "name": "检验室"
+    },
+    {
+      "id": "ecg_room",
+      "name": "心电检查室"
+    },
+    {
+      "id": "xray_room",
+      "name": "X光室"
+    },
+    {
+      "id": "ultrasound_room",
+      "name": "超声室"
+    },
+    {
+      "id": "ct_room",
+      "name": "CT室"
+    }
+  ],
+  "equipment": [
+    {
+      "id": "bp_monitor",
+      "name": "血压计"
+    },
+    {
+      "id": "pulse_oximeter",
+      "name": "脉搏血氧仪"
+    },
+    {
+      "id": "hematology_analyzer",
+      "name": "血细胞分析仪"
+    },
+    {
+      "id": "urine_analyzer",
+      "name": "尿液分析仪"
+    },
+    {
+      "id": "biochemistry_analyzer",
+      "name": "生化分析仪"
+    },
+    {
+      "id": "hba1c_analyzer",
+      "name": "糖化血红蛋白分析仪"
+    },
+    {
+      "id": "ecg_machine",
+      "name": "心电图机"
+    },
+    {
+      "id": "troponin_analyzer",
+      "name": "肌钙蛋白快速分析仪"
+    },
+    {
+      "id": "xray_machine",
+      "name": "X光机"
+    },
+    {
+      "id": "ultrasound_machine",
+      "name": "超声机"
+    },
+    {
+      "id": "ct_scanner",
+      "name": "CT机"
+    },
+    {
+      "id": "microbiology_system",
+      "name": "培养及药敏设备"
+    },
+    {
+      "id": "splint_kit",
+      "name": "夹板固定用品"
+    },
+    {
+      "id": "resuscitation_kit",
+      "name": "基础抢救设备"
+    }
+  ],
+  "staff": [
+    {
+      "id": "physician",
+      "name": "医师"
+    },
+    {
+      "id": "nurse",
+      "name": "护士"
+    },
+    {
+      "id": "lab_technician",
+      "name": "检验技师"
+    },
+    {
+      "id": "radiographer",
+      "name": "放射技师"
+    },
+    {
+      "id": "radiologist",
+      "name": "影像诊断医师"
+    },
+    {
+      "id": "sonographer",
+      "name": "超声医师"
+    },
+    {
+      "id": "surgeon",
+      "name": "外科医师"
+    },
+    {
+      "id": "orthopedic_physician",
+      "name": "骨科医师"
+    },
+    {
+      "id": "emergency_physician",
+      "name": "急诊医师"
+    }
+  ]
+}

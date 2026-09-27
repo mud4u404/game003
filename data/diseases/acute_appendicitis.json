@@ -1,0 +1,180 @@
+{
+  "id": "acute_appendicitis",
+  "name": "急性阑尾炎",
+  "icd10": "K35",
+  "department": "surgery",
+  "relatedDepartments": [
+    "emergency"
+  ],
+  "population": {
+    "minimumAge": 18,
+    "scope": "非妊娠成人简化路径；儿童及妊娠患者不套用本条。"
+  },
+  "epidemiology": {
+    "annualIncidencePer100k": 120,
+    "metric": "annual_consultations_per_100k",
+    "ageWeights": {
+      "0–14": 0,
+      "15–44": 1.5,
+      "45–64": 1,
+      "65+": 0.6
+    },
+    "sexRatio": 1.1,
+    "seasonality": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "basis": "游戏估计：全部为虚构城市每10万人年就诊人次及相对权重，不是新发病例率或患病率；慢病包含复诊。年龄/性别需乘城市人口基数再归一化，18岁以下不生成；季节暂按均匀。"
+  },
+  "triage": {
+    "I": 0.01,
+    "II": 0.19,
+    "III": 0.75,
+    "IV": 0.05
+  },
+  "presentation": {
+    "chiefComplaints": [
+      "肚子疼，后来右下边更疼",
+      "肚子疼还恶心，不想吃东西"
+    ],
+    "symptoms": [
+      {
+        "name": "腹痛",
+        "probability": 0.95
+      },
+      {
+        "name": "恶心",
+        "probability": 0.5
+      },
+      {
+        "name": "食欲下降",
+        "probability": 0.6
+      }
+    ],
+    "signs": [
+      "右下腹可有压痛",
+      "可有腹膜刺激征"
+    ]
+  },
+  "differentials": [
+    "acute_gastroenteritis",
+    "输尿管结石",
+    "异位妊娠"
+  ],
+  "workup": [
+    {
+      "examId": "cbc",
+      "purpose": "协助评估炎症",
+      "typicalFinding": "白细胞可升高，正常不能排除",
+      "diagnosticValue": "supportive"
+    },
+    {
+      "examId": "abdominal_ultrasound",
+      "purpose": "按病情寻找阑尾异常",
+      "typicalFinding": "可见异常阑尾；未显示不等于排除",
+      "diagnosticValue": "supportive"
+    },
+    {
+      "examId": "abdominal_ct",
+      "purpose": "诊断仍不清且接收医院认为有指征时",
+      "typicalFinding": "可显示阑尾及周围炎症",
+      "diagnosticValue": "supportive"
+    }
+  ],
+  "diagnosis": {
+    "criteria": "根据腹痛演变、腹部查体及选择性影像由外科综合判断；不能只依赖血常规。",
+    "difficulty": 3,
+    "misdiagnosisRisks": [
+      "早期腹痛不典型误作胃肠炎",
+      "超声未显示阑尾被当作阴性排除"
+    ]
+  },
+  "treatment": [
+    {
+      "setting": "referral",
+      "description": "疑似者尽快转有急诊外科和手术能力的医院评估；本院不开展手术。",
+      "requires": {
+        "departments": [
+          "surgery"
+        ],
+        "equipment": [],
+        "staff": [
+          "surgeon",
+          "nurse"
+        ]
+      },
+      "duration": "尽快交接，不等待无条件可做的影像"
+    },
+    {
+      "setting": "surgery",
+      "description": "接收医院外科评估手术及其他治疗选择。",
+      "requires": {
+        "departments": [
+          "surgery"
+        ],
+        "equipment": [],
+        "staff": [
+          "surgeon"
+        ]
+      },
+      "duration": "由接收医院按病情决定"
+    }
+  ],
+  "referral": "本院无手术能力时疑似即转；循环不稳或腹膜刺激征明显，按急症救治并转运。",
+  "outcomes": {
+    "timely": {
+      "recovered": 0.93,
+      "improved": 0.05,
+      "complication": 0.019,
+      "death": 0.001
+    },
+    "delayed": {
+      "recovered": 0.75,
+      "improved": 0.1,
+      "complication": 0.14,
+      "death": 0.01
+    },
+    "missed": {
+      "recovered": 0.4,
+      "improved": 0.1,
+      "complication": 0.45,
+      "death": 0.05
+    },
+    "basis": "游戏估计：用于将来平衡的占位概率，不是临床预后或因果效应；不得用于真实风险评估。",
+    "horizonDays": 30,
+    "scope": "假设完成接续医疗后的最终结局；转诊不是治愈。四类按死亡、并发症、恢复、好转优先互斥归类。"
+  },
+  "costCNY": [
+    80,
+    500
+  ],
+  "plain": "阑尾发炎会引起腹痛，有时先在肚子中间疼，后来右下腹更明显。延误可能造成破裂，需要及时外科评估。",
+  "businessNote": "小医院重点是识别和转诊，不能因无CT反复等待；需要可靠外科接续。",
+  "sourceIds": [
+    "appendix_cn",
+    "appendix_wses",
+    "icd_who"
+  ],
+  "simplifications": [
+    "游戏估计：triage分布、症状出现概率、diagnosis.difficulty、费用区间和结局观察天数均无临床统计支持。",
+    "triage仅是未来抽样占位；真实分诊必须按当前生命体征和危险表现，不能由疾病名称或比例决定。",
+    "症状概率是边际概率，各症状可同时出现，不要求相加为1。",
+    "costCNY为本院一次初步门诊评估及基础处置的游戏估计，不含上级医院、手术、长期药物或后续复诊费用。",
+    "所有药物仅写类别与原则，不给剂量；用药选择需考虑禁忌、过敏、肝肾功能及本地规则。",
+    "未建模完整鉴别、合并疾病和特殊人群；workup是按条件选择的候选集，不是每人必做清单。",
+    "ICD-10映射未逐码核对，见icd_who.needsVerification；不代表结算编码。",
+    "旧县级路径不能代表全部现代治疗选择；手术条目只描述外院能力，不表示MVP可开手术。",
+    "非妊娠路径仍保留异位妊娠鉴别提醒；有妊娠可能须另行评估。"
+  ],
+  "reviewStatus": "draft"
+}
