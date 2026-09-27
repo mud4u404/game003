@@ -1,6 +1,6 @@
 # T004 美术管线验证：一间诊室
 
-状态：待发布（排在 T002 之后、T003 之前）
+状态：待发布（T006 合并后立即发布）
 依据：目标图 `art/concepts/v04/d-target.webp`；`AGENTS.md` 视觉目标；T001 的等轴引擎（`v2/`）
 分支：`codex/T004-art-pipeline`（由 Claude 预先建好）
 
