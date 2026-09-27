@@ -1,0 +1,15 @@
+{
+  "diseases": [
+    "acute_appendicitis",
+    "acute_coronary_syndrome",
+    "acute_gastroenteritis",
+    "acute_urticaria",
+    "community_acquired_pneumonia",
+    "distal_radius_fracture",
+    "essential_hypertension",
+    "lower_urinary_tract_infection",
+    "soft_tissue_injury",
+    "type_2_diabetes",
+    "upper_respiratory_infection"
+  ]
+}

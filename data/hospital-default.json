@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "name": "仁和医院",
+  "basis": "游戏原型默认配置：人口、市场份额、营业时间、员工能力、收费均为游戏估计，不是现实数据。",
+  "district": {
+    "name": "老城区",
+    "population": 80000,
+    "ageShares": { "0–14": 0.1, "15–44": 0.34, "45–64": 0.31, "65+": 0.25 },
+    "femaleShare": 0.51,
+    "marketShare": 0.2
+  },
+  "timezoneOffsetMinutes": 480,
+  "openHour": 8,
+  "closeHour": 17,
+  "lastServiceHour": 19,
+  "departments": ["internal_medicine", "surgery"],
+  "equipment": ["bp_monitor", "pulse_oximeter", "hematology_analyzer", "urine_analyzer", "biochemistry_analyzer", "hba1c_analyzer", "ecg_machine", "xray_machine", "splint_kit", "resuscitation_kit"],
+  "rooms": [
+    { "id": "consult", "type": "consultation", "name": "内科诊室" },
+    { "id": "ward", "type": "consultation", "name": "外科诊室 · 处置室", "alsoServes": ["ecg_room", "treatment"] },
+    { "id": "lab", "type": "laboratory", "name": "检验科" },
+    { "id": "xray", "type": "xray_room", "name": "放射科" },
+    { "id": "hall", "type": "waiting", "name": "候诊大厅" }
+  ],
+  "staff": [
+    { "id": "doctor-1", "name": "陈明", "role": "physician", "department": "internal_medicine", "title": "主治医师", "room": "consult", "skill": 0.72, "speed": 0.9 },
+    { "id": "doctor-2", "name": "林远", "role": "physician", "department": "surgery", "title": "住院医师", "room": "ward", "skill": 0.5, "speed": 1.15 },
+    { "id": "triage", "name": "周宁", "role": "nurse", "duty": "triage", "room": "hall", "skill": 0.7, "speed": 1 },
+    { "id": "ward-nurse", "name": "林静", "role": "nurse", "duty": "treatment", "room": "ward", "skill": 0.7, "speed": 1 },
+    { "id": "lab-tech", "name": "刘川", "role": "lab_technician", "room": "lab", "skill": 0.7, "speed": 1 },
+    { "id": "xray-tech", "name": "何川", "role": "radiographer", "room": "xray", "skill": 0.7, "speed": 1 }
+  ],
+  "fees": { "registration": 15, "consultation": 25, "treatmentShare": 0.5 },
+  "rules": { "examStrategy": "standard", "scope": "refer" }
+}

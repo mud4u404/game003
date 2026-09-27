@@ -12,7 +12,7 @@ http.createServer(async (req, res) => {
     const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
     const relative = pathname === '/' ? 'index.html' : pathname === '/v2/' ? 'v2/index.html' : pathname.slice(1);
     // Serve only the application, not repository metadata or local credentials.
-    if (!(relative === 'index.html' || relative === 'style.css' || relative.startsWith('src/') || relative.startsWith('assets/') || relative.startsWith('v2/')) ||
+    if (!(relative === 'index.html' || relative === 'style.css' || relative.startsWith('src/') || relative.startsWith('assets/') || relative.startsWith('v2/') || relative.startsWith('data/')) ||
         relative.split('/').some(p => p === '..' || p.startsWith('.'))) {
       res.writeHead(404).end('Not found'); return;
     }

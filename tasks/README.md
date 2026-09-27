@@ -7,7 +7,7 @@ Claude 编写、ChatGPT 执行、Claude 审查。流程见 `docs/WORKFLOW.md`。
 | T001 | [等轴场景基础](T001-iso-scene.md) | 已完成 | `codex/T001-iso-scene` |
 | T002 | [知识库格式与首批病种](T002-knowledge-base.md) | 已完成 | `codex/T002-knowledge-base` |
 | T005 | [接力脚本：开工留言与进度心跳](T005-relay-heartbeat.md) | 待发布（需用户在场：重装接力服务会中断正在运行的任务） | `codex/T005-relay-heartbeat` |
-| T003 | [就诊模拟引擎核心](T003-sim-core.md) | 开发中 | `codex/T003-sim-core` |
+| T003 | [就诊模拟引擎核心](T003-sim-core.md) | 已完成（Claude 实现） | `claude/T003-sim-core` |
 | T006 | [可玩原型 v0.1：模拟接入画面](T006-playable.md) | 待发布（T003 合并后立即） | `codex/T006-playable` |
 | T004 | [美术管线验证：一间诊室](T004-art-pipeline.md) | 待发布（T006 合并后立即；Codex 可以生成图片） | `codex/T004-art-pipeline` |
 
