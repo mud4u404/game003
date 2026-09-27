@@ -1,6 +1,10 @@
 import { clinicalStatus } from './medical.js';
 // Presentation reads factual assignments and time; it never spawns demand or awards progress.
 export function staffActivity(s, id) {
+  if(id==='pharmacist'){
+    const p=s.patients.find(p=>p.phase==='pharmacy');
+    return p?{mode:s.time<p.serviceAt?'calling':'working',label:s.time<p.serviceAt?'等候患者到取药台':p.clinical.stage==='dispense'?'核对发药与用药说明':'审核续配处方',frame:p.clinical.stage==='dispense'?2:Math.floor((s.time-p.serviceAt)/900)%2,patientId:p.id}:{mode:'preparing',label:'核对库存与处方记录',frame:0};
+  }
   if(id==='doctor1'&&s.patients.some(p=>p.phase==='urgent'))return {mode:'working',label:'协调急救接续',frame:2};
   const phase=id==='nurse2'?'sampling':id==='reception'?'registration':id==='nurse'?'nursing':'consultation';
   const p=(id==='nurse'?s.patients.find(p=>p.phase==='urgent'):null)||s.patients.find(p=>p.phase===phase && (!id.startsWith('doctor') || p.room===(id==='doctor1'?1:2)));
@@ -30,6 +34,8 @@ export function patientIntent(p,time) {
     nursingQueue:'等候护理',nursing:traveling?'前往护理位':'护理中',leaving:'接诊结束 · 离院' }[p.phase] || '';
 }
 export function destinationLabel(p) {
+  if(p.phase==='pharmacy')return '药房';
+  if(p.clinical?.stage==='pharmacy'&&p.phase==='waiting')return '候药';
   if(p.phase==='urgent')return '急救接续';
   if(p.phase==='sampling')return '采样单元';
   if(p.clinical&&p.phase==='nursing')return p.clinical.stage==='sample'?'采样':'评估';

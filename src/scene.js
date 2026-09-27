@@ -133,7 +133,7 @@ export class ClinicScene {
         x += (seated[0]-x)*sit; y += (seated[1]-y)*sit;
       }
       const width = look.height * .95 * look.widthScale;
-      const visibleBottom=staff ? actor.id==='reception'?Math.min(y,791):actor.id.startsWith('doctor')?Math.min(y,215):y : y;
+      const visibleBottom=staff ? actor.id==='reception'?Math.min(y,791):actor.id==='pharmacist'?Math.min(y,515):actor.id.startsWith('doctor')?Math.min(y,215):y : y;
       this.hits.push({id:actor.id,x,y,width:width*.75,height:spriteHeight,bottom:visibleBottom});
       const seatedPhase = !staff && pose.rising ? actor.previousPhase : actor.phase;
       const seatedFacesRight = [3,4,5].includes(look.seatedIndex);
@@ -160,12 +160,12 @@ export class ClinicScene {
         drawSprite('walk',row*4+frame,look.height,1);
       } else if(staff && actor.id.startsWith('nurse') && actor.activity?.clinicalRow!=null){
         drawSprite('nurseWork',actor.activity.clinicalRow*3+actor.activity.frame,look.height,1);
-      } else if(staff && ['doctor1','doctor2','reception'].includes(actor.id) && actor.activity?.mode!=='available') {
-        const row={doctor1:0,doctor2:1,reception:2}[actor.id];
+      } else if(staff && ['doctor1','doctor2','reception','pharmacist'].includes(actor.id) && actor.activity?.mode!=='available') {
+        const row={doctor1:0,doctor2:1,reception:2,pharmacist:1}[actor.id];
         drawSprite('work',row*3+actor.activity.frame,spriteHeight,1);
       } else {
         const sitting = sit > .5;
-        const atlas = sitting ? staff&&actor.id.startsWith('doctor')?'characters':'seated' : !staff||actor.id.startsWith('nurse')?'idle':'characters';
+        const atlas = sitting ? staff&&(actor.id.startsWith('doctor')||actor.id==='pharmacist')?'characters':'seated' : !staff||actor.id.startsWith('nurse')?'idle':'characters';
         const index = sitting ? staff ? actor.id==='reception'?7:look.seatedIndex : look.seatedIndex : !staff?look.index-5:actor.id.startsWith('nurse')?7:look.index;
         // One body at a time: lift/lower over the transition without translucent double heads.
         drawSprite(atlas,index,spriteHeight,1);
@@ -262,17 +262,24 @@ export class ClinicScene {
       }
     });
     module(-654, 208, () => {
-      this.room(708, 260, s.medical?'评估与护理':'基础护理', 3, '#d4d4cf');
+      this.room(708, 260, s.medical?'检查与采样室':'基础护理', 3, '#d4d4cf');
       this.bed(737,278);
       this.prop('furniture',7,887,240,75,77);
       this.prop('furniture',5,911,348,43,58);
     });
     module(-664, 208, () => {
-      this.room(978, 260, '院务办公室', 4, '#e1d6c4');
-      this.desk(1068,324,111); this.chair(1121,312,'#81958c'); this.chair(1081,391); this.chair(1137,391);
-      this.cabinet(1187,249,40,61); this.plant(1212,402,.72);
-      this.box(1007,248,50,57,'#c2b495',3); this.box(1013,254,38,45,'#eae5d0',2);
-      this.box(1018,260,15,17,'#f5f1db',1); this.box(1034,275,11,15,'#aec3ac',1);
+      const pharmacy=s.medical?.pharmacy;
+      this.room(978,260,pharmacy?.enabled?'药房 · 审方与发药':pharmacy?.project?'药房 · 筹备中':'行政 / 可改药房',4,'#e1d6c4');
+      this.desk(1068,324,111);
+      if(pharmacy?.enabled){
+        this.cabinet(1187,249,40,61);
+        this.box(1007,250,55,56,'#e0dfd3',2);
+        for(let row=0;row<3;row++){this.line(1010,265+row*15,1058,265+row*15,'#819093',2);for(let col=0;col<4;col++)this.box(1013+col*11,255+row*15,8,10,['#adbdba','#d7bba0','#a9b9cd'][row],1);}
+        this.box(1150,332,20,19,'#eeeae0',1);this.line(1154,338,1167,338,'#627f8b',2);
+      }else{
+        this.chair(1121,312,'#81958c');this.chair(1137,391);this.cabinet(1187,249,40,61);this.plant(1212,402,.72);
+        this.text(pharmacy?.project?'药柜、库存及药师准备中':'院外药房接续',1099,281,12,'#596e79','center');
+      }
     });
     for(const y of [124,436]) { this.box(572,y,12,231,'#8e999d'); this.box(572,y-5,7,231,'#e1e0d8'); }
     for (const y of [100,410]) for (const x of [94,354]) {
@@ -280,9 +287,10 @@ export class ClinicScene {
       this.line(x+58,y+3,x+58,y+16,'#566772',2);
     }
     this.text('门 诊', 569, 386, 12, '#66737a', 'right');
-    this.text('照 护 与 院 务', 569, 696, 11, '#66737a', 'right');
+    this.text(s.medical?'检 查 与 药 事':'照 护 与 院 务', 569, 696, 11, '#66737a', 'right');
     for (const [id,seat] of Object.entries(FIXED_SEATS)) {
       if (!s.secondRoom && (id==='doctor2'||id==='consultation2')) continue;
+      if(id==='pharmacist'&&!s.medical?.pharmacy?.enabled)continue;
       if(id==='sampling'&&!s.medical?.annex)continue;
       if(id==='urgent'){for(const p of s.patients.filter(p=>p.phase==='urgent'))this.chair(287-(p.urgentSlot||0)*60,721);continue;}
       this.chair(seat.x,seat.y);
@@ -299,7 +307,7 @@ export class ClinicScene {
     this.box(151,942,115,30,'#344b5c',5); this.text('梅 奥 诊 所',208,962,13,'#f2f2ec','center',500);
 
     if(s.medical)this.drawAnnex(s,module);
-    const actors = STAFF.filter(a=>(a.id!=='doctor2'||s.secondRoom)&&(a.id!=='nurse2'||s.medical?.annex)).map(a=>{
+    const actors = STAFF.filter(a=>(a.id!=='doctor2'||s.secondRoom)&&(a.id!=='nurse2'||s.medical?.annex)&&(a.id!=='pharmacist'||s.medical?.pharmacy?.enabled)).map(a=>{
       const pose=a.id.startsWith('nurse')?nursePose(s,a.id):sampleMotion(settledMotion(STAFF_POS[a.id],s.time),s.time);
       const activity=staffActivity(s,a.id),working=['working','care'].includes(activity.mode);
       return {...a,pose,pos:pose.position,staff:true,walk:pose.moving,working,activity,variant:STAFF.indexOf(a)};

@@ -1,6 +1,7 @@
 // Seat centers refer to the cushion, not the character's feet or the backrest.
 // Both furniture rendering and seated actors resolve these same definitions.
 export const FIXED_SEATS = {
+  pharmacist: { x:456, y:520 },
   doctor1: { x: 173, y: 222 },
   doctor2: { x: 432, y: 222 },
   reception: { x: 185, y: 798 },

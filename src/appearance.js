@@ -1,9 +1,9 @@
+import { identityHash, patientSex } from './identity.js';
 // Appearance is derived from identity, never from the world's demand RNG.
-// It is stable across reloads and adds no new save fields.
+// Names, age, sex and sprites share one profile; follow-up visits preserve the episode identity.
 export function patientAppearance(patient) {
-  let hash = 2166136261;
-  for (const c of `${patient.id}:${patient.name}:${patient.appearance}`) hash = Math.imul(hash ^ c.charCodeAt(0), 16777619) >>> 0;
-  const choices = patient.age >= 60 ? [5, 6] : patient.age < 40 ? [7, 9, 10] : [8, 9, 10, 11];
+  const hash=identityHash(patient),sex=patientSex(patient);
+  const choices = sex==='female' ? (patient.age>=60?[6]:[7,10]) : (patient.age>=60?[5]:patient.age<40?[9]:[8,9,11]);
   const index = choices[hash % choices.length];
   const heights = { 5: 75, 6: 70, 7: 75, 8: 77, 9: 86, 10: 78, 11: 76 };
   return { index, seatedIndex: index - 5, height: heights[index] + ((hash >>> 5) % 7) - 3,
@@ -14,6 +14,7 @@ export const STAFF_APPEARANCE = {
   doctor2: { index: 1, seatedIndex: 15, height: 83, widthScale: 1.03 },
   nurse: { index: 2, height: 76, widthScale: 1 },
   nurse2: { index: 2, height: 80, widthScale: .95 },
+  pharmacist: { index: 1, seatedIndex:15, height: 80, widthScale: .97 },
   director: { index: 3, height: 79, widthScale: 1 },
   reception: { index: 4, height: 77, widthScale: 1 }
 };
