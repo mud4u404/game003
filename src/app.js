@@ -1,3 +1,5 @@
+import { CLINICAL_CASES, ANNEX, clinicalStatus } from './medical.js';
+import { ClinicAudio } from './audio.js';
 import { staffActivity, patientIntent } from './activity.js';
 import { createState, advanceTo, restoreState, snapshot, STAFF, CASES, PROJECT, MINUTE, HOUR, applyManagementAction, setAuthority } from './simulation.js';
 import { ClinicScene } from './scene.js';
@@ -8,6 +10,7 @@ const time = n => new Date(n).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:
 const esc = v => String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let state, leader = false, catchingUp = false, currentPanel = null, selected = null, lastUI = 0, lastSave = 0, persistent = true, preservedBadSave = false;
 let lastPanelHTML = '', lastPersonHTML = '', offlineBefore = null, startup = true;
+const audio=new ClinicAudio();
 const scene = new ClinicScene($('scene'), selectPerson, () => $('hint').classList.add('faded'));
 function notice(message, sticky=false) {
   $('notice').replaceChildren(document.createTextNode(message)); $('notice').hidden = false;
@@ -66,13 +69,15 @@ function mutate(action) {
 }
 function panel(title,subtitle,body) {return `<button class="close" data-close="panel" aria-label="关闭面板">×</button><span class="eyebrow">MEIAO / COMMUNITY CLINIC</span><h2>${title}</h2><p class="subtle">${subtitle}</p>${body}`;}
 function ledger(rows) {return '<dl class="ledger">'+rows.map(([key,val])=>`<div><dt>${key}</dt><dd>${val}</dd></div>`).join('')+'</dl>';}
+function patientRecordHTML(c,name,age,status){return `<span class="eyebrow">诊疗记录 · ${esc(CLINICAL_CASES[c.type].label)}</span><h2>${esc(name)}<small>${age} 岁</small></h2><span class="tag">${esc(status||c.outcome||'团队正在接诊')}</span><p>${esc(CLINICAL_CASES[c.type].complaint)}</p>${c.diagnosis?`<h3>${esc(c.diagnosis)}</h3>`:''}${c.findings.map(t=>`<p class="subtle">${esc(t.replace('本模型覆盖的',''))}</p>`).join('')}${c.report?`<p class="small-note">检查：${esc(c.report.status)}${c.report.status==='已送检'?' · 预计 '+time(c.report.expectedAt):''}</p>`:''}${c.plan.map(t=>`<p>${esc(t.replace('本模型覆盖的',''))}</p>`).join('')}${c.prescription?`<p class="small-note">处方：${esc(c.prescription.status)} · 既往方案续配</p>`:''}<ol class="care-trail">${c.trail.slice(-5).map(e=>`<li><time>${time(e.at)}</time> ${esc(e.text)}</li>`).join('')}</ol>`;}
 function staffStatus(id) { return staffActivity(state,id).label; }
 function panelContent() {
-  const m=state.metrics;
+  const m=state.metrics,care=state.medical;
+  if(currentPanel==='hospital'&&care)return panel('诊所正在照护的人','每次接诊之后，仍有需要跟进的事情。',ledger([['当前到院',state.patients.filter(p=>p.phase!=='leaving').length+' 人'],['已复核报告',care.stats.reviewed+' 份'],['随访反馈改善 / 平稳',care.stats.improved+' 人次'],['复评后仍需跟进',care.stats.unresolved+' 人次'],['待报告 / 随访等后续',care.pending.length+' 项'],['现金储备',money(state.cash)]])+`<h3>正在接诊</h3>${state.patients.filter(p=>p.clinical&&p.phase!=='leaving').slice(0,12).map(p=>`<button class="case-row" data-person="${p.id}"><b>${esc(p.name)}</b><span>${esc(clinicalStatus(p,state.time))}</span></button>`).join('')||'<p class="subtle">此刻没有正在接诊的患者。</p>'}<h3>最近诊疗记录</h3>${care.records.slice(0,10).map(r=>`<button class="case-row" data-record="${r.id}"><b>${esc(r.name)}</b><span>${esc(r.clinical.outcome||'后续处理中')}</span></button>`).join('')||'<p class="subtle">团队完成评估后，记录会在这里保留。</p>'}<details><summary>服务范围与结果含义</summary><p class="small-note">首版仅覆盖有限成人门诊路径。完成接诊不等于治愈，转诊不等于失败；未改善需要复评。具体药品剂量与完整疾病鉴别尚未模拟，展示的费用、就诊时长及病例比例属于原型参数。</p></details>`);
   if(currentPanel==='hospital') return panel('一间诊所的日常','从基础门诊开始，慢慢建立信任。',ledger([
     ['当前到院',state.patients.filter(p=>p.phase!=='leaving').length+' 人'],['正在候诊',state.patients.filter(p=>p.phase==='waiting').length+' 人'],['累计完成接诊',m.completed+' 次'],['专科转诊',m.referred+' 人'],['累计服务收入',money(m.revenue)],['运营与投入',money(m.operating+m.investment)],['现金储备',money(state.cash)]
   ])+`<p class="small-note">${m.capacityRedirected?`另有 ${m.capacityRedirected} 人因容量不足获外部就诊指引。<br>`:''}需求来自独立的小镇人群。新增诊室只改变接诊能力。<br>原型中的费用和诊疗时长尚未进行现实校准。</p>`);
-  if(currentPanel==='team') return panel('在这里工作的人','日常接诊与协作，由他们负责。',STAFF.filter(p=>p.id!=='doctor2'||state.secondRoom).map(p=>`<button class="staff-row" data-person="${p.id}"><span class="avatar" style="--coat:${p.color}"></span><span><b>${p.name}</b><small>${p.role}</small></span><span>${staffStatus(p.id)} ›</span></button>`).join('')+'<p class="small-note">选择人物，在诊所里找到他。</p>');
+  if(currentPanel==='team') return panel('在这里工作的人','日常接诊与协作，由他们负责。',STAFF.filter(p=>(p.id!=='doctor2'||state.secondRoom)&&(p.id!=='nurse2'||care?.annex)).map(p=>`<button class="staff-row" data-person="${p.id}"><span class="avatar" style="--coat:${p.color}"></span><span><b>${p.name}</b><small>${p.role}</small></span><span>${staffStatus(p.id)} ›</span></button>`).join('')+'<p class="small-note">选择人物，在诊所里找到他。</p>');
   if(currentPanel==='director') {
     let project;
     if(state.secondRoom) project='<h3>第二诊室已启用</h3><p class="subtle">顾宁已到岗，与林岚共同接诊。持续观察容量与需求的匹配。</p>';
@@ -80,7 +85,8 @@ function panelContent() {
       const pct=Math.floor(100*(state.time-state.project.startedAt)/PROJECT.duration);
       project=`<h3>第二诊室 · 准备中</h3><div class="progress" role="progressbar" aria-label="第二诊室准备进度" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><p class="subtle">预计 ${Math.ceil((state.project.completesAt-state.time)/MINUTE)} 分钟后启用，离线时照常推进。</p>`;
     } else project=`<h3>预留空间 · 第二诊室</h3><p class="subtle">设施与人员到岗投入 ${money(PROJECT.cost)}<br>准备 20 分钟 · 运营支出增加 ¥7 / 分钟</p><button class="action" data-action="expand" ${!leader||catchingUp||state.cash<PROJECT.cost+PROJECT.reserve?'disabled':''}>决定启用第二诊室</button>`;
-    return panel('周敏 · 执行院长','日常运行已经交给团队。',`<p class="quote">“${esc(state.directorThought)}”</p><p class="section-label">投资授权</p><div class="policy"><span>允许院长安排小额扩建</span><button class="switch" role="switch" aria-label="允许院长安排小额扩建" aria-checked="${state.authority}" data-action="authority" ${!leader||catchingUp?'disabled':''}></button></div><p class="small-note">连续观察到候诊积压时，可启用第二诊室；始终保留 ¥30,000 运营储备。</p><div class="project">${project}</div><p class="small-note">管理层当前使用规则决策，尚未接入 LLM。</p>`);
+    const medicalProject=care?`<div class="project"><h3>相邻单元 · 评估与采样能力</h3><p class="subtle">${esc(care.observation)}</p>${ledger([['已采样',care.stats.sampled+' 人次'],['采样平均等候',care.stats.sampleCount?Math.round(care.stats.sampleWait/care.stats.sampleCount/MINUTE)+' 分钟':'尚无样本'],['耗材 / 外部服务支出',money(care.costs.consumables)+' / '+money(care.costs.external)],['相邻单元累计运营支出',money(care.costs.staffSpace)]])}${care.annex?'<button class="action" data-action="viewAnnex">查看采样单元</button>':care.annexProject?`<p>装修与人员准备中 · 约 ${Math.ceil((care.annexProject.completesAt-state.time)/MINUTE)} 分钟</p><button class="action" data-action="viewAnnex">查看相邻空间</button>`:`<p class="subtle">租赁、装修及护士到岗 ¥24,000 · 准备 1 小时<br>启用后增加 ¥6 / 分钟运营支出。独立采样位释放原护理位，不增加患者需求。</p><button class="action" data-action="buildAnnex" ${!leader||catchingUp||state.cash<ANNEX.cost+ANNEX.reserve?'disabled':''}>委托租下相邻单元</button>`}<h3>外部检查合作</h3><p class="subtle">${care.lab==='priority'?'优先合作 · 预计 1 小时 · 单次成本 ¥180':'常规合作 · 预计 4 小时 · 单次成本 ¥100'}<br>仅影响新送检；已送检按原安排返回。</p><button class="action secondary" data-action="${care.lab==='priority'?'standardLab':'priorityLab'}" ${!leader||catchingUp?'disabled':''}>${care.lab==='priority'?'恢复常规合作':'采用优先外检合作'}</button></div>`:'';
+    return panel('周敏 · 执行院长','日常运行已经交给团队。',`<p class="quote">“${esc(state.directorThought)}”</p><p class="section-label">投资授权</p><div class="policy"><span>允许院长安排小额扩建</span><button class="switch" role="switch" aria-label="允许院长安排小额扩建" aria-checked="${state.authority}" data-action="authority" ${!leader||catchingUp?'disabled':''}></button></div><p class="small-note">持续观察到候诊或采样积压时，可安排相应投入；始终保留 ¥30,000 运营储备。</p><div class="project">${project}</div>${medicalProject}`);
   }
   if(currentPanel==='journal') return panel('院务记录','行动留下记录，变化有迹可循。',state.log.slice(0,18).map(e=>`<article class="journal-entry"><time>${time(e.at)}</time><h3>${esc(e.title)}</h3><p>${esc(e.detail)}</p></article>`).join(''));
   return '';
@@ -102,8 +108,10 @@ function renderUI(force=false) {
   if(selected){
     const p=state.patients.find(p=>p.id===selected),staff=STAFF.find(p=>p.id===selected);
     let html='<button class="close" data-close="person" aria-label="关闭人物信息">×</button>';
-    if(p)html+=`<span class="eyebrow">来到诊所的人</span><h2>${esc(p.name)}<small>${p.age} 岁</small></h2><span class="tag">${patientIntent(p, state.time)}</span><p>${esc(p.thought)}</p><p class="small-note">${p.phase==='waiting'?'已候诊 '+Math.floor((state.time-p.waitStarted)/MINUTE)+' 分钟':CASES.find(c=>c.id===p.kind).label}</p>`;
+    if(p?.clinical)html+=patientRecordHTML(p.clinical,p.name,p.age,patientIntent(p,state.time));
+    else if(p)html+=`<span class="eyebrow">来到诊所的人</span><h2>${esc(p.name)}<small>${p.age} 岁</small></h2><span class="tag">${patientIntent(p, state.time)}</span><p>${esc(p.thought)}</p><p class="small-note">${p.phase==='waiting'?'已候诊 '+Math.floor((state.time-p.waitStarted)/MINUTE)+' 分钟':CASES.find(c=>c.id===p.kind).label}</p>`;
     else if(staff)html+=`<span class="eyebrow">${staff.role}</span><h2>${staff.name}</h2><span class="tag">${staffStatus(staff.id)}</span><p>${staff.id==='director'?esc(state.directorThought):staff.description}</p>`;
+    else if(selected.startsWith('case:')){const r=state.medical?.records.find(r=>r.id===selected.slice(5));html+=r?patientRecordHTML(r.clinical,r.name,r.age):'<p>此记录已归档。</p>';}
     else {const past=state.history.find(p=>p.id===selected);html+=`<span class="eyebrow">本次到访已结束</span><h2>${esc(past?.name||'来访者')}</h2><p>${esc(past?.outcome||'已离开诊所')}，团队继续照护下一位患者。</p>`;}
     if(lastPersonHTML!==html){$('person').innerHTML=html;lastPersonHTML=html;}
   }
@@ -114,10 +122,14 @@ document.addEventListener('click',e=>{
   if(b.dataset.close==='panel'){currentPanel=null;renderUI(true);}
   if(b.dataset.close==='person')selectPerson(null);
   if(b.dataset.person){selectPerson(b.dataset.person);scene.focus(b.dataset.person,state);}
+  if(b.dataset.record)selectPerson('case:'+b.dataset.record);
+  if(b.dataset.action==='viewAnnex'){currentPanel=null;selectPerson(null);scene.focusAnnex();}
+  if(['buildAnnex','priorityLab','standardLab'].includes(b.dataset.action))mutate(()=>{const result=applyManagementAction(state,{action:b.dataset.action},'investor');notice(result.ok?'已交由院长执行，后续进展写入院务记录。':result.reason);});
   if(b.dataset.action==='authority')mutate(()=>setAuthority(state,!state.authority));
   if(b.dataset.action==='expand')mutate(()=>{const result=applyManagementAction(state,{action:'openSecondRoom'},'investor');notice(result.ok?'已委托周敏准备第二诊室。20 分钟后开始接诊。':result.reason);});
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){currentPanel=null;selectPerson(null);renderUI(true);}});
+$('sound').onclick=async()=>{await audio.toggle();$('sound').textContent=audio.enabled?'♪':'♫';$('sound').setAttribute('aria-label',audio.enabled?'关闭声音':'开启声音');$('sound').setAttribute('aria-pressed',String(audio.enabled));};
 $('zoom-in').onclick=()=>scene.changeZoom(1.2);$('zoom-out').onclick=()=>scene.changeZoom(1/1.2);$('reset-view').onclick=()=>scene.reset();
 window.addEventListener('storage',e=>{if(e.key===KEY&&!leader&&e.newValue){try{state=restoreState(e.newValue);renderUI(true);}catch{ /* Keep last valid snapshot. */ }}});
 document.addEventListener('visibilitychange',()=>{if(leader&&document.hidden)save();if(!document.hidden&&leader&&!catchingUp){offlineBefore=snapshot(state);catchUp(Date.now());}});
@@ -131,7 +143,7 @@ function frame(tick) {
     // Observer tabs advance their own deterministic view every frame. Only the lock
     // owner saves; waiting for three-second storage snapshots caused stop/start motion.
     if(!catchingUp){const result=advanceTo(state,Date.now(),1000);if(!result.caughtUp)catchUp(Date.now());if(leader&&Date.now()-lastSave>3000)save();}
-    scene.draw(state,tick);renderUI();
+    audio.observe(state,catchingUp||document.hidden);scene.draw(state,tick);renderUI();
   }
   requestAnimationFrame(frame);
 }

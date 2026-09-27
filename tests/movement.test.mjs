@@ -1,8 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createState, advanceTo, restoreState, CASES, HOUR, phaseLabel } from '../src/simulation.js';
+import { createState as createBaseState, advanceTo, restoreState, CASES, HOUR, phaseLabel } from '../src/simulation.js';
 import { planRoute, isWalkable, seatFeet, ENTRY, DESK, ROOM_POS, NURSING_POS, registrationSlot,
   nursingSlot, movePatient, settledMotion, patientPose, WALK_SPEED, STAND_MS, SIT_MS } from '../src/movement.js';
+const createState=(at,seed)=>createBaseState(at,seed,{medical:false});
 const START=1_790_000_000_000;
 test('every route between patient facilities clears walls, furniture and chair footprints',()=>{
   const anchors=[ENTRY,DESK,...Object.values(ROOM_POS),NURSING_POS,

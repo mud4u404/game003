@@ -615,3 +615,5 @@ nav { background:none; border:0; padding:0; gap:10px; backdrop-filter:none; box-
   .nav-button { height:48px; }
   .hud { padding-top:calc(9px + env(safe-area-inset-top)); gap:6px; }
 }
+
+.case-row{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;min-height:48px;border:0;border-bottom:1px solid #526b7225;background:transparent;text-align:left;padding:10px 0;color:inherit;font:inherit;cursor:pointer}.case-row b{white-space:nowrap}.case-row span{font-size:12px;color:#526676;text-align:right}.care-trail{padding-left:19px;font-size:12px;line-height:1.8;color:#607078}.care-trail time{color:#435e70;font-variant-numeric:tabular-nums}.care-trail li{padding:5px 0}details{margin-top:18px;font-size:12px;color:#61717a}summary{cursor:pointer;padding:9px 0}.action.secondary{background:#526675}.person{max-height:65%;overflow-y:auto}.person h3{font-size:15px;margin-top:14px}

@@ -13,6 +13,7 @@ export const STAFF_APPEARANCE = {
   doctor1: { index: 0, seatedIndex: 14, height: 78, widthScale: 1 },
   doctor2: { index: 1, seatedIndex: 15, height: 83, widthScale: 1.03 },
   nurse: { index: 2, height: 76, widthScale: 1 },
+  nurse2: { index: 2, height: 80, widthScale: .95 },
   director: { index: 3, height: 79, widthScale: 1 },
   reception: { index: 4, height: 77, widthScale: 1 }
 };

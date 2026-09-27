@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createState, advanceTo, restoreState, applyManagementAction, setAuthority, managerObservation, MINUTE, HOUR, PROJECT } from '../src/simulation.js';
+import { createState as createBaseState, advanceTo, restoreState, applyManagementAction, setAuthority, managerObservation, MINUTE, HOUR, PROJECT } from '../src/simulation.js';
+const createState=(at,seed)=>createBaseState(at,seed,{medical:false});
 const START = 1_790_000_000_000;
 test('offline catch-up and many online updates produce identical histories and finances',()=>{
   const offline=createState(START),online=createState(START);

@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createState, advanceTo, restoreState, HOUR } from '../src/simulation.js';
+import { createState as createBaseState, advanceTo, restoreState, HOUR } from '../src/simulation.js';
 import { staffActivity, patientIntent } from '../src/activity.js';
 import { actorSeat, FIXED_SEATS } from '../src/seating.js';
 import { nursePose, syncNurseTask } from '../src/staff-behavior.js';
 import { registrationSlot, isWalkable, WALK_SPEED } from '../src/movement.js';
+const createState=(at,seed)=>createBaseState(at,seed,{medical:false});
 const START=1790000000000;
 test('front desk and every seated phase resolve a physical chair, including standing transitions',()=>{
   assert.deepEqual(actorSeat({id:'reception'}),FIXED_SEATS.reception);

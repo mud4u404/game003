@@ -1,5 +1,6 @@
+import { createMedical, newClinicalCase, CLINICAL_CASES, ANNEX, LAB_HOURS, DAY, clinicalNote, clinicalStatus, recordPatient, scheduleClinical, medicalDue, validateMedical } from './medical.js';
 import { createNurseTask, advanceNurseTask, syncNurseTask } from './staff-behavior.js';
-import { movePatient, settledMotion, atDestination, patientPose, ROOM_POS, ENTRY, DESK, seatFeet, registrationSlot, nursingSlot, NURSING_POS, WALK_SPEED } from './movement.js';
+import { movePatient, settledMotion, atDestination, patientPose, ROOM_POS, ENTRY, DESK, seatFeet, registrationSlot, nursingSlot, NURSING_POS, WALK_SPEED, SAMPLE_POS, URGENT_POS } from './movement.js';
 // Time and randomness belong to the simulation, never to rendering or UI refreshes.
 export const VERSION = 2;
 export const MINUTE = 60_000;
@@ -11,6 +12,7 @@ export const CASES = [
   { id: 'specialist', label: '需专科评估', fee: 0, consultation: 65_000, aftercare: false }
 ];
 export const STAFF = [
+  { id:'nurse2',name:'许禾',role:'采样护士',color:'#759899',description:'负责相邻采样单元的核对、采样与送检交接。' },
   { id: 'director', name: '周敏', role: '执行院长', color: '#526b72', description: '重视现金储备，依据持续需求安排投入。' },
   { id: 'doctor1', name: '林岚', role: '全科医生', color: '#e3ece8', description: '负责问诊和服务范围内的诊疗安排。' },
   { id: 'nurse', name: '陈雪', role: '护士', color: '#759899', description: '承担基础护理与院内协作。' },
@@ -43,13 +45,15 @@ function demand(s, at) {
   s.metrics.demand++;
   s.demandTrace.push({ id: p.id, at, kind });
   if (s.demandTrace.length > 256) s.demandTrace.shift();
-  s.nextArrival = at + Math.round(47_000 + random(s) * 48_000);
-  if (s.patients.filter(p => p.phase !== 'leaving').length >= 16) {
+  s.nextArrival = at + Math.round(s.medical ? 180_000 + random(s)*180_000 : 47_000 + random(s)*48_000);
+  if(s.medical){p.clinical=newClinicalCase(p);p.thought=CLINICAL_CASES[p.clinical.type].complaint;}
+  if (s.patients.filter(p => p.phase !== 'leaving').length >= 16 && p.clinical?.priority!==0) {
     s.metrics.capacityRedirected++;
     note(s, '接待安排了外部接续', '当前候诊已满，已告知新到访者可用的外部服务。', 'referral');
     return;
   }
   p.queueSlot = freeSlot(s, ['arriving', 'registerQueue']);
+  p.annexAccess=Boolean(s.medical?.annex);
   p.motion = settledMotion(ENTRY, at);
   movePatient(p, 'arriving', at, registrationSlot(p.queueSlot), 0);
   s.patients.push(p);
@@ -61,7 +65,7 @@ function freeSlot(s, phases) {
 function enter(p, phase, at, duration = null) {
   const target = { arriving: registrationSlot(p.queueSlot || 0), registerQueue: registrationSlot(p.queueSlot || 0),
     registration: DESK, waiting: seatFeet(p.seat || 0), consultation: ROOM_POS[p.room || 1],
-    nursingQueue: nursingSlot(p.queueSlot || 0), nursing: NURSING_POS, leaving: ENTRY }[phase];
+    nursingQueue: nursingSlot(p.queueSlot || 0), nursing: NURSING_POS, sampling:SAMPLE_POS, urgent:[URGENT_POS[0]-(p.urgentSlot||0)*60,URGENT_POS[1]], leaving: ENTRY }[phase];
   movePatient(p, phase, at, target, duration);
 }
 function releaseRoom(p) {
@@ -89,37 +93,45 @@ function dispatch(s) {
   });
   for (let room = 1; room <= (s.secondRoom ? 2 : 1); room++) {
     if (s.patients.some(p => p.room === room && (p.phase === 'consultation' || p.roomReleasedAt > s.time))) continue;
-    const p = s.patients.filter(p => p.phase === 'waiting' && (atDestination(p, s.time) || s.time <= p.motion.end)).sort((a, b) => a.waitStarted - b.waitStarted)[0];
+    if(room===1 && s.patients.some(p=>p.phase==='urgent'))continue;
+    const p = s.patients.filter(p => p.phase === 'waiting' && (!p.clinical || !['assessment','sample'].includes(p.clinical.stage)) && (atDestination(p, s.time) || s.time <= p.motion.end)).sort((a,b)=>(a.clinical?.priority??2)-(b.clinical?.priority??2)||a.waitStarted-b.waitStarted)[0];
     if (!p) break;
     const waited = s.time - p.waitStarted;
     s.metrics.waitTotal += waited; s.metrics.waitCount++;
     p.room = room; p.waited = waited;
-    enter(p, 'consultation', s.time, CASES.find(c => c.id === p.kind).consultation);
+    enter(p, 'consultation', s.time, p.clinical ? (p.clinical.stage==='review'?180000:300000) : CASES.find(c => c.id === p.kind).consultation);
   }
-  if (!s.patients.some(p => p.phase === 'nursing')) {
+  if (!s.patients.some(p => ['nursing','urgent'].includes(p.phase))) {
     const p = s.patients.find(p => p.phase === 'nursingQueue' && atDestination(p, s.time));
     if (p) enter(p, 'nursing', s.time, 42_000);
   }
+  dispatchClinical(s);
   syncNurseTask(s);
+  alignClinicalStaff(s);
 }
 function finishVisit(s, p, referred = false) {
   if (referred) {
     s.metrics.referred++;
     note(s, '已安排专科接续', p.name + '需要本院范围以外的评估，接待已提供转诊信息。', 'referral');
   } else {
-    const fee = CASES.find(c => c.id === p.kind).fee;
+    const fee = p.clinical ? (p.clinical.stage==='sample'?80:p.clinical.visit?40:80) : CASES.find(c => c.id === p.kind).fee;
     s.cash += fee; s.metrics.revenue += fee; s.metrics.completed++;
     note(s, '完成一次接诊', p.name + '的本次服务已完成。收入 ¥' + fee + ' 已入账。');
   }
-  p.outcome = referred ? '转诊接续' : '完成接诊';
+  p.outcome = p.clinical?.outcome || (referred ? '转诊接续' : '完成接诊');
+  if(p.clinical){clinicalNote(p,s.time,p.outcome);recordPatient(s,p);}
   enter(p, 'leaving', s.time, 0);
 }
 function progressPatient(s, p) {
+  if(p.clinical && progressClinical(s,p))return;
   switch (p.phase) {
     case 'arriving': enter(p, 'registerQueue', s.time); break;
     case 'registration':
       p.seat = waitingSeat(s); p.waitStarted = s.time;
-      enter(p, 'waiting', s.time); break;
+      if(p.clinical){p.clinical.waitSince=s.time;p.clinical.readyAt=s.time+(['pressure','workup','screening'].includes(p.clinical.type)?5*MINUTE:0);}
+      enter(p, 'waiting', s.time);
+      if(p.clinical?.stage==='assessment'&&['pressure','workup','screening'].includes(p.clinical.type))p.clinical.readyAt=p.motion.ready+5*MINUTE;
+      break;
     case 'consultation':
       if (p.kind === 'specialist') finishVisit(s, p, true);
       else if (p.kind === 'care') { p.queueSlot = freeSlot(s, ['nursingQueue']); enter(p, 'nursingQueue', s.time); }
@@ -134,7 +146,7 @@ function progressPatient(s, p) {
   }
 }
 export function managerObservation(s) {
-  const waiting = s.patients.filter(p => p.phase === 'waiting').length;
+  const waiting = s.patients.filter(p => p.phase === 'waiting' && (!p.clinical || ['consult','review','followup'].includes(p.clinical.stage))).length;
   return Object.freeze({
     at: s.time, waiting, cash: s.cash, secondRoom: s.secondRoom, project: s.project ? { ...s.project } : null,
     completed: s.metrics.completed, demand: s.metrics.demand, referred: s.metrics.referred,
@@ -155,6 +167,7 @@ export function proposeManagement(s) {
   return { action: 'hold', reason: o.waiting ? '候诊仍在观察范围，先按现有安排接诊。' : '门诊运行平稳，保持现有团队与现金储备。' };
 }
 export function applyManagementAction(s, proposal, actor = 'director') {
+  if(proposal && ['buildAnnex','priorityLab','standardLab'].includes(proposal.action))return clinicalInvestment(s,proposal.action,actor);
   if (!proposal || proposal.action !== 'openSecondRoom') return { ok: false, reason: '不支持的操作' };
   if (!['director', 'investor'].includes(actor)) return { ok: false, reason: '没有操作权限' };
   if (actor === 'director' && !s.authority) return { ok: false, reason: '超出投资授权' };
@@ -172,7 +185,7 @@ export function setAuthority(s, value) {
   return true;
 }
 function review(s) {
-  const waiting = s.patients.filter(p => p.phase === 'waiting').length;
+  const waiting = s.patients.filter(p => p.phase === 'waiting' && (!p.clinical || ['consult','review','followup'].includes(p.clinical.stage))).length;
   s.pressureChecks = waiting >= 2 ? s.pressureChecks + 1 : 0;
   const proposal = proposeManagement(s);
   s.directorThought = proposal.reason;
@@ -180,8 +193,9 @@ function review(s) {
   s.lastReview = s.time;
   s.nextReview += 3 * MINUTE;
 }
-export function createState(now = Date.now(), seed = 20260926) {
+export function createState(now = Date.now(), seed = 20260926, options={}) {
   const s = {
+    medical:options.medical===false?null:createMedical(now),
     version: VERSION, time: now, startedAt: now, rng: seed >>> 0, sequence: 0, eventSequence: 0,
     nextArrival: now + 9000, nextReview: now + 3 * MINUTE, nextCost: now + MINUTE,
     cash: 180000, secondRoom: false, authority: true, project: null, pressureChecks: 0,
@@ -204,13 +218,16 @@ export function advanceTo(s, target, eventLimit = 200_000) {
   let count = 0;
   while (count < eventLimit) {
     const patientDue = s.patients.reduce((min, p) => Math.min(min, p.due ?? Infinity, p.motionDue ?? Infinity, p.roomReleasedAt ?? Infinity), Infinity);
-    const next = Math.min(s.nextArrival, s.nextCost, s.nextReview, s.project?.completesAt ?? Infinity, s.nurseTask.due ?? Infinity, patientDue);
+    const next = Math.min(s.nextArrival, s.nextCost, s.nextReview, s.project?.completesAt ?? Infinity, s.nurseTask.due ?? Infinity, s.sampleTask?.due ?? Infinity, medicalDue(s), patientDue);
     if (next > target) { s.time = target; return { caughtUp: true, events: count }; }
     s.time = next;
     advanceNurseTask(s);
+    advanceClinical(s);
     if (s.nextArrival === next) demand(s, next);
     if (s.nextCost === next) {
-      const cost = s.secondRoom ? 19 : 12;
+      const extra=s.medical?.annex?ANNEX.operating:0;
+      if(s.medical)s.medical.costs.staffSpace+=extra;
+      const cost = (s.secondRoom ? 19 : 12)+extra;
       s.cash -= cost; s.metrics.operating += cost; s.nextCost += MINUTE;
     }
     if (s.project?.completesAt === next) {
@@ -226,6 +243,7 @@ export function advanceTo(s, target, eventLimit = 200_000) {
   return { caughtUp: false, events: count };
 }
 export function phaseLabel(p, time = Infinity) {
+  if(p.clinical && atDestination(p,time))return clinicalStatus(p);
   if (!atDestination(p, time)) {
     const pose = patientPose(p, time);
     if (pose.sit > 0 && time < p.motion.start) return '起身中';
@@ -244,7 +262,7 @@ export function restoreState(serialized) {
   const s = JSON.parse(serialized);
   const finite = n => Number.isFinite(n);
   const count = n => Number.isSafeInteger(n) && n >= 0;
-  const timed = new Set(['arriving', 'registration', 'consultation', 'nursing', 'leaving']);
+  const timed = new Set(['arriving', 'registration', 'consultation', 'nursing', 'sampling', 'urgent', 'leaving']);
   const metricKeys = ['demand', 'completed', 'referred', 'capacityRedirected', 'revenue', 'operating', 'investment', 'waitTotal', 'waitCount'];
   if (!s || ![1, VERSION].includes(s.version) || !finite(s.time) || !finite(s.cash) ||
       !finite(s.startedAt) || s.startedAt > s.time || !count(s.rng) ||
@@ -257,11 +275,11 @@ export function restoreState(serialized) {
       s.patients.length > 32 || new Set(s.patients.map(p => p?.id)).size !== s.patients.length ||
       s.patients.some(p => !p || typeof p.id !== 'string' || typeof p.name !== 'string' ||
         typeof p.thought !== 'string' || typeof p.color !== 'string' || !count(p.age) || !count(p.appearance) ||
-        !CASES.some(c => c.id === p.kind) || !phaseLabel(p) || !finite(p.phaseAt) || !finite(p.arrivedAt) ||
+        !CASES.some(c => c.id === p.kind) || !['arriving','registerQueue','registration','waiting','consultation','nursingQueue','nursing','sampling','urgent','leaving'].includes(p.phase) || !phaseLabel(p) || !finite(p.phaseAt) || !finite(p.arrivedAt) ||
         (p.seat !== null && !count(p.seat)) || (p.room !== null && ![1, 2].includes(p.room)) ||
         (p.phase === 'consultation' && ![1, 2].includes(p.room)) ||
         (p.phase === 'waiting' && !finite(p.waitStarted)) ||
-        (timed.has(p.phase) ? !finite(p.due) || p.due < s.time : p.due !== null)) ||
+        (p.pausedForUrgent ? p.due!==null || !finite(p.remainingService) || p.remainingService<0 : timed.has(p.phase) ? !finite(p.due) || p.due < s.time : p.due !== null)) ||
       s.log.some(e => !e || !count(e.id) || !finite(e.at) || typeof e.title !== 'string' || typeof e.detail !== 'string') ||
       s.history.some(e => !e || typeof e.id !== 'string' || typeof e.name !== 'string' || typeof e.outcome !== 'string') ||
       (s.project && (s.secondRoom || s.project.type !== 'secondRoom' || !finite(s.project.startedAt) ||
@@ -298,5 +316,145 @@ export function restoreState(serialized) {
       !m || ![m.at,m.start,m.end,m.ready,m.length].every(finite) || m.length<0 || m.start>m.end ||
       !Array.isArray(m.points) || m.points.length<2 || m.points.some(p=>!Array.isArray(p)||p.length!==2||!p.every(finite)))
     throw new Error('员工动作存档不完整');
+  if(s.medical===undefined)s.medical=createMedical(s.time);
+  validateMedical(s);
+  if(s.sampleTask){const t=s.sampleTask,m=t.motion;if(!m||![m.at,m.start,m.end,m.ready,m.length].every(finite)||m.start>m.end||!Array.isArray(m.points)||m.points.some(p=>!Array.isArray(p)||p.length!==2||!p.every(finite))||(t.due!==null&&(!finite(t.due)||t.due<s.time)))throw Error('采样岗位存档不完整');}
   return s;
+}
+
+function spendClinical(s,amount,category){s.cash-=amount;s.metrics.operating+=amount;s.medical.costs[category]+=amount;}
+function queueClinical(s,p,stage){p.clinical.stage=stage;p.clinical.waitSince=s.time;p.waitStarted=s.time;p.seat=waitingSeat(s);p.room=null;enter(p,'waiting',s.time);}
+function closeClinical(s,p,outcome,referred=false){p.clinical.outcome=outcome;finishVisit(s,p,referred);}
+function arrangeFollowup(s,p,days){
+  if(!scheduleClinical(s,p,'followup',days*DAY))clinicalNote(p,s.time,'本院随访名额已满，已交接合作机构继续跟进。');
+}
+function prescribe(s,p){
+  p.clinical.prescription={status:'医师已审核',issuedAt:s.time,description:'核对既往方案后续配；药品与剂量由既有处方记录管理'};
+  p.clinical.plan.push('合作药房复核与续配既往处方，继续家庭监测。');s.medical.stats.prescribed++;
+  clinicalNote(p,s.time,'已核对既往处方、过敏史与当前资料；生成续配处方。');
+  if(!scheduleClinical(s,p,'dispense',HOUR))clinicalNote(p,s.time,'已将续配处方交由患者选择的外部药房接续。');
+}
+function progressClinical(s,p){const c=p.clinical,m=s.medical;
+  if(p.phase==='arriving'&&c.priority===0){
+    c.stage='urgent';c.findings=[CLINICAL_CASES.urgent.assessment];c.diagnosis=CLINICAL_CASES.urgent.diagnosis;c.plan=[CLINICAL_CASES.urgent.plan];clinicalNote(p,s.time,'识别急症警示，立即联系急救接收方；不等待常规登记。');
+    p.urgentSlot=s.patients.filter(q=>q.phase==='urgent').length;enter(p,'urgent',s.time,2*MINUTE);m.stats.urgent++;
+    note(s,'团队启动急救接续',p.name+'出现急症警示。护士照护等候，医生协调转诊，接待联系接收方。','referral');return true;
+  }
+  if(p.phase==='urgent'){
+    c.outcome='已交接急救接收方 · 后续待回传';clinicalNote(p,s.time,'急救接收方确认接续，完成交接；不能据此判定治愈。');
+    s.metrics.referred++;scheduleClinical(s,p,'transfer',DAY);recordPatient(s,p);
+    s.history.unshift({id:p.id,name:p.name,kind:p.kind,outcome:c.outcome,at:s.time});s.history.length=Math.min(40,s.history.length);
+    s.patients=s.patients.filter(q=>q.id!==p.id);note(s,'急救转诊已交接',p.name+'由接收方继续评估，诊所等待后续回传。','referral');return true;
+  }
+  if(['nursing','sampling'].includes(p.phase)){
+    if(c.stage==='assessment'){
+      c.assessmentAt=s.time;c.findings.push(CLINICAL_CASES[c.type].assessment);m.stats.assessed++;
+      clinicalNote(p,s.time,'完成到院评估与测量，记录症状、病史及警示信息。');queueClinical(s,p,'consult');
+    }else{
+      m.stats.sampled++;spendClinical(s,18,'consumables');spendClinical(s,m.lab==='priority'?180:100,'external');
+      c.report={status:'已送检',sampledAt:s.time,expectedAt:s.time+LAB_HOURS[m.lab]*HOUR,contract:m.lab};
+      clinicalNote(p,s.time,'完成标本核对、采样与外送；合作机构接续心电检查，等待完整报告。');
+      if(scheduleClinical(s,p,'report',LAB_HOURS[m.lab]*HOUR))closeClinical(s,p,'已完成采样 · 等待外部报告');
+      else closeClinical(s,p,'后续名额已满 · 交接合作机构',true);
+    }return true;
+  }
+  if(p.phase!=='consultation')return false;
+  c.diagnosis=CLINICAL_CASES[c.type].diagnosis;
+  clinicalNote(p,s.time,c.stage==='review'?'医生复核外部报告。':c.stage==='followup'?'医生完成随访复评。':'医生完成问诊、相关体格检查与资料核对。');
+  if(c.stage==='review'){
+    m.stats.reviewed++;const lag=s.time-c.report.receivedAt;c.delay=lag;
+    if(lag>30*MINUTE){m.stats.lateReviews++;clinicalNote(p,s.time,'报告返回至复核超过本院30分钟流程目标；此为流程信号，不直接推断医疗损害。');}
+    if(c.report.abnormal){c.diagnosis='检查异常 · 需进一步评估';c.plan=['解释异常，安排上级机构进一步评估；不据单份报告自动加药。'];closeClinical(s,p,'检查异常 · 已安排专科评估',true);}
+    else {c.plan=['已复核当前检查资料，继续既往管理并安排随访。'];prescribe(s,p);arrangeFollowup(s,p,30);closeClinical(s,p,'方案已确认 · 继续长期管理');}
+  }else if(c.stage==='followup'){
+    if(c.type==='screening'){c.diagnosis='血压持续偏高 · 需完善确认';c.plan=['结合家庭记录安排进一步确认与风险评估，未凭一次读数开药。'];m.stats.unresolved++;closeClinical(s,p,'需进一步确认 · 已接续评估',true);}
+    else if(c.variation.persistent){c.diagnosis=c.type==='respiratory'?'症状尚未明显改善':'血压控制仍需调整';c.plan=['复核病程、用药和新出现的症状；安排后续评估，不把未改善自动归为医护失误。'];m.stats.unresolved++;closeClinical(s,p,'复评后需继续管理');}
+    else{m.stats.improved++;c.plan=['当前反馈改善，保留后续注意事项与长期管理安排。'];closeClinical(s,p,c.type==='respiratory'?'随访反馈改善':'随访控制平稳');}
+  }else if(c.type==='workup'){
+    c.plan=[CLINICAL_CASES.workup.plan];clinicalNote(p,s.time,'根据本次评估开具检查安排。');releaseRoomAfterQueue(s,p,'sample');return true;
+  }else{
+    c.plan=[CLINICAL_CASES[c.type].plan];
+    if(c.type==='pressure')prescribe(s,p);
+    arrangeFollowup(s,p,c.type==='respiratory'?7:c.type==='screening'?7:30);
+    closeClinical(s,p,c.type==='pressure'?'续配方案已审核 · 等待药房接续':c.type==='screening'?'尚未确诊 · 已约非同日复测':'已说明照护方案 · 安排随访');
+  }
+  releaseRoom(p);return true;
+}
+function releaseRoomAfterQueue(s,p,stage){const room=p.room;queueClinical(s,p,stage);p.room=room;releaseRoom(p);}
+function dispatchClinical(s){if(!s.medical)return;
+  const urgent=s.patients.some(p=>p.phase==='urgent');
+  for(const p of s.patients){
+    if(urgent&&(p.phase==='nursing'||p.phase==='consultation'&&p.room===1)&&!p.pausedForUrgent){
+      p.remainingService=Math.max(0,p.due-s.time);p.due=null;p.pausedForUrgent=true;
+    }else if(!urgent&&p.pausedForUrgent){p.pausedForUrgent=false;p.due=s.time+p.remainingService;delete p.remainingService;if(p.phase==='nursing'){p.serviceAt=s.time;p.staffAligned=false;}}
+  }
+  const waiting=s.patients.filter(p=>p.phase==='waiting'&&p.clinical&&['assessment','sample'].includes(p.clinical.stage)&&atDestination(p,s.time)&&(p.clinical.readyAt??0)<=s.time)
+    .sort((a,b)=>a.clinical.priority-b.clinical.priority||a.clinical.waitSince-b.clinical.waitSince);
+  if(!urgent&&!s.patients.some(p=>p.phase==='nursing')){
+    const p=waiting.find(p=>p.clinical.stage==='assessment'||!s.medical.annex);
+    if(p)startNursing(s,p,'nursing');
+  }
+  if(s.medical.annex&&!s.patients.some(p=>p.phase==='sampling')){
+    const p=waiting.find(p=>p.phase==='waiting'&&p.clinical.stage==='sample');if(p)startNursing(s,p,'sampling');
+  }
+}
+function startNursing(s,p,phase){
+  const sample=p.clinical.stage==='sample';
+  if(sample){s.medical.stats.sampleWait+=s.time-p.clinical.waitSince;s.medical.stats.sampleCount++;}
+  p.annexAccess=Boolean(s.medical.annex);enter(p,phase,s.time,sample?3*MINUTE:p.clinical.type==='respiratory'?45000:2*MINUTE);p.staffAligned=false;
+}
+function alignClinicalStaff(s){for(const p of s.patients){
+  if(!p.clinical||!['nursing','sampling','urgent'].includes(p.phase)||p.pausedForUrgent||p.staffAligned)continue;
+  const task=p.phase==='sampling'?s.sampleTask:s.nurseTask;if(task?.patientId!==p.id){if(p.phase==='urgent'){const active=s.patients.find(q=>q.id===task?.patientId);if(active?.due)p.due=Math.max(p.due,active.due+2*MINUTE);}continue;}
+  const start=Math.max(p.serviceAt,task.motion.ready);p.due+=start-p.serviceAt;p.serviceAt=start;p.staffAligned=true;
+}}
+function returnPatient(s,e){
+  const c=e.clinical;c.visit++;c.outcome=null;c.waitSince=s.time;c.readyAt=s.time;
+  const p={...e.patient,id:c.episodeId+'-v'+c.visit,clinical:c,arrivedAt:s.time,phase:'arriving',phaseAt:s.time,due:null,room:null,seat:null,waitStarted:null,annexAccess:Boolean(s.medical.annex)};
+  p.queueSlot=freeSlot(s,['arriving','registerQueue']);p.motion=settledMotion(ENTRY,s.time);movePatient(p,'arriving',s.time,registrationSlot(p.queueSlot),0);s.patients.push(p);
+  note(s,'已安排复诊',p.name+(c.stage==='review'?'返回诊所复核报告。':'按约定返回，团队继续跟进此前的就诊。'));
+}
+function advanceClinical(s){const m=s.medical;if(!m)return;
+  if(m.annexProject?.completesAt===s.time){m.annex=true;m.annexProject=null;syncNurseTask(s);note(s,'相邻采样单元投入使用','许禾已到岗，采样不再占用原护理位；新增工资、租金与维护支出开始计入。','management');}
+  for(const e of [...m.pending].filter(e=>e.due===s.time)){
+    if(['return','followup'].includes(e.kind)&&s.patients.filter(p=>p.phase!=='leaving').length>=16){e.due+=30*MINUTE;continue;}
+    m.pending=m.pending.filter(q=>q!==e);const c=e.clinical,p={...e.patient,clinical:c};
+    if(e.kind==='report'){
+      m.stats.reported++;c.report={...c.report,status:'已返回 · 待医生复核',receivedAt:s.time,abnormal:c.variation.abnormalReport,
+        summary:c.variation.abnormalReport?'肾功能相关结果异常，需结合临床进一步评估。':'本次检查未见明显异常，仍需医师结合病史复核。'};
+      c.findings.push(c.report.summary);c.stage='review';c.priority=c.report.abnormal?1:2;clinicalNote(p,s.time,'外部检查资料已齐，进入医生复核队列。');recordPatient(s,p);m.pending.push({...e,kind:'return',due:s.time});
+    }else if(e.kind==='return'){returnPatient(s,e);
+    }else if(e.kind==='dispense'){
+      m.stats.dispensed++;c.prescription.status='合作药房已核对发药';clinicalNote(p,s.time,'合作药房回传：已核对处方并发药，完成用药说明。');
+      const existing=m.records.find(r=>r.id===c.episodeId);if(existing){existing.clinical.prescription=c.prescription;existing.clinical.trail.push({at:s.time,text:'合作药房已核对发药并说明用药。'});existing.clinical.trail=existing.clinical.trail.slice(-24);existing.at=s.time;}
+      for(const q of m.pending)if(q.clinical.episodeId===c.episodeId)q.clinical.prescription=c.prescription;
+      for(const q of s.patients)if(q.clinical?.episodeId===c.episodeId)q.clinical.prescription=c.prescription;
+      note(s,'药房回传已发药',p.name+'的续配处方已由合作药房核对接续。');
+    }else if(e.kind==='followup'){
+      if(c.type==='respiratory'&&!c.variation.persistent){c.outcome='随访反馈：症状改善';m.stats.improved++;clinicalNote(p,s.time,'随访联系收到改善反馈，未将其记为医生即时治愈。');recordPatient(s,p);note(s,'收到随访反馈',p.name+'反馈症状改善。');}
+      else {c.stage='followup';c.findings.push(c.type==='screening'?'带回非同日家庭记录，需进一步确认。':c.variation.persistent?'随访反馈未达到预期，已安排复评。':'随访记录较平稳，按约定复诊。');returnPatient(s,e);}
+    }else {c.outcome='接收方已接续 · 诊所尚无长期结局';clinicalNote(p,s.time,'收到接续确认；外部完整病程尚未回传，不推断治疗成功或失败。');recordPatient(s,p);note(s,'收到转诊接续确认',p.name+'已由接收方继续诊疗。','referral');}
+  }
+  if(m.nextAudit===s.time){
+    const waiting=s.patients.filter(p=>p.clinical?.stage==='sample'&&p.phase==='waiting');
+    const pressure=waiting.some(p=>s.time-p.clinical.waitSince>5*MINUTE);
+    m.pressureChecks=pressure?m.pressureChecks+1:0;
+    m.observation=m.annex?'采样单元已运行，继续比较等待与新增成本。':m.pressureChecks>=2?'采样连续两次复盘出现长等待，建议租下相邻单元并安排专职护士。':'继续观察采样等待，尚无持续扩建依据。';
+    if(m.pressureChecks>=2&&s.authority&&!m.annex&&!m.annexProject)clinicalInvestment(s,'buildAnnex','director');
+    m.nextAudit+=30*MINUTE;
+  }
+}
+function clinicalInvestment(s,action,actor){const m=s.medical;
+  if(!m)return {ok:false,reason:'医疗服务尚未启用'};
+  if(!['investor','director'].includes(actor)||actor==='director'&&!s.authority)return {ok:false,reason:'超出投资授权'};
+  if(action==='buildAnnex'){
+    if(m.annex||m.annexProject)return {ok:false,reason:'相邻单元已启用或正在准备'};
+    if(s.cash<ANNEX.cost+ANNEX.reserve)return {ok:false,reason:'需保留 ¥30,000 运营储备'};
+    s.cash-=ANNEX.cost;s.metrics.investment+=ANNEX.cost;m.annexProject={startedAt:s.time,completesAt:s.time+ANNEX.duration,actor};
+    note(s,'租下相邻单元','投入 ¥24,000，准备独立采样位并安排护士；1 小时后启用，原门诊继续运行。','management');
+  }else{
+    const lab=action==='priorityLab'?'priority':'standard';if(m.lab===lab)return {ok:false,reason:'已采用该合作安排'};
+    m.lab=lab;note(s,'调整外检合作',lab==='priority'?'新送检采用优先合作：1 小时回传，单次外部成本 ¥180。':'新送检恢复常规合作：4 小时回传，单次外部成本 ¥100。','management');
+  }
+  return {ok:true};
 }

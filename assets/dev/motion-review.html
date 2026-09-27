@@ -7,7 +7,7 @@
 import {createState,advanceTo,phaseLabel} from '/src/simulation.js';
 import {ClinicScene} from '/src/scene.js';
 const start=1790000000000,id='patient-1';
-function initial(){const s=createState(start,20260926);s.patients=[s.patients[0]];s.patients[0].kind='care';s.nextArrival=start+3600000;return s;}
+function initial(){const s=createState(start,20260926,{medical:false});s.patients=[s.patients[0]];s.patients[0].kind='care';s.nextArrival=start+3600000;return s;}
 let state=initial(),seconds=0,playing=false,following=null,last=performance.now();
 const canvas=document.querySelector('canvas'),slider=document.querySelector('#time'),status=document.querySelector('#status'),play=document.querySelector('#play');
 const scene=new ClinicScene(canvas,()=>{},()=>{following=null});scene.selected=id;
