@@ -1,6 +1,15 @@
 # 开发交接
 
-更新日期：2026-09-27
+更新日期：2026-09-28
+
+## 最新接力：本机开发与 GitHub 同步设置（2026-09-28）
+
+- 当前目标：用户明确选择继续在当前电脑开发，代码同步 GitHub；本轮不创建 Codex 云端环境。
+- 已完成：确认工作区干净、分支为 main，`git pull --ff-only` 返回 Already up to date。本机仓库配置 main 跟踪 origin/main，pull.ff=only、push.default=simple。保留 HTTPS 拉取地址，将 origin 推送地址设置为 `git@github.com:mud4u404/game003.git`，使用已有 SSH 身份；这些 Git 配置只在本机 .git/config 生效。
+- 权限检查：HTTPS 默认凭据及 gh 凭据的 `git push --dry-run` 均返回 403；`ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=10 -T git@github.com` 确认账号 mud4u404（GitHub 不提供 shell，因此退出码为 1）；SSH 地址的推送预检返回 Everything up-to-date。未生成新密钥、未保存或提交凭据。
+- 验证结果：`npm run verify` 语法检查及 61/61 测试通过。已阅读 docs/QUALITY_GATE.md；本轮只涉及 Git 配置与文档，正常游戏入口及玩家可理解性审查未重跑，不新增游戏修复声明，不修改玩家档案。实际文档提交推送与远程 HEAD 核对结果以本轮交付报告为准。
+- 已知问题：HTTPS 写入凭据问题仍存在，当前项目使用 SSH 推送绕过；一次 HTTPS `git ls-remote` 超时，远程核对可使用 SSH。此前患者阻塞的未验证事项仍保留。新电脑不会继承本机 SSH 身份和 .git/config。
+- 下一步：继续在本目录开发，每个可验证任务更新交接、提交并 `git push origin main`，然后核对远程提交；接力分支 main。多人并行继续使用独立分支和 PR。
 
 ## 当前目标
 
