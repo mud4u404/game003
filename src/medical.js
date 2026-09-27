@@ -25,7 +25,7 @@ export function createMedical(at){return {version:1,pharmacy:createPharmacy(),an
 export function clinicalNote(p,at,text){p.clinical.trail.push({at,text});if(p.clinical.trail.length>24)p.clinical.trail.shift();}
 export function clinicalStatus(p,time=Infinity){const c=p.clinical;if(!c)return null;
   if(p.pausedForUrgent)return '等候急救协作结束';
-  if(p.phase==='waiting'&&c.stage==='assessment'&&c.readyAt>time)return '静息后测量血压';
+  if(p.phase==='waiting'&&c.stage==='assessment'&&c.readyAt>time)return '测压前静息 · 还需 '+Math.ceil((c.readyAt-time)/60000)+' 分钟';
   if(p.phase==='pharmacy')return c.stage==='dispense'?'药师核对发药与用药说明':'药师审核处方';
   if(p.phase==='urgent')return '急救接续 · 团队照护中';
   if(p.phase==='sampling')return '采样与交接';

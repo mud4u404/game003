@@ -337,9 +337,9 @@ export class ClinicScene {
     this.text('接 待',172,841,12,'#526475','center');
     if(s.venture){this.box(70,365,370,28,'#f1efe3ef',3);this.text(siteOf(s.venture.site).name+' · '+(s.venture.stage==='fitting'?'筹建中':s.venture.stage==='ready'?'待开业':s.venture.stage==='moving'?'迁址交接中':acceptingAt(s)?'营业中':'非接诊时段'),84,384,13,'#435d70');}
     const labeled=[];
-    for(const a of actors.filter(a=>!a.staff && a.walk || a.staff && a.id.startsWith('nurse') && (a.walk||a.activity?.mode==='preparing')).sort((a,b)=>Number(b.id===this.selected)-Number(a.id===this.selected))) {
+    for(const a of actors.filter(a=>!a.staff && (a.walk||a.phase==='waiting'||a.id===this.selected) || a.staff && a.id.startsWith('nurse') && (a.walk||a.activity?.mode==='preparing')).sort((a,b)=>Number(b.id===this.selected)-Number(a.id===this.selected))) {
       if(labeled.length>=3 || labeled.some(p=>Math.hypot(p[0]-a.pos[0],p[1]-a.pos[1])<110))continue;
-      const label=a.staff?(a.activity.label.includes('评估')?'评估':a.activity.label.includes('采样')?'采样':a.activity.label.includes('急救')?'急救接续':a.activity.label.includes('备物')||a.activity.mode==='preparing'?'备物':a.activity.label.includes('返回')?'归位':'护理'):destinationLabel(a);
+      const label=a.staff?(a.activity.label.includes('评估')?'评估':a.activity.label.includes('采样')?'采样':a.activity.label.includes('急救')?'急救接续':a.activity.label.includes('备物')||a.activity.mode==='preparing'?'备物':a.activity.label.includes('返回')?'归位':'护理'):!a.walk&&a.clinical?(a.phase==='waiting'&&a.clinical.stage==='assessment'&&a.clinical.readyAt>s.time?'静息 '+Math.ceil((a.clinical.readyAt-s.time)/60000)+'分':clinicalStatus(a,s.time)):destinationLabel(a);
       const h=a.staff?STAFF_APPEARANCE[a.id].height:patientAppearance(a).height,font=Math.max(12,Math.min(20,9/this.scale)),y=a.pos[1]-h-12,w=label.length*font+16;
       this.box(a.pos[0]-w/2,y-font,w,font+8,'#edf0e9ed',4);this.text(label,a.pos[0],y,font,'#40576b','center',500);
       labeled.push(a.pos);

@@ -33,6 +33,19 @@ export function patientIntent(p,time) {
     waiting:traveling?'前往候诊席':'等候叫号',consultation:traveling?`前往 0${p.room} 诊室`:'问诊中',
     nursingQueue:'等候护理',nursing:traveling?'前往护理位':'护理中',leaving:'接诊结束 · 离院' }[p.phase] || '';
 }
+// Explain the current dependency, without inventing a finish time for a queue.
+export function careNextStep(p,time) {
+  const c=p.clinical;if(!c)return '';
+  if(p.pausedForUrgent)return '团队正在优先处理急症，结束后自动继续本次服务。';
+  if(['arriving','registerQueue','registration'].includes(p.phase))return c.priority===0?'急症优先交接，不等待常规登记。':'接待登记后，由护士评估，再安排医生接诊。';
+  if(p.phase==='waiting'&&c.stage==='assessment')return c.readyAt>time?'正在完成测压前静息，结束后由护士叫号测量，再进入医生接诊。':'等待护理位；护士完成当前工作后自动叫号。';
+  if(['nursing','sampling'].includes(p.phase))return c.stage==='assessment'?'护士评估完成后进入医生候诊队列。':'完成采样与交接后离院，报告返回后安排医生复核。';
+  if(p.phase==='waiting')return {consult:'等待诊室空出，按紧急程度和候诊顺序自动叫号。',review:'等待医生复核检查资料。',followup:'等待医生完成随访复评。',sample:'等待采样位，护理团队按顺序叫号。',pharmacy:'等待药师核对处方；未开药房或缺货时安排合作药房接续。'}[c.stage]||'';
+  if(p.phase==='consultation')return '医生正在接诊，结束后按本次方案安排检查、药事接续或离院随访。';
+  if(p.phase==='pharmacy')return '药师审核、核对发药并说明用药后离院。';
+  if(p.phase==='urgent')return '团队联系急救接收方并照护，完成交接后继续跟踪回传。';
+  return '';
+}
 export function destinationLabel(p) {
   if(p.phase==='pharmacy')return '药房';
   if(p.clinical?.stage==='pharmacy'&&p.phase==='waiting')return '候药';

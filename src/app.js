@@ -3,7 +3,7 @@ import { FoundingUI,businessPanel } from './founding-ui.js';
 import { patientSex } from './identity.js';
 import { CLINICAL_CASES, ANNEX, PHARMACY, clinicalStatus } from './medical.js';
 import { ClinicAudio } from './audio.js';
-import { staffActivity, patientIntent } from './activity.js';
+import { staffActivity, patientIntent, careNextStep } from './activity.js';
 import { createState, createVenture, advanceTo, restoreState, snapshot, STAFF, CASES, PROJECT, MINUTE, HOUR, applyManagementAction, setAuthority } from './simulation.js';
 import { ClinicScene } from './scene.js';
 const $ = id => document.getElementById(id);
@@ -125,7 +125,7 @@ function renderUI(force=false) {
   if(selected){
     const p=state.patients.find(p=>p.id===selected),staff=staffFor(state,STAFF).find(p=>p.id===selected);
     let html='<button class="close" data-close="person" aria-label="关闭人物信息">×</button>';
-    if(p?.clinical)html+=patientRecordHTML(p.clinical,p.name,p.age,patientIntent(p,state.time),patientSex(p));
+    if(p?.clinical)html+=patientRecordHTML(p.clinical,p.name,p.age,patientIntent(p,state.time),patientSex(p))+`<p class="small-note">${esc(careNextStep(p,state.time))}</p>`;
     else if(p)html+=`<span class="eyebrow">来到诊所的人</span><h2>${esc(p.name)}<small>${p.age} 岁</small></h2><span class="tag">${patientIntent(p, state.time)}</span><p>${esc(p.thought)}</p><p class="small-note">${p.phase==='waiting'?'已候诊 '+Math.floor((state.time-p.waitStarted)/MINUTE)+' 分钟':CASES.find(c=>c.id===p.kind).label}</p>`;
     else if(staff)html+=`<span class="eyebrow">${staff.role}</span><h2>${staff.name}</h2><span class="tag">${staffStatus(staff.id)}</span><p>${staff.id==='director'?esc(state.directorThought):staff.description}</p>`;
     else if(selected.startsWith('case:')){const r=state.medical?.records.find(r=>r.id===selected.slice(5));html+=r?patientRecordHTML(r.clinical,r.name,r.age,null,r.sex):'<p>此记录已归档。</p>';}
