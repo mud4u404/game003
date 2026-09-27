@@ -86,7 +86,7 @@
 
 ## 执行记录（ChatGPT 填写）
 
-（未开始）
+（2026-09-28 Claude 已建好分支和 PR，等待 ChatGPT 开工）
 
 ## 审查记录（Claude 填写）
 
