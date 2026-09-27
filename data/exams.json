@@ -1,0 +1,368 @@
+[
+  {
+    "id": "cbc",
+    "name": "血常规",
+    "room": "laboratory",
+    "equipment": [
+      "hematology_analyzer"
+    ],
+    "staff": [
+      "nurse",
+      "lab_technician"
+    ],
+    "durationMinutes": 5,
+    "resultMinutes": 30,
+    "costCNY": [
+      20,
+      60
+    ],
+    "plain": "看看血细胞的数量，帮助判断感染或贫血。单凭白细胞升高不能确定是细菌感染。",
+    "sourceIds": [
+      "cap_cn",
+      "appendix_cn"
+    ],
+    "reviewStatus": "draft",
+    "basis": "游戏估计：时间、费用、房间设备和人员配置均为原型资源抽象，非收费标准或时效承诺。",
+    "simplifications": [
+      "resultMinutes 从采样/检查结束到报告可用；不含排队、外送或转运时间。",
+      "来源支持检查用途，不支持本游戏的运营数值。"
+    ]
+  },
+  {
+    "id": "urinalysis",
+    "name": "尿常规",
+    "room": "laboratory",
+    "equipment": [
+      "urine_analyzer"
+    ],
+    "staff": [
+      "lab_technician"
+    ],
+    "durationMinutes": 5,
+    "resultMinutes": 30,
+    "costCNY": [
+      10,
+      40
+    ],
+    "plain": "查看尿中的细胞、糖和蛋白等线索。异常结果要结合症状，不能单独判定感染。",
+    "sourceIds": [
+      "diabetes_cn",
+      "uti_nice"
+    ],
+    "reviewStatus": "draft",
+    "basis": "游戏估计：时间、费用、房间设备和人员配置均为原型资源抽象，非收费标准或时效承诺。",
+    "simplifications": [
+      "resultMinutes 从采样/检查结束到报告可用；不含排队、外送或转运时间。",
+      "来源支持检查用途，不支持本游戏的运营数值。"
+    ]
+  },
+  {
+    "id": "blood_glucose",
+    "name": "血糖",
+    "room": "laboratory",
+    "equipment": [
+      "biochemistry_analyzer"
+    ],
+    "staff": [
+      "nurse",
+      "lab_technician"
+    ],
+    "durationMinutes": 5,
+    "resultMinutes": 30,
+    "costCNY": [
+      10,
+      30
+    ],
+    "plain": "测量静脉血里的糖。确诊糖尿病通常需要按条件检测和复查，不能只凭一次指尖读数。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft",
+    "basis": "游戏估计：时间、费用、房间设备和人员配置均为原型资源抽象，非收费标准或时效承诺。",
+    "simplifications": [
+      "resultMinutes 从采样/检查结束到报告可用；不含排队、外送或转运时间。",
+      "来源支持检查用途，不支持本游戏的运营数值。"
+    ]
+  },
+  {
+    "id": "hba1c",
+    "name": "糖化血红蛋白",
+    "room": "laboratory",
+    "equipment": [
+      "hba1c_analyzer"
+    ],
+    "staff": [
+      "nurse",
+      "lab_technician"
+    ],
+    "durationMinutes": 5,
+    "resultMinutes": 120,
+    "costCNY": [
+      40,
+      100
+    ],
+    "plain": "帮助了解近几个月的平均血糖。贫血等情况可能影响结果，需要医生解释。",
+    "sourceIds": [
+      "diabetes_cn"
+    ],
+    "reviewStatus": "draft",
+    "basis": "游戏估计：时间、费用、房间设备和人员配置均为原型资源抽象，非收费标准或时效承诺。",
+    "simplifications": [
+      "resultMinutes 从采样/检查结束到报告可用；不含排队、外送或转运时间。",
+      "来源支持检查用途，不支持本游戏的运营数值。"
+    ]
+  },
+  {
+    "id": "ecg",
+    "name": "心电图",
+    "room": "ecg_room",
+    "equipment": [
+      "ecg_machine"
+    ],
+    "staff": [
+      "physician",
+      "nurse"
+    ],
+    "durationMinutes": 10,
+    "resultMinutes": 5,
+    "costCNY": [
+      20,
+      80
+    ],
+    "plain": "记录心脏的电活动，寻找心律和供血异常。一次正常不能排除心脏急症。",
+    "sourceIds": [
+      "acs_nice",
+      "chest_nice"
+    ],
+    "reviewStatus": "draft",
+    "basis": "游戏估计：时间、费用、房间设备和人员配置均为原型资源抽象，非收费标准或时效承诺。",
+    "simplifications": [
+      "resultMinutes 从采样/检查结束到报告可用；不含排队、外送或转运时间。",
+      "来源支持检查用途，不支持本游戏的运营数值。"
+    ]
+  },
+  {
+    "id": "troponin",
+    "name": "肌钙蛋白（快速检测）",
+    "room": "laboratory",
+    "equipment": [
+      "troponin_analyzer"
+    ],
+    "staff": [
+      "nurse",
+      "lab_technician"
+    ],
+    "durationMinutes": 5,
+    "resultMinutes": 20,
+    "costCNY": [
+      80,
+      200
+    ],
+    "plain": "检查心肌是否受损。发病早期可能还没升高，一次阴性不能排除心梗。",
+    "sourceIds": [
+      "chest_nice"
+    ],
+    "reviewStatus": "draft",
+    "basis": "游戏估计：时间、费用、房间设备和人员配置均为原型资源抽象，非收费标准或时效承诺。",
+    "simplifications": [
+      "resultMinutes 从采样/检查结束到报告可用；不含排队、外送或转运时间。",
+      "来源支持检查用途，不支持本游戏的运营数值。"
+    ]
+  },
+  {
+    "id": "chest_xray",
+    "name": "胸部X光",
+    "room": "xray_room",
+    "equipment": [
+      "xray_machine"
+    ],
+    "staff": [
+      "radiographer",
+      "radiologist"
+    ],
+    "durationMinutes": 10,
+    "resultMinutes": 30,
+    "costCNY": [
+      60,
+      150
+    ],
+    "plain": "拍摄胸部影像，帮助寻找肺部炎症等异常。结果需要结合症状判断。",
+    "sourceIds": [
+      "cap_cn"
+    ],
+    "reviewStatus": "draft",
+    "basis": "游戏估计：时间、费用、房间设备和人员配置均为原型资源抽象，非收费标准或时效承诺。",
+    "simplifications": [
+      "resultMinutes 从采样/检查结束到报告可用；不含排队、外送或转运时间。",
+      "来源支持检查用途，不支持本游戏的运营数值。"
+    ]
+  },
+  {
+    "id": "limb_xray",
+    "name": "四肢X光",
+    "room": "xray_room",
+    "equipment": [
+      "xray_machine"
+    ],
+    "staff": [
+      "radiographer",
+      "radiologist"
+    ],
+    "durationMinutes": 10,
+    "resultMinutes": 30,
+    "costCNY": [
+      60,
+      180
+    ],
+    "plain": "拍摄受伤部位，观察骨折和骨头位置。症状持续而片子正常时仍可能需要复查。",
+    "sourceIds": [
+      "fracture_cn"
+    ],
+    "reviewStatus": "draft",
+    "basis": "游戏估计：时间、费用、房间设备和人员配置均为原型资源抽象，非收费标准或时效承诺。",
+    "simplifications": [
+      "resultMinutes 从采样/检查结束到报告可用；不含排队、外送或转运时间。",
+      "来源支持检查用途，不支持本游戏的运营数值。"
+    ]
+  },
+  {
+    "id": "abdominal_ultrasound",
+    "name": "腹部超声",
+    "room": "ultrasound_room",
+    "equipment": [
+      "ultrasound_machine"
+    ],
+    "staff": [
+      "sonographer"
+    ],
+    "durationMinutes": 20,
+    "resultMinutes": 15,
+    "costCNY": [
+      80,
+      250
+    ],
+    "plain": "用声波观察腹部器官。可能帮助发现阑尾异常，但没看清不等于没病。",
+    "sourceIds": [
+      "appendix_cn",
+      "appendix_wses"
+    ],
+    "reviewStatus": "draft",
+    "basis": "游戏估计：时间、费用、房间设备和人员配置均为原型资源抽象，非收费标准或时效承诺。",
+    "simplifications": [
+      "resultMinutes 从采样/检查结束到报告可用；不含排队、外送或转运时间。",
+      "来源支持检查用途，不支持本游戏的运营数值。"
+    ]
+  },
+  {
+    "id": "abdominal_ct",
+    "name": "腹部CT",
+    "room": "ct_room",
+    "equipment": [
+      "ct_scanner"
+    ],
+    "staff": [
+      "radiographer",
+      "radiologist"
+    ],
+    "durationMinutes": 15,
+    "resultMinutes": 60,
+    "costCNY": [
+      300,
+      800
+    ],
+    "plain": "用多层X光影像查看腹部，帮助处理诊断不清的情况。是否使用造影剂由接诊团队判断。",
+    "sourceIds": [
+      "appendix_cn",
+      "appendix_wses"
+    ],
+    "reviewStatus": "draft",
+    "basis": "游戏估计：时间、费用、房间设备和人员配置均为原型资源抽象，非收费标准或时效承诺。",
+    "simplifications": [
+      "resultMinutes 从采样/检查结束到报告可用；不含排队、外送或转运时间。",
+      "来源支持检查用途，不支持本游戏的运营数值。"
+    ]
+  },
+  {
+    "id": "blood_pressure",
+    "name": "血压测量",
+    "room": "consultation",
+    "equipment": [
+      "bp_monitor"
+    ],
+    "staff": [
+      "nurse",
+      "physician"
+    ],
+    "durationMinutes": 10,
+    "resultMinutes": 0,
+    "costCNY": [
+      0,
+      20
+    ],
+    "plain": "测量血液对血管壁的压力。休息、姿势和多次测量会影响判断，单次升高不等于确诊。",
+    "sourceIds": [
+      "htn_cn"
+    ],
+    "reviewStatus": "draft",
+    "basis": "游戏估计：时间、费用、房间设备和人员配置均为原型资源抽象，非收费标准或时效承诺。",
+    "simplifications": [
+      "resultMinutes 从采样/检查结束到报告可用；不含排队、外送或转运时间。",
+      "来源支持检查用途，不支持本游戏的运营数值。"
+    ]
+  },
+  {
+    "id": "pulse_oximetry",
+    "name": "脉搏血氧测量",
+    "room": "consultation",
+    "equipment": [
+      "pulse_oximeter"
+    ],
+    "staff": [
+      "nurse",
+      "physician"
+    ],
+    "durationMinutes": 3,
+    "resultMinutes": 0,
+    "costCNY": [
+      0,
+      20
+    ],
+    "plain": "从手指估计血液携氧情况。读数要结合呼吸状态，不能代替医生检查。",
+    "sourceIds": [
+      "cap_cn"
+    ],
+    "reviewStatus": "draft",
+    "basis": "游戏估计：时间、费用、房间设备和人员配置均为原型资源抽象，非收费标准或时效承诺。",
+    "simplifications": [
+      "resultMinutes 从采样/检查结束到报告可用；不含排队、外送或转运时间。",
+      "来源支持检查用途，不支持本游戏的运营数值。"
+    ]
+  },
+  {
+    "id": "urine_culture",
+    "name": "尿培养及药敏",
+    "room": "laboratory",
+    "equipment": [
+      "microbiology_system"
+    ],
+    "staff": [
+      "lab_technician"
+    ],
+    "durationMinutes": 5,
+    "resultMinutes": 2880,
+    "costCNY": [
+      60,
+      180
+    ],
+    "plain": "培养尿里的细菌，帮助选择有效药物。不是每次尿路不适都要做。",
+    "sourceIds": [
+      "uti_nice"
+    ],
+    "reviewStatus": "draft",
+    "basis": "游戏估计：时间、费用、房间设备和人员配置均为原型资源抽象，非收费标准或时效承诺。",
+    "simplifications": [
+      "resultMinutes 从采样/检查结束到报告可用；不含排队、外送或转运时间。",
+      "来源支持检查用途，不支持本游戏的运营数值。"
+    ]
+  }
+]

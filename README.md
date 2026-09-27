@@ -27,6 +27,12 @@ PLAYWRIGHT_MODULE=/absolute/path/to/playwright node tests/v2/browser.cjs
 
 该检查使用独立浏览器上下文，在 390×844、DPR 3 下保存默认、放大、点选三张截图至 `art/screens/T001/`，验证模拟移动端触控和桌面操作、静止时不重绘，并检查旧入口可打开。它不代表手机真机测试。场景数据格式和实际验收记录见 `tasks/T001-iso-scene.md`。
 
+## T002 知识库草稿（待审查）
+
+`data/` 包含首批11个病种、13项检查、105个术语、16条来源及资源id清单；格式和数值口径见 [data/README.md](data/README.md)。全部为draft，尚未接入游戏。概率、费用和运营时间明确标为游戏估计；来源与释义的待核验清单见 [T002执行记录](tasks/T002-knowledge-base.md)。
+
+`node --test tests/v2/knowledge.test.mjs` 单独检查知识库；`npm run verify` 已通过现有通配符包含该测试，无需安装新依赖。测试验证结构和引用，不代替医学审校。
+
 ## 运行与验证
 
 需要 Node.js 20 或更高版本。应用无第三方依赖，不需要 `npm install`。

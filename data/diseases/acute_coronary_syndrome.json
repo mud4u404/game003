@@ -1,0 +1,164 @@
+{
+  "id": "acute_coronary_syndrome",
+  "name": "急性冠脉综合征",
+  "icd10": null,
+  "department": "emergency",
+  "relatedDepartments": [
+    "cardiology",
+    "internal_medicine"
+  ],
+  "population": {
+    "minimumAge": 18,
+    "scope": "非妊娠成人简化路径；儿童及妊娠患者不套用本条。"
+  },
+  "epidemiology": {
+    "annualIncidencePer100k": 200,
+    "metric": "annual_consultations_per_100k",
+    "ageWeights": {
+      "0–14": 0,
+      "15–44": 0.2,
+      "45–64": 1.5,
+      "65+": 2.5
+    },
+    "sexRatio": 1.5,
+    "seasonality": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "basis": "游戏估计：全部为虚构城市每10万人年就诊人次及相对权重，不是新发病例率或患病率；慢病包含复诊。年龄/性别需乘城市人口基数再归一化，18岁以下不生成；季节暂按均匀。"
+  },
+  "triage": {
+    "I": 0.08,
+    "II": 0.87,
+    "III": 0.05,
+    "IV": 0
+  },
+  "presentation": {
+    "chiefComplaints": [
+      "胸口像压了块石头，还出汗",
+      "胸闷喘不上气，人很难受"
+    ],
+    "symptoms": [
+      {
+        "name": "胸部不适",
+        "probability": 0.8
+      },
+      {
+        "name": "出汗",
+        "probability": 0.5
+      },
+      {
+        "name": "气促",
+        "probability": 0.35
+      }
+    ],
+    "signs": [
+      "可能外观无明显异常",
+      "可有循环不稳"
+    ]
+  },
+  "differentials": [
+    "肺栓塞",
+    "主动脉夹层",
+    "胃食管反流"
+  ],
+  "workup": [
+    {
+      "examId": "ecg",
+      "purpose": "疑似时尽快评估并按病情重复",
+      "typicalFinding": "可有供血异常，也可初次正常",
+      "diagnosticValue": "essential"
+    },
+    {
+      "examId": "troponin",
+      "purpose": "结合发病时间与方法评估心肌损伤",
+      "typicalFinding": "可升高，早期或部分类型可不升高",
+      "diagnosticValue": "supportive"
+    }
+  ],
+  "diagnosis": {
+    "criteria": "结合症状、动态心电图和按检测方法复查的肌钙蛋白，由接收医院判断具体类型；初次正常不能排除，疑似即启动急救转诊。",
+    "difficulty": 4,
+    "misdiagnosisRisks": [
+      "把非典型胸闷或上腹不适当胃病",
+      "一次肌钙蛋白阴性即排除"
+    ]
+  },
+  "treatment": [
+    {
+      "setting": "referral",
+      "description": "立即启动急救及转运到有心脏急症救治能力的医院；能做的初评不得拖延转运。",
+      "requires": {
+        "departments": [
+          "emergency"
+        ],
+        "equipment": [
+          "resuscitation_kit"
+        ],
+        "staff": [
+          "emergency_physician",
+          "nurse"
+        ]
+      },
+      "duration": "立即，转运与初评并行"
+    }
+  ],
+  "referral": "疑似即转有胸痛急救和冠脉介入能力的医院；不要等肌钙蛋白阳性才转。",
+  "outcomes": {
+    "timely": {
+      "recovered": 0,
+      "improved": 0.85,
+      "complication": 0.1,
+      "death": 0.05
+    },
+    "delayed": {
+      "recovered": 0,
+      "improved": 0.65,
+      "complication": 0.2,
+      "death": 0.15
+    },
+    "missed": {
+      "recovered": 0,
+      "improved": 0.4,
+      "complication": 0.3,
+      "death": 0.3
+    },
+    "basis": "游戏估计：用于将来平衡的占位概率，不是临床预后或因果效应；不得用于真实风险评估。",
+    "horizonDays": 30,
+    "scope": "假设完成接续医疗后的最终结局；转诊不是治愈。四类按死亡、并发症、恢复、好转优先互斥归类。"
+  },
+  "costCNY": [
+    80,
+    400
+  ],
+  "plain": "心脏供血突然出问题，可能表现为胸口压迫感、出汗或气短。小医院要尽快识别并联系急救，不能靠一次正常检查放心。",
+  "businessNote": "常见于中老年风险人群；需要快速识别和急救转运渠道，不能把留住患者当经营目标。",
+  "sourceIds": [
+    "acs_nice",
+    "chest_nice",
+    "icd_who"
+  ],
+  "simplifications": [
+    "游戏估计：triage分布、症状出现概率、diagnosis.difficulty、费用区间和结局观察天数均无临床统计支持。",
+    "triage仅是未来抽样占位；真实分诊必须按当前生命体征和危险表现，不能由疾病名称或比例决定。",
+    "症状概率是边际概率，各症状可同时出现，不要求相加为1。",
+    "costCNY为本院一次初步门诊评估及基础处置的游戏估计，不含上级医院、手术、长期药物或后续复诊费用。",
+    "所有药物仅写类别与原则，不给剂量；用药选择需考虑禁忌、过敏、肝肾功能及本地规则。",
+    "未建模完整鉴别、合并疾病和特殊人群；workup是按条件选择的候选集，不是每人必做清单。",
+    "ICD-10映射未逐码核对，见icd_who.needsVerification；不代表结算编码。",
+    "icd10为null：本综合征包括不稳定心绞痛和不同类型心梗，不能用单一心梗编码代替。",
+    "快速肌钙蛋白不等同高敏检测，未指定试剂及采血复查间隔，不生成排除规则。",
+    "未写具体抗栓、溶栓、氧疗指令；急救细节与国内胸痛流程必须补核。"
+  ],
+  "reviewStatus": "draft"
+}

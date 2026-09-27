@@ -1,0 +1,163 @@
+{
+  "id": "acute_gastroenteritis",
+  "name": "急性胃肠炎",
+  "icd10": "A09",
+  "department": "internal_medicine",
+  "relatedDepartments": [
+    "emergency",
+    "surgery"
+  ],
+  "population": {
+    "minimumAge": 18,
+    "scope": "非妊娠成人简化路径；儿童及妊娠患者不套用本条。"
+  },
+  "epidemiology": {
+    "annualIncidencePer100k": 12000,
+    "metric": "annual_consultations_per_100k",
+    "ageWeights": {
+      "0–14": 0,
+      "15–44": 1.2,
+      "45–64": 1,
+      "65+": 1
+    },
+    "sexRatio": 1,
+    "seasonality": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "basis": "游戏估计：全部为虚构城市每10万人年就诊人次及相对权重，不是新发病例率或患病率；慢病包含复诊。年龄/性别需乘城市人口基数再归一化，18岁以下不生成；季节暂按均匀。"
+  },
+  "triage": {
+    "I": 0.002,
+    "II": 0.028,
+    "III": 0.27,
+    "IV": 0.7
+  },
+  "presentation": {
+    "chiefComplaints": [
+      "今天拉了好几次肚子",
+      "又吐又拉，喝不下水"
+    ],
+    "symptoms": [
+      {
+        "name": "腹泻",
+        "probability": 0.9
+      },
+      {
+        "name": "呕吐",
+        "probability": 0.5
+      },
+      {
+        "name": "腹部不适",
+        "probability": 0.7
+      }
+    ],
+    "signs": [
+      "可有口干和尿少",
+      "查体评估脱水及局限压痛"
+    ]
+  },
+  "differentials": [
+    "acute_appendicitis",
+    "消化道出血",
+    "肠梗阻"
+  ],
+  "workup": [],
+  "diagnosis": {
+    "criteria": "短期呕吐腹泻结合接触史与查体评估，优先判断脱水；便血或固定部位剧痛不能套用轻症路径。",
+    "difficulty": 2,
+    "misdiagnosisRisks": [
+      "有腹泻就忽略阑尾炎或其他腹部急症"
+    ]
+  },
+  "treatment": [
+    {
+      "setting": "outpatient",
+      "description": "能饮水的轻症补充水分和电解质，观察恢复；疑似病毒性者不常规用抗菌药。",
+      "requires": {
+        "departments": [
+          "internal_medicine"
+        ],
+        "equipment": [],
+        "staff": [
+          "physician"
+        ]
+      },
+      "duration": "根据恢复和饮水情况复评"
+    },
+    {
+      "setting": "referral",
+      "description": "不能维持饮水或明显脱水时转有补液监测能力的机构。",
+      "requires": {
+        "departments": [
+          "emergency"
+        ],
+        "equipment": [
+          "resuscitation_kit"
+        ],
+        "staff": [
+          "physician",
+          "nurse"
+        ]
+      },
+      "duration": "及时接续"
+    }
+  ],
+  "referral": "循环不稳、意识改变、明显脱水、便血或持续局部剧痛，转急诊进一步检查。",
+  "outcomes": {
+    "timely": {
+      "recovered": 0.9,
+      "improved": 0.08,
+      "complication": 0.019,
+      "death": 0.001
+    },
+    "delayed": {
+      "recovered": 0.72,
+      "improved": 0.18,
+      "complication": 0.095,
+      "death": 0.005
+    },
+    "missed": {
+      "recovered": 0.55,
+      "improved": 0.2,
+      "complication": 0.23,
+      "death": 0.02
+    },
+    "basis": "游戏估计：用于将来平衡的占位概率，不是临床预后或因果效应；不得用于真实风险评估。",
+    "horizonDays": 30,
+    "scope": "假设完成接续医疗后的最终结局；转诊不是治愈。四类按死亡、并发症、恢复、好转优先互斥归类。"
+  },
+  "costCNY": [
+    20,
+    200
+  ],
+  "plain": "突然呕吐或腹泻会让身体丢失水分。多数轻症重点是补水，便血、剧痛或喝不下水需要进一步检查。",
+  "businessNote": "轻症需要观察和宣教；无法补水或诊断不明者需转诊，不能将所有腹痛当胃肠炎。",
+  "sourceIds": [
+    "gastro_diagnosis",
+    "gastro_treatment",
+    "icd_who"
+  ],
+  "simplifications": [
+    "游戏估计：triage分布、症状出现概率、diagnosis.difficulty、费用区间和结局观察天数均无临床统计支持。",
+    "triage仅是未来抽样占位；真实分诊必须按当前生命体征和危险表现，不能由疾病名称或比例决定。",
+    "症状概率是边际概率，各症状可同时出现，不要求相加为1。",
+    "costCNY为本院一次初步门诊评估及基础处置的游戏估计，不含上级医院、手术、长期药物或后续复诊费用。",
+    "所有药物仅写类别与原则，不给剂量；用药选择需考虑禁忌、过敏、肝肾功能及本地规则。",
+    "未建模完整鉴别、合并疾病和特殊人群；workup是按条件选择的候选集，不是每人必做清单。",
+    "ICD-10映射未逐码核对，见icd_who.needsVerification；不代表结算编码。",
+    "来源主要针对病毒性胃肠炎；A09是感染性胃肠炎的宽泛暂映射，病原未定。",
+    "workup空数组表示短暂轻症不常规检查；持续或重症检查在接收医院完成，本批未列完整粪便和电解质项目。"
+  ],
+  "reviewStatus": "draft"
+}

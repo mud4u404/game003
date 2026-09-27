@@ -1,0 +1,178 @@
+[
+  {
+    "id": "uri_cn",
+    "title": "急性上呼吸道感染基层诊疗指南（2018年）",
+    "publisher": "中华医学会；中华全科医师杂志",
+    "year": 2019,
+    "url": "https://seleguide.yiigle.com/uploads/guide_html/急性上呼吸道感染基层诊疗指南（2018年）.html",
+    "scope": "概述、临床表现、诊断及治疗；标题版本为2018，期刊发表为2019。",
+    "needsVerification": false,
+    "verificationNote": "已核对公开正文；只支持所列定性内容，不支持游戏概率、费用或资源配置。",
+    "accessedOn": "2026-09-28"
+  },
+  {
+    "id": "cap_cn",
+    "title": "中国成人社区获得性肺炎诊断和治疗指南(2016年版)",
+    "publisher": "中华医学会呼吸病学分会；中华结核和呼吸杂志",
+    "year": 2016,
+    "url": "https://seleguide.yiigle.com/uploads/guide_html/中国成人社区获得性肺炎诊断和治疗指南(2016年版).html",
+    "scope": "成人肺炎表现、胸片、严重程度评估和治疗原则。",
+    "needsVerification": false,
+    "verificationNote": "已核对公开正文；只支持所列定性内容，不支持游戏概率、费用或资源配置。",
+    "accessedOn": "2026-09-28"
+  },
+  {
+    "id": "gastro_diagnosis",
+    "title": "Diagnosis of Viral Gastroenteritis (“Stomach Flu”)",
+    "publisher": "NIDDK",
+    "year": 2018,
+    "url": "https://www.niddk.nih.gov/health-information/digestive-diseases/viral-gastroenteritis/diagnosis",
+    "scope": "病毒性胃肠炎的症状、脱水评估及选择性检查；年份为页面复核年。",
+    "needsVerification": false,
+    "verificationNote": "已核对公开正文；只支持所列定性内容，不支持游戏概率、费用或资源配置。",
+    "accessedOn": "2026-09-28"
+  },
+  {
+    "id": "gastro_treatment",
+    "title": "Treatment of Viral Gastroenteritis (“Stomach Flu”)",
+    "publisher": "NIDDK",
+    "year": 2018,
+    "url": "https://www.niddk.nih.gov/health-information/digestive-diseases/viral-gastroenteritis/treatment",
+    "scope": "病毒性胃肠炎补液原则；不外推至所有感染性腹泻；年份为页面复核年。",
+    "needsVerification": false,
+    "verificationNote": "已核对公开正文；只支持所列定性内容，不支持游戏概率、费用或资源配置。",
+    "accessedOn": "2026-09-28"
+  },
+  {
+    "id": "htn_cn",
+    "title": "国家基层高血压防治管理指南（2017）",
+    "publisher": "国家心血管病中心；国家卫生计生委办公厅发布",
+    "year": 2017,
+    "url": "https://www.nhc.gov.cn/jws/s2907/201711/b9281ecb0808400088f3dec95441ff51.shtml",
+    "scope": "基层高血压长期管理。",
+    "needsVerification": true,
+    "verificationNote": "官方通知和指南名称已确认；附件正文未成功取得。诊断细节与现行版本需 Claude 核验，不引用该附件数值。",
+    "accessedOn": "2026-09-28"
+  },
+  {
+    "id": "htn_education",
+    "title": "国家卫生健康委疾控局关于开展2019年“全国高血压日”宣传活动的通知",
+    "publisher": "国家卫生健康委疾控局",
+    "year": 2019,
+    "url": "https://www.nhc.gov.cn/jkj/c100063/201909/c07412a7f19b474caffbbed24c3a5c58.shtml",
+    "scope": "宣传要点：原发性高血压常需长期管理；不引用旧版控制目标。",
+    "needsVerification": true,
+    "verificationNote": "检索确认官方标题、日期及宣传要点；本轮未逐段打开正文，需复核。",
+    "accessedOn": "2026-09-28"
+  },
+  {
+    "id": "diabetes_cn",
+    "title": "国家基层糖尿病防治管理指南（2022）",
+    "publisher": "国家基层糖尿病防治管理办公室",
+    "year": 2022,
+    "url": "https://down.jctnb.org.cn/uploads/download_content/2022zn/国家基层糖尿病防治管理指南（ 2022）.pdf",
+    "scope": "PDF印刷页10–12诊断、14辅助检查、15治疗原则、转诊章节；诊断阈值仅用于知识解释。",
+    "needsVerification": false,
+    "verificationNote": "已核对公开正文；只支持所列定性内容，不支持游戏概率、费用或资源配置。",
+    "accessedOn": "2026-09-28"
+  },
+  {
+    "id": "uti_nice",
+    "title": "Urinary tract infection (lower): antimicrobial prescribing",
+    "publisher": "NICE",
+    "year": 2018,
+    "url": "https://www.nice.org.uk/guidance/ng109/chapter/Recommendations",
+    "scope": "NG109：下尿路感染抗菌治疗与培养；国外建议须按本地耐药及人群调整。",
+    "needsVerification": false,
+    "verificationNote": "已核对公开正文；只支持所列定性内容，不支持游戏概率、费用或资源配置。",
+    "accessedOn": "2026-09-28"
+  },
+  {
+    "id": "appendix_cn",
+    "title": "急性阑尾炎临床路径（2011县级医院版）",
+    "publisher": "中华医学会",
+    "year": 2011,
+    "url": "https://www.cma.org.cn/art/2018/10/17/art_1542_55.html",
+    "scope": "诊断检查、外科评估与手术；官网页面发布于2018，路径版本为2011。",
+    "needsVerification": false,
+    "verificationNote": "已核对公开正文；只支持所列定性内容，不支持游戏概率、费用或资源配置。",
+    "accessedOn": "2026-09-28"
+  },
+  {
+    "id": "sprain_nhs",
+    "title": "Sprains and strains",
+    "publisher": "NHS",
+    "year": 2024,
+    "url": "https://www.nhs.uk/conditions/sprains-and-strains/",
+    "scope": "扭伤症状、初期保护与危险表现；年份为页面复核年。",
+    "needsVerification": false,
+    "verificationNote": "已核对公开正文；只支持所列定性内容，不支持游戏概率、费用或资源配置。",
+    "accessedOn": "2026-09-28"
+  },
+  {
+    "id": "fracture_cn",
+    "title": "青壮年和老年胳膊容易发生的骨折--桡骨远端骨折",
+    "publisher": "中华医学会",
+    "year": 2023,
+    "url": "https://www.cma.org.cn/art/2023/4/21/art_4584_50477.html",
+    "scope": "骨折拍片评估、保守或手术治疗及复查；科普非完整指南。",
+    "needsVerification": false,
+    "verificationNote": "已核对公开正文；只支持所列定性内容，不支持游戏概率、费用或资源配置。",
+    "accessedOn": "2026-09-28"
+  },
+  {
+    "id": "urticaria_cn",
+    "title": "中国荨麻疹诊疗指南（2022版）",
+    "publisher": "中华医学会皮肤性病学分会荨麻疹研究中心；中华皮肤科杂志",
+    "year": 2022,
+    "url": "https://rs.yiigle.com/CN321138202212/1436321.htm",
+    "scope": "风团和瘙痒的定义及分类；治疗细节待核全文。",
+    "needsVerification": true,
+    "verificationNote": "题名、作者、2022年55卷12期1041–1049及DOI已核；正文打开失败，不能声称全文核验。",
+    "accessedOn": "2026-09-28"
+  },
+  {
+    "id": "acs_nice",
+    "title": "Acute coronary syndromes",
+    "publisher": "NICE",
+    "year": 2020,
+    "url": "https://www.nice.org.uk/guidance/ng185/chapter/recommendations",
+    "scope": "NG185：综合征涵盖不同心梗与不稳定心绞痛，专科救治。",
+    "needsVerification": true,
+    "verificationNote": "官方概览和检索正文确认；完整推荐页打开失败，处置细节需进一步审查。",
+    "accessedOn": "2026-09-28"
+  },
+  {
+    "id": "chest_nice",
+    "title": "Recent-onset chest pain of suspected cardiac origin: assessment and diagnosis",
+    "publisher": "NICE",
+    "year": 2010,
+    "url": "https://www.nice.org.uk/guidance/cg95",
+    "scope": "CG95：疑似心源性胸痛的评估及排除诊断限制。",
+    "needsVerification": true,
+    "verificationNote": "已通过NICE官方检索确认题名、2010年发布及2016年修订标记；完整推荐页打开失败，检测及转诊细节需进一步核验。",
+    "accessedOn": "2026-09-28"
+  },
+  {
+    "id": "icd_who",
+    "title": "ICD-10 Version:2019",
+    "publisher": "World Health Organization",
+    "year": 2019,
+    "url": "https://icd.who.int/browse10/2019/en",
+    "scope": "ICD-10类别编码；不是中国医保结算编码。",
+    "needsVerification": true,
+    "verificationNote": "已打开2019版浏览器；动态分类节点未逐码验证。所有映射待核，不能作为账单编码。",
+    "accessedOn": "2026-09-28"
+  },
+  {
+    "id": "appendix_wses",
+    "title": "Diagnosis and treatment of acute appendicitis: 2020 update of the WSES Jerusalem guidelines",
+    "publisher": "World Society of Emergency Surgery; World Journal of Emergency Surgery",
+    "year": 2020,
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7386163/",
+    "scope": "诊断与影像章节：超声、按条件选择CT；用于补充旧县级路径的影像说明，不移植治疗时间和概率。",
+    "needsVerification": false,
+    "verificationNote": "已核对论文题名、年及影像段落。来源不支持游戏费用或资源配置。",
+    "accessedOn": "2026-09-28"
+  }
+]
