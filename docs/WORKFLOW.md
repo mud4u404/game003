@@ -63,9 +63,9 @@
 
 **本机接力脚本 `tools/codex-relay.mjs`（让本机的 ChatGPT 也能自动接手）**
 - 在用户电脑上后台运行，每分钟查看 GitHub 上带 `<!-- relay:codex -->` 标记、由允许的账号发出的新评论（Claude 的任务或审查意见都带这个标记）。
-- 发现后在本机调用 Codex CLI（默认 `codex exec --full-auto`）处理：切到对应分支、完成要求、推送。处理结束后脚本在同一个 PR 上留言附上结果，Claude 立即收到通知。
-- 一次只处理一条，按顺序排队；状态和日志在 `tools/.relay/`（已加入 `.gitignore`）。
-- 启动：`node tools/codex-relay.mjs`。可选环境变量：`CODEX_CMD`（Codex 命令，推送需要网络权限时在这里调整）、`RELAY_INTERVAL_SEC`（默认 60）、`RELAY_AUTHORS`（允许的发送账号，默认仓库所有者）。
+- 发现后在本机调用 Codex CLI（默认 `codex exec --approve-for-me -c sandbox_workspace_write.network_access=true`）处理：切到对应分支、完成要求、推送。处理结束后脚本在同一个 PR 上留言附上结果，Claude 立即收到通知。
+- 一次只处理一条，按顺序排队；手动运行时状态和日志在 `tools/.relay/`（已加入 `.gitignore`）；macOS 安装后位于 `~/Library/Application Support/game003-relay/state/`。
+- macOS 自动启动安装：`node tools/install-codex-relay.mjs`，使用独立工作副本和用户级 LaunchAgent；详见 `docs/CODEX_RELAY.md`。手动启动：`node tools/codex-relay.mjs`。可选环境变量：`CODEX_CMD`（Codex 命令，推送需要网络权限时在这里调整）、`RELAY_INTERVAL_SEC`（默认 60）、`RELAY_AUTHORS`（允许的发送账号，默认仓库所有者）。
 - 首次使用由 ChatGPT 在本机验证：Codex CLI 的非交互参数、沙箱内能否 `git push`、`gh` 是否已登录，并设置为开机自动运行。验证结果写进 `HANDOFF.md`。
 - 这样整个循环不需要用户转述：Claude 发任务或审查 → 脚本唤醒 ChatGPT → ChatGPT 推送并留言 → Claude 立即审查。
 
