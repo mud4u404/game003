@@ -4,7 +4,7 @@ Claude 编写、ChatGPT 执行、Claude 审查。流程见 `docs/WORKFLOW.md`。
 
 | 编号 | 任务 | 状态 | 分支 |
 |---|---|---|---|
-| T001 | [等轴场景基础](T001-iso-scene.md) | 待开发 | `codex/T001-iso-scene` |
+| T001 | [等轴场景基础](T001-iso-scene.md) | 待审查 | `codex/T001-iso-scene` |
 
 ## 任务单模板
 
