@@ -1,3 +1,5 @@
+import { staffFor, siteOf, acceptingAt } from './business.js';
+import { drawTown } from './town-scene.js';
 import { clinicalStatus } from './medical.js';
 import { nursePose } from './staff-behavior.js';
 import { staffActivity, destinationLabel } from './activity.js';
@@ -66,7 +68,7 @@ export class ClinicScene {
     return [x - r.left, y - r.top];
   }
   origin() { return [this.width / 2 + this.pan[0] - 340 * this.scale, this.height / 2 + this.pan[1] - 550 * this.scale]; }
-  worldPoint(x, y) { const o = this.origin(); return [(x-o[0])/this.scale,(y-o[1])/this.scale]; }
+  worldPoint(x, y) { if(this.townTransform){const t=this.townTransform;return [(x-t.ox)/t.scale,(y-t.oy)/t.scale];}const o = this.origin(); return [(x-o[0])/this.scale,(y-o[1])/this.scale]; }
   changeZoom(factor, anchor = [this.width/2, this.height/2]) {
     const before = this.worldPoint(...anchor); this.zoom = Math.max(.75, Math.min(2.8, this.zoom * factor));
     const o = this.origin(); this.pan[0] += anchor[0] - (before[0] * this.scale + o[0]); this.pan[1] += anchor[1] - (before[1] * this.scale + o[1]);
@@ -122,7 +124,7 @@ export class ClinicScene {
   }
   person(x,y,color,staff=false,variant=0,walk=false,selected=false,tick=0,actor=null) {
     if (actor && this.art.ready) {
-      const look = staff ? STAFF_APPEARANCE[actor.id] : patientAppearance(actor);
+      const look = staff ? actor.art===0||actor.art===1 ? {...STAFF_APPEARANCE[actor.id],index:actor.art,seatedIndex:actor.art===0?14:15}:STAFF_APPEARANCE[actor.id] : patientAppearance(actor);
       const pose = actor.pose;
       const support = actorSeat(actor,pose.rising);
       // A seated pose must always have a physical supporting seat.
@@ -161,7 +163,7 @@ export class ClinicScene {
       } else if(staff && actor.id.startsWith('nurse') && actor.activity?.clinicalRow!=null){
         drawSprite('nurseWork',actor.activity.clinicalRow*3+actor.activity.frame,look.height,1);
       } else if(staff && ['doctor1','doctor2','reception','pharmacist'].includes(actor.id) && actor.activity?.mode!=='available') {
-        const row={doctor1:0,doctor2:1,reception:2,pharmacist:1}[actor.id];
+        const row=actor.id.startsWith('doctor')&&actor.art!==undefined?actor.art:{doctor1:0,doctor2:1,reception:2,pharmacist:1}[actor.id];
         drawSprite('work',row*3+actor.activity.frame,spriteHeight,1);
       } else {
         const sitting = sit > .5;
@@ -216,6 +218,7 @@ export class ClinicScene {
     }
   }
   draw(s, tick) {
+    if(s.venture?.stage==='planning'){drawTown(this,s,tick);return;}this.townTransform=null;
     const c = this.ctx;this.expanded=Boolean(s.medical?.annex||s.medical?.annexProject);
     if(this.frameBucket!==Math.floor(s.time/100)) {
       this.frameBucket=Math.floor(s.time/100);this.canvas.dataset.sceneTime=String(s.time);
@@ -262,7 +265,7 @@ export class ClinicScene {
       }
     });
     module(-654, 208, () => {
-      this.room(708, 260, s.medical?'检查与采样室':'基础护理', 3, '#d4d4cf');
+      this.room(708, 260, s.venture&&!s.venture.plan?.services.includes('sampling')?'评估与测量室':s.medical?'检查与采样室':'基础护理', 3, '#d4d4cf');
       this.bed(737,278);
       this.prop('furniture',7,887,240,75,77);
       this.prop('furniture',5,911,348,43,58);
@@ -307,7 +310,7 @@ export class ClinicScene {
     this.box(151,942,115,30,'#344b5c',5); this.text('梅 奥 诊 所',208,962,13,'#f2f2ec','center',500);
 
     if(s.medical)this.drawAnnex(s,module);
-    const actors = STAFF.filter(a=>(a.id!=='doctor2'||s.secondRoom)&&(a.id!=='nurse2'||s.medical?.annex)&&(a.id!=='pharmacist'||s.medical?.pharmacy?.enabled)).map(a=>{
+    const actors = staffFor(s,STAFF,true).filter(a=>(a.id!=='doctor2'||s.secondRoom)&&(a.id!=='nurse2'||s.medical?.annex)&&(a.id!=='pharmacist'||s.medical?.pharmacy?.enabled)).map(a=>{
       const pose=a.id.startsWith('nurse')?nursePose(s,a.id):sampleMotion(settledMotion(STAFF_POS[a.id],s.time),s.time);
       const activity=staffActivity(s,a.id),working=['working','care'].includes(activity.mode);
       return {...a,pose,pos:pose.position,staff:true,walk:pose.moving,working,activity,variant:STAFF.indexOf(a)};
@@ -332,6 +335,7 @@ export class ClinicScene {
     this.layers.sort((a,b)=>a.depth-b.depth).forEach(layer=>layer.draw());
     this.drawClinicalWork(s,actors,tick);
     this.text('接 待',172,841,12,'#526475','center');
+    if(s.venture){this.box(70,365,370,28,'#f1efe3ef',3);this.text(siteOf(s.venture.site).name+' · '+(s.venture.stage==='fitting'?'筹建中':s.venture.stage==='ready'?'待开业':s.venture.stage==='moving'?'迁址交接中':acceptingAt(s)?'营业中':'非接诊时段'),84,384,13,'#435d70');}
     const labeled=[];
     for(const a of actors.filter(a=>!a.staff && a.walk || a.staff && a.id.startsWith('nurse') && (a.walk||a.activity?.mode==='preparing')).sort((a,b)=>Number(b.id===this.selected)-Number(a.id===this.selected))) {
       if(labeled.length>=3 || labeled.some(p=>Math.hypot(p[0]-a.pos[0],p[1]-a.pos[1])<110))continue;

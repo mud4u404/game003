@@ -3,7 +3,8 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const URL = process.env.PREVIEW_URL || 'http://localhost:4173';
+// Legacy operational regression suite; founding has independent component/UI fixtures.
+const URL = (process.env.PREVIEW_URL || 'http://localhost:4173').replace(/\/$/,'')+'/?slot=legacy';
 const output = process.env.SCREENSHOT_DIR || '/tmp/meiao-browser-checks';
 const KEY = 'meiao-clinic-v1';
 (async()=>{

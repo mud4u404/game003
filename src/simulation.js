@@ -1,3 +1,4 @@
+import { initVenture, ventureDue, advanceVenture, acceptingAt, nextAdmission, serviceAvailable, investmentAllowed, validateVenture, siteOf, candidate } from './business.js';
 import { GIVEN_PROFILES, patientSex } from './identity.js';
 import { createMedical, newClinicalCase, CLINICAL_CASES, ANNEX, LAB_HOURS, DAY, clinicalNote, clinicalStatus, recordPatient, scheduleClinical, medicalDue, validateMedical, createPharmacy, PHARMACY } from './medical.js';
 import { createNurseTask, advanceNurseTask, syncNurseTask } from './staff-behavior.js';
@@ -48,8 +49,13 @@ function demand(s, at) {
   s.metrics.demand++;
   s.demandTrace.push({ id: p.id, at, kind });
   if (s.demandTrace.length > 256) s.demandTrace.shift();
-  s.nextArrival = at + Math.round(s.medical ? 180_000 + random(s)*180_000 : 47_000 + random(s)*48_000);
+  s.nextArrival = at + Math.round(s.venture ? 720_000 + random(s)*600_000 : s.medical ? 180_000 + random(s)*180_000 : 47_000 + random(s)*48_000);
   if(s.medical){p.clinical=newClinicalCase(p);p.thought=CLINICAL_CASES[p.clinical.type].complaint;}
+  if(s.venture){
+    if(!acceptingAt(s,at)){s.venture.world.closed++;return;}
+    if((s.sequence*37)%100>=siteOf(s.venture.site).access){s.venture.world.outside++;return;}
+    if(!serviceAvailable(s,p.clinical.type)){s.venture.world.unavailable++;note(s,'已提供外部就诊指引','到访需求超出本院当前服务范围，接待已指引合适的合作机构。','referral');return;}
+  }
   if (s.patients.filter(p => p.phase !== 'leaving').length >= 16 && p.clinical?.priority!==0) {
     s.metrics.capacityRedirected++;
     note(s, '接待安排了外部接续', '当前候诊已满，已告知新到访者可用的外部服务。', 'referral');
@@ -170,6 +176,7 @@ export function proposeManagement(s) {
   return { action: 'hold', reason: o.waiting ? '候诊仍在观察范围，先按现有安排接诊。' : '门诊运行平稳，保持现有团队与现金储备。' };
 }
 export function applyManagementAction(s, proposal, actor = 'director') {
+  const issue=investmentAllowed(s,proposal?.action);if(issue)return {ok:false,reason:issue};
   if(proposal && ['buildAnnex','priorityLab','standardLab','openPharmacy'].includes(proposal.action))return clinicalInvestment(s,proposal.action,actor);
   if (!proposal || proposal.action !== 'openSecondRoom') return { ok: false, reason: '不支持的操作' };
   if (!['director', 'investor'].includes(actor)) return { ok: false, reason: '没有操作权限' };
@@ -188,6 +195,7 @@ export function setAuthority(s, value) {
   return true;
 }
 function review(s) {
+  if(s.venture&&s.venture.stage!=='open'){s.nextReview+=3*MINUTE;s.lastReview=s.time;return;}
   const waiting = s.patients.filter(p => p.phase === 'waiting' && (!p.clinical || ['consult','review','followup'].includes(p.clinical.stage))).length;
   s.pressureChecks = waiting >= 2 ? s.pressureChecks + 1 : 0;
   const proposal = proposeManagement(s);
@@ -207,7 +215,7 @@ export function createState(now = Date.now(), seed = 20260926, options={}) {
     patients: [], history: [], demandTrace: [], log: [], nurseTask: createNurseTask(now)
   };
   // An explicit opening cohort, present whether the player is watching or not.
-  for (let i = 0; i < 4; i++) demand(s, now);
+  if(!options.empty)for (let i = 0; i < 4; i++) demand(s, now);
   s.patients.forEach((p, i) => {
     p.motion = settledMotion([310 + i * 17, 1016], now);
     enter(p, 'arriving', now + i * 1700, 0);
@@ -216,26 +224,30 @@ export function createState(now = Date.now(), seed = 20260926, options={}) {
   note(s, '梅奥诊所开始营业', '林岚与陈雪已到岗。周敏负责日常经营，你可以随时观察和调整授权。', 'management');
   return s;
 }
+export function createVenture(now=Date.now(),seed=20260926){
+  const s=createState(now,seed,{empty:true});s.venture=initVenture(now);s.log=[];s.eventSequence=0;s.authority=false;return s;
+}
 export function advanceTo(s, target, eventLimit = 200_000) {
   if (!Number.isFinite(target) || target <= s.time) return { caughtUp: true, events: 0 };
   let count = 0;
   while (count < eventLimit) {
     const patientDue = s.patients.reduce((min, p) => Math.min(min, p.due ?? Infinity, p.motionDue ?? Infinity, p.roomReleasedAt ?? Infinity), Infinity);
-    const next = Math.min(s.nextArrival, s.nextCost, s.nextReview, s.project?.completesAt ?? Infinity, s.nurseTask.due ?? Infinity, s.sampleTask?.due ?? Infinity, medicalDue(s), patientDue);
+    const next = Math.min(s.nextArrival, s.nextCost, s.nextReview, s.project?.completesAt ?? Infinity, s.nurseTask.due ?? Infinity, s.sampleTask?.due ?? Infinity, medicalDue(s), ventureDue(s), patientDue);
     if (next > target) { s.time = target; return { caughtUp: true, events: count }; }
     s.time = next;
+    advanceVenture(s);
     advanceNurseTask(s);
     advanceClinical(s);
     if (s.nextArrival === next) demand(s, next);
     if (s.nextCost === next) {
       const extra=s.medical?.annex?ANNEX.operating:0;
-      if(s.medical){s.medical.costs.staffSpace+=extra;if(s.medical.pharmacy.enabled)s.medical.pharmacy.operating+=PHARMACY.operating;}
-      const cost = (s.secondRoom ? 19 : 12)+extra+(s.medical?.pharmacy.enabled?PHARMACY.operating:0);
+      if(s.medical&&!s.venture){s.medical.costs.staffSpace+=extra;if(s.medical.pharmacy.enabled)s.medical.pharmacy.operating+=PHARMACY.operating;}
+      const cost = s.venture?0:(s.secondRoom ? 19 : 12)+extra+(s.medical?.pharmacy.enabled?PHARMACY.operating:0);
       s.cash -= cost; s.metrics.operating += cost; s.nextCost += MINUTE;
     }
     if (s.project?.completesAt === next) {
       s.secondRoom = true; s.project = null;
-      note(s, '第二诊室开始接诊', '顾宁已到岗。新增容量不会改变小镇的患者需求。', 'management');
+      note(s, '第二诊室开始接诊', (s.venture?'周启明':'顾宁')+'已到岗。新增容量不会改变小镇的患者需求。', 'management');
     }
     for (const p of s.patients) { if (p.motionDue === next) p.motionDue = null; if (p.roomReleasedAt === next) p.roomReleasedAt = null; }
     for (const p of [...s.patients]) if (p.due !== null && p.due === next) progressPatient(s, p);
@@ -259,7 +271,7 @@ export function phaseLabel(p, time = Infinity) {
 }
 export function snapshot(s) {
   return { time: s.time, completed: s.metrics.completed, referred: s.metrics.referred,
-    revenue: s.metrics.revenue, operating: s.metrics.operating, investment: s.metrics.investment, cash: s.cash };
+    revenue: s.metrics.revenue, operating: s.metrics.operating, investment: s.metrics.investment, cash: s.cash, debtPaid:s.venture?.debtPaid||0 };
 }
 export function restoreState(serialized) {
   const s = JSON.parse(serialized);
@@ -322,6 +334,7 @@ export function restoreState(serialized) {
   if(s.medical===undefined)s.medical=createMedical(s.time);
   if(s.medical&&s.medical.pharmacy===undefined)s.medical.pharmacy=createPharmacy();
   validateMedical(s);
+  validateVenture(s);
   if(s.sampleTask){const t=s.sampleTask,m=t.motion;if(!m||![m.at,m.start,m.end,m.ready,m.length].every(finite)||m.start>m.end||!Array.isArray(m.points)||m.points.some(p=>!Array.isArray(p)||p.length!==2||!p.every(finite))||(t.due!==null&&(!finite(t.due)||t.due<s.time)))throw Error('采样岗位存档不完整');}
   return s;
 }
@@ -387,7 +400,14 @@ function progressClinical(s,p){const c=p.clinical,m=s.medical;
     else if(c.variation.persistent){c.diagnosis=c.type==='respiratory'?'症状尚未明显改善':'血压控制仍需调整';c.plan=['复核病程、用药和新出现的症状；安排后续评估，不把未改善自动归为医护失误。'];m.stats.unresolved++;closeClinical(s,p,'复评后需继续管理');}
     else{m.stats.improved++;c.plan=['当前反馈改善，保留后续注意事项与长期管理安排。'];closeClinical(s,p,c.type==='respiratory'?'随访反馈改善':'随访控制平稳');}
   }else if(c.type==='workup'){
-    c.plan=[CLINICAL_CASES.workup.plan];clinicalNote(p,s.time,'根据本次评估开具检查安排。');releaseRoomAfterQueue(s,p,'sample');return true;
+    c.plan=[CLINICAL_CASES.workup.plan];clinicalNote(p,s.time,'根据本次评估开具检查安排。');
+    if(s.venture&&!s.venture.plan.services.includes('sampling')){
+      spendClinical(s,m.lab==='priority'?180:100,'external');
+      c.report={status:'合作机构待采样与检查',orderedAt:s.time,expectedAt:s.time+LAB_HOURS[m.lab]*HOUR,contract:m.lab,source:'external'};
+      clinicalNote(p,s.time,'本院未开设采样，已交接合作机构完成采样和检查；报告按合作安排回传。');
+      if(!scheduleClinical(s,p,'report',LAB_HOURS[m.lab]*HOUR))clinicalNote(p,s.time,'本院自动回传容量已满，由合作机构继续检查与复核。');closeClinical(s,p,'已安排合作机构检查');releaseRoom(p);return true;
+    }
+    releaseRoomAfterQueue(s,p,'sample');return true;
   }else{
     c.plan=[CLINICAL_CASES[c.type].plan];
     if(c.type==='pressure'){prescribe(s,p);releaseRoomAfterQueue(s,p,'pharmacy');return true;}
@@ -449,11 +469,12 @@ function orderMedicines(s){const f=s.medical.pharmacy;
   note(s,'药房已安排补货','续配库存达到补货线，采购24份，预计4小时后交接入库。','management');
 }
 function advanceClinical(s){const m=s.medical;if(!m)return;
-  if(m.pharmacy.project?.completesAt===s.time){m.pharmacy.enabled=true;m.pharmacy.project=null;m.pharmacy.stock=PHARMACY.initialStock;note(s,'院内药房开始服务','陆承安已到岗，药柜与首批库存完成交接，可承接模型范围内的续配处方。','management');}
+  if(m.pharmacy.project?.completesAt===s.time){m.pharmacy.enabled=true;m.pharmacy.project=null;m.pharmacy.stock=PHARMACY.initialStock;if(s.venture&&!s.venture.plan.services.includes('pharmacy'))s.venture.plan.services.push('pharmacy');note(s,'院内药房开始服务','陆承安已到岗，药柜与首批库存完成交接，可承接模型范围内的续配处方。','management');}
   if(m.pharmacy.order?.due===s.time){m.pharmacy.stock+=m.pharmacy.order.quantity;m.pharmacy.order=null;note(s,'药房补货已入库','药师完成到货核对，续配库存已补充。','management');}
 
-  if(m.annexProject?.completesAt===s.time){m.annex=true;m.annexProject=null;syncNurseTask(s);note(s,'相邻采样单元投入使用','许禾已到岗，采样不再占用原护理位；新增工资、租金与维护支出开始计入。','management');}
+  if(m.annexProject?.completesAt===s.time){m.annex=true;m.annexProject=null;syncNurseTask(s);note(s,'相邻采样单元投入使用',(s.venture?'沈宁':'许禾')+'已到岗，采样不再占用原护理位；新增工资、租金与维护支出开始计入。','management');}
   for(const e of [...m.pending].filter(e=>e.due===s.time)){
+    if(s.venture&&['return','followup'].includes(e.kind)&&!acceptingAt(s)){e.due=Math.max(s.time+60000,nextAdmission(s,s.time));continue;}
     if(['return','followup'].includes(e.kind)&&s.patients.filter(p=>p.phase!=='leaving').length>=16){e.due+=30*MINUTE;continue;}
     m.pending=m.pending.filter(q=>q!==e);const c=e.clinical,p={...e.patient,clinical:c};
     if(e.kind==='report'){
@@ -483,6 +504,7 @@ function advanceClinical(s){const m=s.medical;if(!m)return;
   }
 }
 function clinicalInvestment(s,action,actor){const m=s.medical;
+  const issue=investmentAllowed(s,action);if(issue)return {ok:false,reason:issue};
   if(!m)return {ok:false,reason:'医疗服务尚未启用'};
   if(!['investor','director'].includes(actor)||actor==='director'&&!s.authority)return {ok:false,reason:'超出投资授权'};
   if(action==='openPharmacy'){
