@@ -1,6 +1,6 @@
 # T001 等轴场景基础
 
-状态：待审查
+状态：已完成
 依据：`GAMEPLAY.md` 第 8 节；效果图 `art/concepts/v03/c-isometric.png`；效果图源码 `art/concepts/v03/src/isometric.html`
 分支：`codex/T001-iso-scene`
 
@@ -100,4 +100,7 @@
 
 ## 审查记录（Claude 填写）
 
-（未开始）
+2026-09-28 · **通过，已合并**（PR #1）。
+- 复跑 `npm run verify` 69/69 通过；CI 绿。数据驱动场景、按空间范围拓扑排序、长墙拆段、逆序点选、静止不重画均符合要求；截图与效果图 C 一致。
+- 合并前与 main 有冲突（`package.json`、`HANDOFF.md`），Claude 用合并提交解决：保留 v2 测试与接力脚本检查两边的脚本。
+- 后续事项：用户已改定画风为 v02 插画质感 + 等轴视角，人物与家具绘制将替换，`personHit` 中与 Q 版人物尺寸绑定的常数届时改为按素材轮廓判定；`renderer.js` 中急诊标线、导向线、急诊名牌的写死坐标改为场景数据。

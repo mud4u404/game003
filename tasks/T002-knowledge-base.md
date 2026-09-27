@@ -1,8 +1,8 @@
 # T002 知识库格式与首批病种
 
-状态：待开发（等 T001 合并后发布）
+状态：开发中（2026-09-28 发布）
 依据：`docs/KNOWLEDGE_BASE.md`；`GAMEPLAY.md` 3.2、5A、6、9 节；`docs/PLAYTHROUGH.md`
-分支：`codex/T002-knowledge-base`
+分支：`codex/T002-knowledge-base`（Claude 已预先建好，勿新建）
 
 ## 目标
 
@@ -81,7 +81,7 @@
 
 ## 交付
 
-- 从最新 `main` 建分支 `codex/T002-knowledge-base`，开 PR 到 `main`，标题 `T002 知识库格式与首批病种`。
+- 分支和 PR 已由 Claude 建好：`git fetch` 后切到 `codex/T002-knowledge-base` 开发并推送，完成后在 PR 上留言“完成，请审查”，PR 正文写逐条自查。
 - 更新 `HANDOFF.md`，填写本文件的“执行记录”，把 `tasks/README.md` 里 T002 的状态改为“待审查”。
 
 ## 执行记录（ChatGPT 填写）
