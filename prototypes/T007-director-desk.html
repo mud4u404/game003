@@ -1,0 +1,454 @@
+<title>院长桌面试玩</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&display=swap">
+<style>
+:root{
+  --bg:#EEF4F2;--surface:#FFFFFF;--sunk:#E3ECE9;--ink:#15302B;--muted:#5B726D;--line:#CFDDD9;
+  --accent:#1B8574;--accent-ink:#FFFFFF;--accent-soft:#D5EDE8;
+  --good:#2C7F4F;--warn:#B06E12;--crit:#BE3A33;--warn-soft:#F7EAD3;--crit-soft:#F6DAD7;
+  --serif:"Noto Serif SC","Songti SC","STSong",serif;
+  --sans:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;--bg:#0E1917;--surface:#16241F;--sunk:#1D2E2A;--ink:#E2EEEA;--muted:#8FA8A2;--line:#2A3E39;
+  --accent:#4DBEA9;--accent-ink:#0B1A17;--accent-soft:#1D3A34;--good:#6CC28E;--warn:#E3A64B;--crit:#EE7A70;--warn-soft:#3A2E17;--crit-soft:#3E211F;}}
+:root[data-theme="dark"]{
+  color-scheme:dark;--bg:#0E1917;--surface:#16241F;--sunk:#1D2E2A;--ink:#E2EEEA;--muted:#8FA8A2;--line:#2A3E39;
+  --accent:#4DBEA9;--accent-ink:#0B1A17;--accent-soft:#1D3A34;--good:#6CC28E;--warn:#E3A64B;--crit:#EE7A70;--warn-soft:#3A2E17;--crit-soft:#3E211F;}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;padding-inline:16px;padding-block:0 120px}
+.wrap{max-width:560px;margin:0 auto}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px 10px;border-bottom:1px solid var(--line);margin-inline:-16px;padding-inline:16px}
+.top .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;max-width:560px;margin:0 auto}
+h1{font-family:var(--serif);font-size:20px;margin:0;letter-spacing:.02em}
+.day{color:var(--muted);font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:560px;margin:8px auto 0}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+.kpi b{display:block;font-size:17px;font-variant-numeric:tabular-nums}
+.kpi span{font-size:11px;color:var(--muted);letter-spacing:.05em}
+.kpi.crit{border-color:var(--crit);background:var(--crit-soft)}
+.kpi.warn{border-color:var(--warn);background:var(--warn-soft)}
+section{margin-top:20px}
+h2{font-family:var(--serif);font-size:16px;margin:0 0 8px;text-wrap:balance}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.stack{display:flex;flex-direction:column;gap:10px}
+.muted{color:var(--muted);font-size:13px}
+.brief{background:var(--accent-soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.brief p{margin:0 0 6px}.brief p:last-child{margin:0}
+table.nums{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+table.nums td{padding:7px 0;border-bottom:1px solid var(--line)}
+table.nums tr:last-child td{border-bottom:0}
+table.nums td:last-child{text-align:right}
+table.nums td.dd{text-align:left}
+tr.drill{cursor:pointer}
+tr.drill td:first-child::after{content:" ›";color:var(--accent)}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:99px;background:var(--sunk);color:var(--muted);margin-left:6px;vertical-align:1px}
+.tag.crit{background:var(--crit-soft);color:var(--crit)}.tag.warn{background:var(--warn-soft);color:var(--warn)}.tag.good{background:var(--accent-soft);color:var(--good)}
+.quote{border-left:3px solid var(--line);padding-left:10px;margin:0}
+.quote b{font-weight:600}
+.cases{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.case{background:var(--sunk);border-radius:8px;padding:8px 10px;font-size:13px}
+.case .h{display:flex;justify-content:space-between;gap:8px;font-weight:600}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+button{font:inherit;font-size:14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 12px;cursor:pointer}
+button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+button.sel{border-color:var(--accent);background:var(--accent-soft);font-weight:600}
+button:disabled{opacity:.45;cursor:not-allowed}
+details.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px}
+details.panel>summary{padding:12px 14px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between}
+details.panel>summary::after{content:"＋";color:var(--muted)}
+details.panel[open]>summary::after{content:"－"}
+details.panel .in{padding:0 14px 14px;display:flex;flex-direction:column;gap:12px}
+.opt{display:flex;flex-direction:column;gap:4px}
+.opt .t{font-size:13px;color:var(--muted)}
+.person{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:10px}
+.person:first-child{border-top:0;padding-top:0}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));z-index:6}
+.bar .wrap{display:flex;gap:10px;align-items:center}
+.bar .wrap .muted{flex:1}
+.pending{font-size:12px;color:var(--warn)}
+.event{border-color:var(--warn)}
+.event.crit{border-color:var(--crit)}
+textarea{width:100%;min-height:90px;font:inherit;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--surface);color:var(--ink)}
+.intro p{margin:0 0 8px}
+@media (prefers-reduced-motion:no-preference){.fade{animation:f .35s ease-out}@keyframes f{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}}
+</style>
+
+<header class="top"><div class="row"><h1>仁和医院</h1><span class="day" id="dayLabel"></span></div>
+<div class="kpis" id="kpis"></div></header>
+<main class="wrap" id="app"></main>
+<div class="bar" id="bar"><div class="wrap"><span class="muted" id="barNote"></span><button class="primary" id="endDay">签字，结束今天</button></div></div>
+
+<script>
+(() => {
+const DAYS = 14;
+const fmt = n => (n < 0 ? '-¥' : '¥') + Math.abs(Math.round(n)).toLocaleString('zh-CN');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function rng(seed){let s=seed>>>0;return()=>{s=(s+0x6D2B79F5)>>>0;let t=s;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296;};}
+
+const SURN='王李张刘陈杨黄赵吴周徐孙马朱胡郭何林罗高'.split('');
+const GIVEN='建国 秀英 志强 丽 伟 芳 磊 敏 洋 静 军 婷 涛 霞 斌 娟 鹏 燕 浩 红'.split(' ');
+const DZ={
+  uri:{n:'上呼吸道感染',c:'咳嗽、咽痛两天',ex:'血常规'},
+  pna:{n:'社区获得性肺炎',c:'发热、咳嗽带痰四天',ex:'血常规 + 胸部X光',xray:1},
+  ge:{n:'急性胃肠炎',c:'腹泻、呕吐一天',ex:'血常规、粪常规'},
+  uti:{n:'尿路感染',c:'尿频尿痛',ex:'尿常规'},
+  frac:{n:'桡骨远端骨折',c:'摔倒后手腕肿痛',ex:'腕部X光',xray:1},
+  app:{n:'急性阑尾炎',c:'右下腹痛、发热',ex:'血常规 + 腹部CT',complex:1},
+  htn:{n:'原发性高血压',c:'头晕，血压 168/102',ex:'血压复测、心电图'},
+  dm:{n:'2型糖尿病',c:'口渴多尿、消瘦',ex:'空腹血糖、糖化血红蛋白'},
+};
+const MIS={pna:'uri',app:'ge',uti:'ge',frac:'uri'}; // 真实 → 被误诊成
+const EXAM={lean:{n:'精简',rev:.85,mis:.10,d:'只做最必要的检查'},standard:{n:'规范',rev:1,mis:.05,d:'按诊疗指南开检查'},full:{n:'全面',rev:1.35,mis:.02,d:'能查的都查'}};
+const FEE={low:{n:'低',rev:.8,dem:1.15},std:{n:'标准',rev:1,dem:1},high:{n:'高',rev:1.3,dem:.82}};
+
+function newState(){
+  return {v:1,runId:'r'+Date.now().toString(36)+Math.floor(Math.random()*1e4),seed:Math.floor(Math.random()*1e9),day:1,
+    cash:150000,debt:0,rep:50,rooms:2,nurses:2,xray:0,xrayReady:0,ct:0,ctReady:0,roomReady:0,
+    doctors:[{id:'d1',name:'王建华',title:'主治医师',skill:.8,care:.85,speed:.4,salary:900},
+             {id:'d2',name:'张明',title:'住院医师',skill:.55,care:.3,speed:.9,salary:600}],
+    rules:{exam:'lean',scope:'refer',fee:'std'},orders:{mass:'ask',limit:50000},
+    investor:null,flags:{},crisis:0,crisisDeadline:0,loansTaken:0,
+    pendingMis:[],pendingBad:[],yesterday:null,brief:[],events:[],log:[],history:[],over:null,feedback:null,candidates:null};
+}
+let S; try{S=JSON.parse(localStorage.getItem('dd.state')||'null');}catch(e){S=null}
+if(!S||S.v!==1)S=newState();
+const save=()=>{try{localStorage.setItem('dd.state',JSON.stringify(S));}catch(e){}};
+const log=(a)=>{S.log.push({day:S.day,a});};
+
+// ---------- 候选医生 ----------
+function candidates(){
+  if(S.candidates&&S.candidates.day===S.day)return S.candidates.list;
+  const r=rng(S.seed+S.day*97);
+  const pool=[
+    {title:'主任医师',skill:.92,care:.9,speed:.5,salary:1800},
+    {title:'副主任医师',skill:.82,care:.75,speed:.6,salary:1300},
+    {title:'主治医师',skill:.7,care:.8,speed:.55,salary:900},
+    {title:'主治医师',skill:.72,care:.45,speed:.85,salary:850},
+    {title:'住院医师',skill:.5,care:.7,speed:.6,salary:550},
+    {title:'住院医师',skill:.45,care:.4,speed:.95,salary:500}];
+  const list=[0,1].map(i=>{const p=pool[Math.floor(r()*pool.length)];
+    return {...p,id:'c'+S.day+i,name:SURN[Math.floor(r()*SURN.length)]+GIVEN[Math.floor(r()*GIVEN.length)]+(i?'':'')};});
+  S.candidates={day:S.day,list};return list;
+}
+const trait=d=>[d.skill>=.8?'医术好':d.skill<.55?'经验少':'医术一般',d.care>=.75?'严谨':d.care<.5?'粗心':'还算仔细',d.speed>=.8?'看得快':d.speed<.5?'看得慢':'速度中等'].join(' · ');
+
+// ---------- 一天的模拟 ----------
+function simulateDay(){
+  const r=rng(Math.imul((S.seed^Math.imul(S.day,0x9E3779B1))>>>0,0x85EBCA6B)^S.day);
+  const d=S.day, wk=(d%7===6||d%7===0)?.7:1;
+  const docs=S.doctors;
+  let demand=Math.round((28+S.rep*.45)*FEE[S.rules.fee].dem*wk*(.9+r()*.2));
+  let cap=docs.reduce((a,x)=>a+14+x.speed*10,0);
+  if(S.nurses<docs.length)cap*=.8;
+  cap=Math.min(cap,S.rooms*24);cap=Math.floor(cap);
+  const served=Math.min(demand,cap), left=demand-served;
+  const keys=Object.keys(DZ), w=[20,12,14,10,8,6,15,15];
+  const pick=()=>{let t=r()*100;for(let i=0;i<keys.length;i++){t-=w[i];if(t<0)return keys[i];}return 'uri';};
+  const cases=[]; let revenue=0, referred=0, treated=0, xrayRef=0, cxRef=0, cxTried=0;
+  const ex=EXAM[S.rules.exam], fee=FEE[S.rules.fee];
+  const load={}; docs.forEach(x=>load[x.id]=0);
+  for(let i=0;i<served;i++){
+    const k=pick(), dz=DZ[k];
+    // 按速度分配医生
+    const tot=docs.reduce((a,x)=>a+14+x.speed*10,0); let t=r()*tot, doc=docs[0];
+    for(const x of docs){t-=14+x.speed*10;if(t<0){doc=x;break;}}
+    load[doc.id]++;
+    const p={name:SURN[Math.floor(r()*SURN.length)]+GIVEN[Math.floor(r()*GIVEN.length)],age:18+Math.floor(r()*65),dz:k,doc:doc.name};
+    if(dz.xray&&!S.xray){p.out='转诊';p.why='本院没有X光机，无法确诊';referred++;xrayRef++;cases.push(p);continue;}
+    if(dz.complex&&!S.ct&&S.rules.scope==='refer'){p.out='转诊';p.why='超出本院能力（需CT和手术评估）';referred++;cxRef++;cases.push(p);continue;}
+    let fee1=(dz.complex?500:dz.xray?260:150)*ex.rev*fee.rev;
+    if(dz.complex){cxTried++;fee1=S.ct?900:600;
+      const bad=r()<(S.ct?.08:.3);
+      if(bad)S.pendingBad.push({reveal:d+2,p:{...p,ex:'血常规（本院无CT）'}});}
+    revenue+=fee1; treated++;
+    // 误诊：检查越省、医生越粗心越容易
+    if(MIS[k]&&!(dz.xray&&S.rules.exam!=='lean'&&S.xray)){
+      const pm=ex.mis*(1.7-doc.care)*(1.4-doc.skill)*3.5;
+      if(r()<pm){p.mis=MIS[k];S.pendingMis.push({reveal:d+2+Math.floor(r()*2),p:{...p}});}
+    }
+    p.out='治疗后离院';p.fee=Math.round(fee1);cases.push(p);
+  }
+  for(let i=0;i<left;i++){const k=pick();cases.push({name:SURN[Math.floor(r()*SURN.length)]+GIVEN[Math.floor(r()*GIVEN.length)],age:18+Math.floor(r()*65),dz:k,out:'未就诊离开',why:'候诊超过 90 分钟，自行离开'});}
+  // 今天发现的误诊和不良结局
+  const found=S.pendingMis.filter(x=>x.reveal===d); S.pendingMis=S.pendingMis.filter(x=>x.reveal>d);
+  const bad=S.pendingBad.filter(x=>x.reveal===d); S.pendingBad=S.pendingBad.filter(x=>x.reveal>d);
+  // 成本
+  const sal=docs.reduce((a,x)=>a+x.salary,0)+S.nurses*350;
+  const fixed=1500+S.rooms*300+(S.xray?200:0)+(S.ct?800:0);
+  const interest=Math.round(S.debt*.0009);
+  const cost=sal+fixed+interest;
+  // 口碑
+  let dRep=treated*.03-left*.12-referred*.03-found.length*1.2-bad.length*2.5;
+  if(S.rules.fee==='high'&&S.rules.exam==='full')dRep-=.8;
+  if(S.ct)dRep+=.2;
+  dRep=Math.max(-6,Math.min(3,dRep));
+  S.rep=Math.max(0,Math.min(100,S.rep+dRep));
+  S.cash+=revenue-cost;
+  const y={day:d,demand,served,left,referred,xrayRef,cxRef,cxTried,treated,revenue:Math.round(revenue),cost,sal,fixed,interest,dRep:+dRep.toFixed(1),
+    found:found.map(x=>x.p),bad:bad.map(x=>x.p),load,cases,cap};
+  return y;
+}
+
+// ---------- 夜间与事件 ----------
+function overnight(y){
+  const brief=[], events=[];
+  const nd=S.day+1;
+  // 建设完工
+  if(S.roomReady===nd){S.rooms++;S.roomReady=0;brief.push('新诊室完工，诊室增至 '+S.rooms+' 间。');}
+  if(S.xrayReady===nd){S.xray=1;S.xrayReady=0;brief.push('X光机安装调试完成，今天开始使用。');}
+  if(S.ctReady===nd){S.ct=1;S.ctReady=0;brief.push('CT 安装完成，今天开始使用。');}
+  // 第 8 天夜里：车祸伤员（离线，由助理按常备指令处理）
+  if(nd===9){
+    const o=S.orders.mass; let txt;
+    if(o==='ask'){txt='凌晨 2:40 城东国道客车侧翻，急救中心询问能否接收 12 名伤员。你没有设定预案，助理打了你两次电话没打通，按惯例全部婉拒，急救中心记下了。';S.rep-=3;}
+    else if(o==='refer'){txt='凌晨 2:40 城东国道客车侧翻，急救中心询问能否接收 12 名伤员。助理按你的预案“夜间批量伤员一律转往市一院”婉拒。';S.rep-=1.5;}
+    else{const strong=S.doctors.length>=3&&S.nurses>=3;
+      if(strong){txt='凌晨 2:40 客车侧翻，助理按你的预案接收 12 名伤员，召回全部医护。10 人处理后离院，2 人稳定后转上级医院。电视台早间新闻提到了仁和医院。';S.rep+=6;S.cash+=14000;}
+      else{txt='凌晨 2:40 客车侧翻，助理按你的预案接收 12 名伤员，但当班只有 '+S.doctors.length+' 名医生、'+S.nurses+' 名护士。2 名伤员处置延误，家属在网上投诉，卫健局要求书面说明。';S.rep-=7;S.cash+=6000;S.flags.dispute=1;}}
+    brief.push(txt); S.flags.mass=o;
+  }
+  // 危机分档
+  if(S.cash<0){
+    if(S.crisis===0){S.crisis=1;brief.push('账上现金为负。助理：“这是预警。工资明天照发的话会继续透支，建议今天就处理。”');}
+    else if(S.crisis===1){S.crisis=2;S.crisisDeadline=nd+3;brief.push('银行来函催收：第 '+S.crisisDeadline+' 天前现金仍为负，将申请冻结账户，医院无法继续营业。');}
+    else if(S.crisis===2&&nd>=S.crisisDeadline){S.over={type:'bankrupt',day:nd};}
+  } else if(S.crisis){S.crisis=0;brief.push('现金回正，危机解除。');}
+  if(S.cash>0&&S.cash<25000&&!S.crisis)brief.push('助理：“现金只够发大约 '+Math.max(1,Math.floor(S.cash/(y.cost||1)))+' 天工资了。”');
+  // 待办事件
+  if(nd===3&&!S.flags.nurse)events.push({id:'nurse',title:'护士李芳提出加薪',body:'李芳说隔壁诊所每天多给 ¥120，她考虑过去。她是两名护士之一。',
+    opts:[['加薪 ¥120/天','raise'],['不加，由她去','let']]});
+  if(nd===5&&!S.investor)events.push({id:'inv',title:'投资方顾总约谈',body:'顾总愿意投资 ¥300,000，占股 25%。条件：第 14 天结束时口碑达到 60，或最近一天接诊达到 60 人。没达到的话，他要求派人进董事会，重大开支须他同意。',
+    opts:[['接受','accept'],['还价：¥250,000 占 15%','haggle'],['婉拒','decline']]});
+  if(nd===6&&S.orders.mass==='ask')events.push({id:'tip',title:'助理提醒：夜间预案还没定',body:'“院长，夜里出了大事我联系不上您的话，得有个规矩。建议在‘常备指令’里定一下：夜间有批量伤员时，我们接还是转？”',opts:[['知道了','ok']]});
+  if(nd===11&&S.flags.dispute&&!S.flags.disputeDone)events.push({id:'disp',title:'医疗纠纷：客车事故伤员家属',body:'家属要求赔偿 ¥40,000。法务说打官司大概率赔得少，但要拖两个月，期间媒体会持续关注。',
+    opts:[['赔 ¥40,000 私了','pay'],['走司法程序','court']]});
+  if(S.crisis===2&&!S.flags.rescue)events.push({id:'rescue',title:'紧急融资：新投资方',body:'一家医疗集团愿意注资 ¥200,000，要求占股 45%，并由集团任命财务总监。',opts:[['接受','take'],['拒绝','refuse']]});
+  return {brief,events};
+}
+
+function resolveEvent(ev,choice){
+  const e=ev.id; let msg='';
+  if(e==='nurse'){S.flags.nurse=choice;if(choice==='raise'){msg='李芳留下了。护士成本每天 +¥120。';S.cash-=0;S.flags.nurseRaise=1;}else{S.nurses--;msg='李芳离职，护士剩 '+S.nurses+' 人。';}}
+  if(e==='inv'){
+    if(choice==='accept'){S.investor={amount:300000,share:25};S.cash+=300000;msg='签约。¥300,000 到账。目标：第 14 天口碑 ≥60 或单日接诊 ≥60。';}
+    else if(choice==='haggle'){const ok=rng(S.seed+5)()<.5;
+      if(ok){S.investor={amount:250000,share:15};S.cash+=250000;msg='顾总想了一会儿，同意了。¥250,000 到账，目标不变。';}
+      else{S.investor={declined:1};msg='顾总说：“那就算了，等你们做出点样子再谈。”投资撤回。';}}
+    else{S.investor={declined:1};msg='你婉拒了。顾总说随时可以再谈。';}}
+  if(e==='disp'){S.flags.disputeDone=choice;if(choice==='pay'){S.cash-=40000;msg='已赔付 ¥40,000，家属撤下网帖。';}else{S.rep-=4;msg='进入司法程序。本地论坛上的讨论还在持续，口碑 -4。';}}
+  if(e==='rescue'){S.flags.rescue=choice;if(choice==='take'){S.cash+=200000;S.flags.group=1;msg='集团注资 ¥200,000，你保住了医院，但失去了近一半股权。';}else msg='你拒绝了集团。';}
+  if(e==='tip')msg='';
+  log('事件「'+ev.title+'」：'+choice);
+  return msg;
+}
+
+// ---------- 渲染 ----------
+const app=document.getElementById('app');
+let openCat=null, eventMsgs={};
+
+function kpis(){
+  const c=S.crisis?'crit':S.cash<25000?'warn':'';
+  document.getElementById('kpis').innerHTML=
+   `<div class="kpi ${c}"><span>现金</span><b>${fmt(S.cash)}</b></div>
+    <div class="kpi"><span>口碑</span><b>${S.rep.toFixed(0)}<small class="muted"> /100</small></b></div>
+    <div class="kpi ${S.debt?'':''}"><span>贷款</span><b>${S.debt?fmt(S.debt):'无'}</b></div>`;
+  document.getElementById('dayLabel').textContent=S.over?'试玩结束':`第 ${S.day} 天 / ${DAYS}`;
+}
+
+function caseHtml(p){
+  const dz=DZ[p.dz];
+  let dx=dz.n, extra='';
+  if(p.mis)dx=`初诊：${DZ[p.mis].n} → 返诊确诊：${dz.n}`;
+  if(p.out==='未就诊离开')dx='未就诊';
+  return `<div class="case"><div class="h"><span>${esc(p.name)}，${p.age}岁</span><span>${esc(p.out||'')}</span></div>
+   <div>主诉：${esc(dz.c)}</div>${p.doc?`<div>接诊：${esc(p.doc)}${p.mis?' · 检查：'+(S.rules.exam==='lean'?'仅血常规':'血常规'):''}</div>`:''}
+   <div>诊断：${esc(dx)}</div>${p.why?`<div class="muted">${esc(p.why)}</div>`:''}${p.fee?`<div class="muted">费用 ${fmt(p.fee)}</div>`:''}${extra}</div>`;
+}
+
+function drill(cat,y){
+  let list=[];
+  if(cat==='ref')list=y.cases.filter(c=>c.out==='转诊');
+  if(cat==='left')list=y.cases.filter(c=>c.out==='未就诊离开');
+  if(cat==='mis')list=y.found.map(p=>({...p,out:'返诊'}));
+  if(cat==='bad')list=y.bad.map(p=>({...p,out:'病情加重转院',why:'在本院按保守方案处理后病情加重，已转上级医院'}));
+  if(cat==='tr')list=y.cases.filter(c=>c.out==='治疗后离院');
+  if(!list.length)return '<div class="muted" style="margin-top:6px">没有病例。</div>';
+  const more=list.length>6?`<div class="muted">另有 ${list.length-6} 份病历，模式相同。</div>`:'';
+  return `<div class="cases">${list.slice(0,6).map(caseHtml).join('')}${more}</div>`;
+}
+
+function reportSection(){
+  const y=S.yesterday;
+  if(!y)return `<section class="fade"><div class="card intro">
+    <h2>你是仁和医院的院长</h2>
+    <p>这是一家刚开业的综合门诊部：2 名医生、2 名护士、2 间诊室、有检验科，没有 X 光。账上 ¥150,000。</p>
+    <p>接下来 14 天，每一回合代表一整天。医院会自己运转，你只看汇报、翻病历、做决定。点汇报里带 › 的数字能看到具体病历。</p>
+    <p>医院可能倒闭。助理会提醒你，但不会替你做决定。</p>
+    <p class="muted">这是方向测试：没有画面，只测“看汇报 → 发现问题 → 做决定 → 看后果”好不好玩。你的决定会被记录下来给 Claude 分析。</p>
+  </div></section>`;
+  const rowD=(label,val,cat,tag='')=>`<tr class="${cat?'drill':''}" ${cat?`data-cat="${cat}"`:''}><td>${label}${tag}</td><td>${val}</td></tr>${openCat===cat&&cat?`<tr><td colspan="2" class="dd">${drill(cat,y)}</td></tr>`:''}`;
+  const refRate=y.served?y.referred/y.served:0;
+  const lastRep=S.history.length?S.history[S.history.length-1].rep:50;
+  let html=`<section class="fade"><h2>第 ${y.day} 天门诊日报</h2><div class="card"><table class="nums">
+    ${rowD('来院人数',y.demand)}
+    ${rowD('完成诊疗',y.treated,'tr')}
+    ${rowD('转诊',y.referred,'ref',refRate>.15?'<span class="tag warn">'+Math.round(refRate*100)+'%</span>':'')}
+    ${rowD('候诊太久离开',y.left,'left',y.left>3?'<span class="tag crit">多</span>':'')}
+    ${rowD('返诊发现误诊',y.found.length,'mis',y.found.length?'<span class="tag crit">新</span>':'')}
+    ${y.bad.length?rowD('冒险收治后病情加重',y.bad.length,'bad','<span class="tag crit">新</span>'):''}
+    ${rowD('收入',fmt(y.revenue))}
+    ${rowD('支出（工资 '+fmt(y.sal)+'）',fmt(y.cost))}
+    ${rowD('口碑变化',(y.dRep>0?'+':'')+y.dRep)}
+  </table></div></section>`;
+  // 部门汇报：主任报喜不报忧
+  const quotes=[];
+  const ld=Object.entries(y.load).map(([id,n])=>{const d=S.doctors.find(x=>x.id===id);return d?`${d.name} ${n} 人`:''}).filter(Boolean).join('，');
+  quotes.push(`<p class="quote"><b>门诊主任 王建华：</b>“昨天门诊运行平稳，大家都很辛苦。${y.found.length?'有几个病人回来复诊，已经处理好了。':''}接诊量：${ld}。”</p>`);
+  if(y.left>3||S.nurses<S.doctors.length)quotes.push(`<p class="quote"><b>护士长：</b>“${y.left>3?'下午候诊区坐满了，有病人等不下去走了。':''}${S.nurses<S.doctors.length?'护士比医生少，分诊和治疗室顾不过来。':''}”</p>`);
+  quotes.push(`<p class="quote"><b>财务：</b>“昨日净${y.revenue-y.cost>=0?'流入':'流出'} ${fmt(Math.abs(y.revenue-y.cost))}。按现在的开支，每天固定成本约 ${fmt(y.cost)}。”</p>`);
+  html+=`<section><h2>部门汇报</h2><div class="card stack">${quotes.join('')}</div></section>`;
+  // 助理：只讲怎么看，不给答案
+  const tips=[];
+  if(refRate>.15)tips.push('转诊率超过 15%，一般是缺设备或能力不够。点开“转诊”看看原因写的是什么。');
+  if(y.found.length)tips.push('“返诊发现误诊”是几天前的病人回来了。误诊通常和检查策略、接诊医生有关，病历里都有记录。');
+  if(y.left>3)tips.push('病人等不及走掉，说明接诊能力跟不上：医生、护士、诊室，哪个最先卡住要看具体情况。');
+  if(!tips.length)tips.push('今天没有明显异常。可以看看财务：收入能不能覆盖每天的固定成本。');
+  html+=`<section><h2>助理 周然</h2><div class="card stack">${tips.map(t=>`<p style="margin:0">“${esc(t)}”</p>`).join('')}</div></section>`;
+  return html;
+}
+
+function briefSection(){
+  if(!S.brief.length)return '';
+  return `<section class="fade"><h2>昨夜到今早</h2><div class="brief">${S.brief.map(b=>`<p>${esc(b)}</p>`).join('')}</div></section>`;
+}
+
+function eventsSection(){
+  if(!S.events.length&&!Object.keys(eventMsgs).length)return '';
+  const cards=S.events.map(ev=>`<div class="card event ${ev.id==='rescue'?'crit':''}"><b>${esc(ev.title)}</b><p style="margin:6px 0 0">${esc(ev.body)}</p>
+     <div class="btns">${ev.opts.map(([l,v])=>`<button data-ev="${ev.id}" data-v="${v}">${esc(l)}</button>`).join('')}</div></div>`).join('');
+  const done=Object.values(eventMsgs).filter(Boolean).map(m=>`<div class="card"><span class="muted">${esc(m)}</span></div>`).join('');
+  return `<section><h2>待你拍板</h2><div class="stack">${cards}${done}</div></section>`;
+}
+
+function decisions(){
+  const sel=(k,v,cur)=>`<button data-rule="${k}" data-v="${v}" class="${cur===v?'sel':''}">`;
+  const pend=[S.roomReady?`诊室施工中（第 ${S.roomReady} 天完工）`:'',S.xrayReady?`X光机安装中（第 ${S.xrayReady} 天可用）`:'',S.ctReady?`CT 安装中（第 ${S.ctReady} 天可用）`:''].filter(Boolean);
+  const cands=candidates();
+  const staff=S.doctors.map(d=>`<div class="person"><div><b>${esc(d.name)}</b> <span class="muted">${d.title}</span><div class="muted">${trait(d)} · ¥${d.salary}/天</div></div>${S.doctors.length>1?`<button data-fire="${d.id}">解聘</button>`:''}</div>`).join('');
+  const hire=cands.map(c=>`<div class="person"><div><b>${esc(c.name)}</b> <span class="muted">${c.title}</span><div class="muted">${trait(c)} · ¥${c.salary}/天</div></div><button data-hire="${c.id}" ${S.doctors.length>=S.rooms+1?'':''}>聘用</button></div>`).join('');
+  const canLoan=S.crisis<2&&S.rep>=30&&S.loansTaken<2;
+  return `<section><h2>你的权力</h2><div class="stack">
+  <details class="panel"><summary>建设</summary><div class="in">
+    ${pend.length?`<div class="pending">${pend.join('；')}</div>`:''}
+    <div class="opt"><div>现有：诊室 ${S.rooms} 间 · 检验科 · ${S.xray?'X光机':'无X光'} · ${S.ct?'CT':'无CT'}</div></div>
+    <div class="opt"><button data-build="room" ${S.roomReady?'disabled':''}>增加一间诊室 · ¥30,000</button><span class="t">2 天完工，每天多 ¥300 运营成本。一间诊室最多支撑约 24 人次/天。</span></div>
+    <div class="opt"><button data-build="xray" ${S.xray||S.xrayReady?'disabled':''}>购置 X 光机 · ¥80,000</button><span class="t">3 天安装。肺炎、骨折等需要拍片的病人不必再转走。每天维保 ¥200。</span></div>
+    <div class="opt"><button data-build="ct" ${S.ct||S.ctReady?'disabled':''}>购置 CT · ¥350,000</button><span class="t">5 天安装。能处理阑尾炎等复杂病例，提升名气。每天维保 ¥800。</span></div>
+  </div></details>
+  <details class="panel"><summary>人事</summary><div class="in">
+    <div class="muted">医生（工资次日开始计算）</div>${staff}
+    <div class="muted" style="margin-top:4px">今天人才市场上的求职者</div>${hire}
+    <div class="person"><div><b>护士</b> <span class="muted">现有 ${S.nurses} 人 · ¥350/天</span><div class="muted">护士少于医生时，接诊能力打八折。</div></div><span class="btns" style="margin:0"><button data-nurse="1">招 1 名</button>${S.nurses>1?'<button data-nurse="-1">减 1 名</button>':''}</span></div>
+  </div></details>
+  <details class="panel"><summary>规则</summary><div class="in">
+    <div class="opt"><div>检查策略</div><div class="btns" style="margin:0">${['lean','standard','full'].map(v=>sel('exam',v,S.rules.exam)+EXAM[v].n+'</button>').join('')}</div><span class="t">${EXAM[S.rules.exam].d}。检查越全，收费越高、误诊越少。</span></div>
+    <div class="opt"><div>能力外的病人</div><div class="btns" style="margin:0">${sel('scope','refer',S.rules.scope)}一律转诊</button>${sel('scope','try',S.rules.scope)}尽量收治</button></div><span class="t">收治复杂病例收入高，但没有 CT 时出事的风险很大。</span></div>
+    <div class="opt"><div>收费档位</div><div class="btns" style="margin:0">${['low','std','high'].map(v=>sel('fee',v,S.rules.fee)+FEE[v].n+'</button>').join('')}</div><span class="t">价格影响来院人数和每位病人的收入。</span></div>
+  </div></details>
+  <details class="panel"><summary>常备指令（你不在时助理照办）</summary><div class="in">
+    <div class="opt"><div>夜间来了批量伤员</div><div class="btns" style="margin:0">${sel('mass','ask',S.orders.mass)}先打电话问我</button>${sel('mass','accept',S.orders.mass)}全部接收</button>${sel('mass','refer',S.orders.mass)}一律转往市一院</button></div><span class="t">打电话可能联系不上你。接收需要足够的医生和护士。</span></div>
+  </div></details>
+  <details class="panel"><summary>资金</summary><div class="in">
+    <div class="opt"><button data-loan="1" ${canLoan?'':'disabled'}>向银行贷款 ¥100,000</button><span class="t">日息约 0.09%（年化约 33%，小医院拿不到更好的条件）。最多贷两次。${S.crisis>=2?'催收期间银行不再放贷。':S.rep<30?'口碑低于 30，银行不批。':''}</span></div>
+    ${S.debt?`<div class="opt"><button data-repay="1" ${S.cash>=50000?'':'disabled'}>提前还款 ¥50,000</button></div>`:''}
+    ${S.investor&&S.investor.amount?`<div class="muted">投资方顾总持股 ${S.investor.share}%，目标：第 14 天口碑 ≥60 或单日接诊 ≥60。</div>`:''}
+    ${S.flags.group?'<div class="muted">医疗集团持股 45%，财务总监由集团任命。</div>':''}
+  </div></details>
+  </div></section>`;
+}
+
+function historySection(){
+  if(S.history.length<2)return '';
+  const rows=S.history.map(h=>`<tr><td>第 ${h.day} 天</td><td>${h.demand}</td><td>${h.treated}</td><td>${h.referred}</td><td>${h.left}</td><td>${h.found}</td><td>${fmt(h.net)}</td></tr>`).join('');
+  return `<section><details class="panel"><summary>历史数据</summary><div class="in" style="overflow-x:auto"><table class="nums" style="min-width:420px;font-size:13px"><tr class="muted"><td>日期</td><td>来院</td><td>诊疗</td><td>转诊</td><td>离开</td><td>误诊</td><td>净额</td></tr>${rows}</table></div></details></section>`;
+}
+
+function endSection(){
+  const o=S.over; const last=S.history[S.history.length-1]||{};
+  const bestServed=Math.max(0,...S.history.map(h=>h.treated+h.referred));
+  let head,body;
+  if(o.type==='bankrupt'){head='仁和医院倒闭了';body=`第 ${o.day} 天，银行冻结账户。你坚持了 ${o.day-1} 天。`;}
+  else{head='两周过去了';
+    const inv=S.investor&&S.investor.amount?((S.rep>=60||bestServed>=60)?'顾总的目标达成了，他对你很满意。':'顾总的目标没有达成，他会派人进董事会。'):'';
+    body=`现金 ${fmt(S.cash)}，贷款 ${S.debt?fmt(S.debt):'无'}，口碑 ${S.rep.toFixed(0)}。${inv}`;}
+  const q=(id,label,opts)=>`<div class="opt"><div>${label}</div><div class="btns" style="margin:0">${opts.map(v=>`<button data-fb="${id}" data-v="${esc(v)}" class="${S.feedback&&S.feedback[id]===v?'sel':''}">${esc(v)}</button>`).join('')}</div></div>`;
+  return `<section class="fade"><div class="card"><h2>${head}</h2><p style="margin:0">${body}</p></div></section>
+  ${historySection()}
+  <section><h2>告诉 Claude 你的感受</h2><div class="card stack">
+    ${q('fun','哪部分最有意思？',['翻病历找原因','做决定看后果','谈判和融资','危机和意外','都没意思'])}
+    ${q('why','发生的事你看得懂原因吗？',['大部分看得懂','一半一半','经常莫名其妙'])}
+    ${q('hard','难度',['太简单','正好','太难'])}
+    ${q('amount','每天要拍板的事',['太少','正好','太多'])}
+    ${q('visual','只有这种面板够不够？',['够了，重点是决策','需要看到医院画面','画面比决策重要'])}
+    <div class="opt"><label for="fbText">还有什么想说的（最想加什么、最烦什么）</label><textarea id="fbText">${esc(S.feedback&&S.feedback.text||'')}</textarea></div>
+    <div class="btns"><button class="primary" id="sendFb">提交给 Claude</button><button id="restart">重新开一家</button></div>
+    <div class="muted" id="fbState"></div>
+  </div></section>`;
+}
+
+function render(){
+  kpis();
+  if(S.over){app.innerHTML=endSection();document.getElementById('bar').hidden=true;bind();return;}
+  document.getElementById('bar').hidden=false;
+  app.innerHTML=briefSection()+eventsSection()+reportSection()+decisions()+historySection();
+  const pendingEv=S.events.length;
+  document.getElementById('barNote').textContent=pendingEv?`还有 ${pendingEv} 件事等你拍板`:(S.day===DAYS?'最后一天':'');
+  document.getElementById('endDay').disabled=!!pendingEv;
+  bind();
+}
+
+let db=null;
+async function sync(){
+  if(!db)return false;
+  try{await db.doc('playtests/'+S.runId).set({runId:S.runId,updatedAt:new Date().toISOString(),day:S.day,over:S.over,cash:Math.round(S.cash),rep:+S.rep.toFixed(1),debt:S.debt,
+    investor:S.investor,flags:S.flags,rules:S.rules,orders:S.orders,doctors:S.doctors.map(d=>d.name+'/'+d.title),nurses:S.nurses,rooms:S.rooms,xray:S.xray,ct:S.ct,
+    history:S.history,log:S.log.slice(-200),feedback:S.feedback});return true;}catch(e){return false;}
+}
+
+function bind(){
+  app.querySelectorAll('tr.drill').forEach(tr=>tr.onclick=()=>{const c=tr.dataset.cat;openCat=openCat===c?null:c;if(openCat)log('查看病历：'+c);save();render();});
+  app.querySelectorAll('[data-ev]').forEach(b=>b.onclick=()=>{const ev=S.events.find(e=>e.id===b.dataset.ev);eventMsgs[ev.id]=resolveEvent(ev,b.dataset.v);S.events=S.events.filter(e=>e!==ev);save();render();});
+  app.querySelectorAll('[data-rule]').forEach(b=>b.onclick=()=>{const k=b.dataset.rule,v=b.dataset.v;if(k==='mass'){S.orders.mass=v;}else S.rules[k]=v;log('规则 '+k+'='+v);save();render();});
+  app.querySelectorAll('[data-build]').forEach(b=>b.onclick=()=>{const k=b.dataset.build;const price={room:30000,xray:80000,ct:350000}[k];
+    S.cash-=price;if(k==='room')S.roomReady=S.day+2;if(k==='xray')S.xrayReady=S.day+3;if(k==='ct')S.ctReady=S.day+5;log('建设 '+k);save();render();});
+  app.querySelectorAll('[data-hire]').forEach(b=>b.onclick=()=>{const c=S.candidates.list.find(x=>x.id===b.dataset.hire);S.doctors.push({...c,id:'d'+Date.now().toString(36)});S.candidates.list=S.candidates.list.filter(x=>x!==c);log('聘用 '+c.title+' '+trait(c)+' ¥'+c.salary);save();render();});
+  app.querySelectorAll('[data-fire]').forEach(b=>b.onclick=()=>{const d=S.doctors.find(x=>x.id===b.dataset.fire);S.cash-=d.salary*3;S.doctors=S.doctors.filter(x=>x!==d);log('解聘 '+d.name+'（'+trait(d)+'）');save();render();});
+  app.querySelectorAll('[data-nurse]').forEach(b=>b.onclick=()=>{S.nurses+= +b.dataset.nurse;log('护士 '+b.dataset.nurse);save();render();});
+  app.querySelectorAll('[data-loan]').forEach(b=>b.onclick=()=>{S.cash+=100000;S.debt+=100000;S.loansTaken++;log('贷款 10万');save();render();});
+  app.querySelectorAll('[data-repay]').forEach(b=>b.onclick=()=>{S.cash-=50000;S.debt-=50000;log('还款 5万');save();render();});
+  app.querySelectorAll('[data-fb]').forEach(b=>b.onclick=()=>{S.feedback=S.feedback||{};S.feedback[b.dataset.fb]=b.dataset.v;save();render();});
+  const send=document.getElementById('sendFb');
+  if(send)send.onclick=async()=>{S.feedback=S.feedback||{};S.feedback.text=document.getElementById('fbText').value;S.feedback.sentAt=new Date().toISOString();save();
+    const ok=await sync();document.getElementById('fbState').textContent=ok?'已提交。回到对话里告诉 Claude 一声就行。':'这台设备没能提交。请截图这一页发给 Claude。';};
+  const rs=document.getElementById('restart');
+  if(rs)rs.onclick=()=>{const prev=S.runId;S=newState();S.log.push({day:0,a:'重开，上一局 '+prev});eventMsgs={};openCat=null;save();render();window.scrollTo(0,0);};
+}
+
+document.getElementById('endDay').onclick=()=>{
+  if(S.events.length)return;
+  if(S.flags.nurseRaise){/* 加薪计入护士成本 */}
+  const y=simulateDay();
+  if(S.flags.nurseRaise)S.cash-=120;
+  S.history.push({day:y.day,demand:y.demand,treated:y.treated,referred:y.referred,left:y.left,found:y.found.length,net:y.revenue-y.cost,rep:+S.rep.toFixed(1),cash:Math.round(S.cash)});
+  const {brief,events}=overnight(y);
+  S.yesterday={...y,cases:y.cases.slice(0,120)};S.brief=brief;S.events=events;eventMsgs={};openCat=null;
+  if(!S.over){ if(S.day>=DAYS)S.over={type:'done',day:DAYS}; else S.day++; }
+  S.candidates=null; save(); render(); sync(); window.scrollTo(0,0);
+};
+
+render();
+(async()=>{try{db=await window.claude?.use?.('db');}catch(e){db=null}})();
+})();
+</script>
