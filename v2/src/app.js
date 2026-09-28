@@ -72,7 +72,10 @@ async function start() {
       engine = Engine.restore(data.kb, config, saved.save.engine);
       lastSeen = saved.save.lastSeen;
     } else {
-      engine = new Engine(data.kb, config, { seed: (Math.random() * 2 ** 31) >>> 0, startMs: Date.now() });
+      // 首次开院：若已过今天开门时间，从今天开门时刻开始模拟到现在（“今天已经营业了一阵”），避免面对空医院干等。
+      const probe = new Engine(data.kb, config, { startMs: Date.now() }), t = probe.local();
+      const openedToday = Date.now() - ((t.hour - config.openHour) * 60 + t.minute) * 60000;
+      engine = new Engine(data.kb, config, { seed: (Math.random() * 2 ** 31) >>> 0, startMs: t.hour >= config.openHour ? openedToday : Date.now() });
     }
     engine.advanceTo(Date.now());
     save();
