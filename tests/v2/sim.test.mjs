@@ -139,7 +139,7 @@ test('非营业时间没有新患者，并能给出下次开门时间', () => {
 test('数据清单与病种文件一致（浏览器按清单加载）', async () => {
   const { readdirSync, readFileSync } = await import('node:fs');
   const dir = new URL('../../data/diseases/', import.meta.url);
-  const files = readdirSync(dir).filter(f => f.endsWith('.json')).map(f => f.slice(0, -5)).sort();
+  const files = readdirSync(dir).filter(f => !f.startsWith('._') && f.endsWith('.json')).map(f => f.slice(0, -5)).sort();
   const manifest = JSON.parse(readFileSync(new URL('../../data/manifest.json', import.meta.url), 'utf8'));
   assert.deepEqual([...manifest.diseases].sort(), files);
 });

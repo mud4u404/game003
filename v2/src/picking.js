@@ -19,7 +19,7 @@ export function pickPerson(screenPoint, camera, orderedNodes) {
   const p=fromScreen(screenPoint,camera);
   for(let i=orderedNodes.length-1;i>=0;i--) {
     const n=orderedNodes[i];
-    if(n.person ? personHit(n.person,p) : n.hit?.(p)) return n.person||null;
+    if(n.person ? (n.pixelHit ? n.hit(p) : personHit(n.person,p)) : n.hit?.(p)) return n.person||null;
   }
   return null;
 }

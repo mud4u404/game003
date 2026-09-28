@@ -92,6 +92,21 @@ export async function main() {
     }
     job.status = 'notified';saveState(stateFile, state);
   }
+  async function tryNotify(job, id) {
+    if (job.nextNoticeAt && Date.now() < job.nextNoticeAt) return;
+    try {
+      await notify(job, id);
+      delete job.nextNoticeAt; delete job.noticeFailures;
+      saveState(stateFile, state);
+    } catch {
+      job.noticeFailures = (job.noticeFailures || 0) + 1;
+      const base = Number(process.env.RELAY_RETRY_MS || 60000);
+      const delay = Math.min(3600000, (Number.isFinite(base) && base > 0 ? base : 60000) * 2 ** Math.min(job.noticeFailures - 1, 6));
+      job.nextNoticeAt = Date.now() + delay;
+      saveState(stateFile, state);
+      log('通知失败，任务结果已保留；继续检查新任务', `PR #${job.number}`, `下次重试 ${new Date(job.nextNoticeAt).toISOString()}`);
+    }
+  }
   async function handle(comment) {
     const number = Number(comment.issue_url.split('/').pop()), id = String(comment.id);
     if (!Number.isSafeInteger(number)) throw new Error('Invalid PR number');
@@ -144,11 +159,11 @@ export async function main() {
       }
     } catch (e) { job.code = -1;job.summary = `接力失败：${e.message.split('\n')[0]}`; }
     job.status = 'finished';saveState(stateFile, state);
-    if (!stopping) await notify(job, id);
+    if (!stopping) await tryNotify(job, id);
     log('结束', `PR #${number}`, '退出码', job.code);
   }
   async function tick() {
-    if (!process.argv.includes('--check')) for (const [id, job] of Object.entries(state.jobs)) if (job.status === 'finished') await notify(job, id);
+    if (!process.argv.includes('--check')) for (const [id, job] of Object.entries(state.jobs)) if (job.status === 'finished') await tryNotify(job, id);
     const startedAt = new Date().toISOString();
     const pages = JSON.parse(gh('api', `repos/${repo}/issues/comments?since=${encodeURIComponent(state.since)}&per_page=100&sort=updated&direction=asc`, '--paginate', '--slurp'));
     const todo = pendingComments(pages.flat(), authors, state.jobs);

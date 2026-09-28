@@ -4,6 +4,16 @@
 
 本项目是一款面向手机端、严肃克制的专业医疗模拟游戏。玩家投资一家从小诊所起步的医院并任命管理层，观察其持续经营，在愿意时干预发展方向，逐步建立诊疗能力与专业声誉。产品方向及待验证建议见 `DESIGN.md`。现已有 0.3.2 从零筹建原型：独立新档案、小镇选址、服务配置、岗位招聘、预算/启动贷款、确认后直接开业、营业时间/日结固定成本及迁址，保留有限成人门诊路径、检查回传与复核、处方续配/随访、急救接续、院长授权与相邻采样单元扩建、本地存档与离线补算。实现范围和限制见 `IMPLEMENTATION.md`。
 
+## T004 诊室美术预览（2026-09-28）
+
+用户最新选定白色与青绿色插画方向，参考与规范见 `art/style/`。`npm start` 后打开 `http://localhost:4173/v2/?scene=clinic-room`，查看一间诊室：拖动、缩放、点选人物；下方入口返回正式 `/v2/`。预览不读写存档，没有就诊模拟。用户已批准继续动态试验：正式 `/v2/` 已接入新诊室、内科医生及站坐患者，按真实患者状态行走、转身、起身/落座；左上可切换内科诊室与全院，两者共用进度。其他科室设备、其他员工及卧姿尚未换装。
+
+动态短片见 `art/screens/T004/clinic-motion-test-clock.webm`（10倍开发测试时钟，正式游戏没有加速）。可复现演示 `/v2/?dev&at=2026-09-28T10:30&speed=10&seed=2`，不会读写玩家存档。
+
+新诊室触控/病历/相机/静止帧检查：`PLAYWRIGHT_MODULE=/absolute/path/to/playwright node tests/v2/live-clinic-browser.cjs`。
+
+可选静态美术预览浏览器验收：`PLAYWRIGHT_MODULE=/absolute/path/to/playwright node tests/v2/art-browser.cjs`。使用独立存储，生成 `art/screens/T004/room.png` 与 `room-zoom.png`，验证触屏/鼠标、静止帧、点选和返回正式医院。
+
 ## 开始工作
 
 1. 阅读 `AGENTS.md`，遵守协作和提交规则。

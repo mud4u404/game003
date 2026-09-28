@@ -1,0 +1,46 @@
+{
+  "normal": {
+    "start": "2026-09-28T06:07:44.602Z",
+    "end": "2026-09-28T06:17:45.515Z",
+    "startClock": "9月28日 周一 14:07",
+    "endClock": "9月28日 周一 14:17",
+    "errors": [],
+    "recordsBefore": 43,
+    "recordsAfter": 43,
+    "recordsAfterReload": 43,
+    "recordIdsPreserved": true,
+    "recordCostsPreserved": true,
+    "stageChanges": [
+      {
+        "id": "P32",
+        "before": "treatment",
+        "after": "departed"
+      },
+      {
+        "id": "P35",
+        "before": "consult",
+        "after": "treatment"
+      },
+      {
+        "id": "P37",
+        "before": "wait_doctor",
+        "after": "consult"
+      }
+    ],
+    "newPatients": []
+  },
+  "final": {
+    "start": "2026-09-28T06:16:12.650Z",
+    "end": "2026-09-28T06:18:12.932Z",
+    "startClock": "9月28日 周一 14:16",
+    "endClock": "9月28日 周一 14:18",
+    "errors": [],
+    "recordsBefore": 32,
+    "recordsAfter": 32,
+    "recordsAfterReload": 32,
+    "recordIdsPreserved": true,
+    "recordCostsPreserved": true,
+    "stageChanges": [],
+    "newPatients": []
+  }
+}

@@ -1,6 +1,6 @@
 // 可玩原型 v0.1：实时模拟接入等轴场景。
-import { scene as baseScene } from './layout.js';
-import { buildScene } from './catalog.js';
+import { liveScene as scene, clinicNodes } from './live-clinic.js';
+import { loadSprites, prepareWalkFrames } from './sprites.js';
 import { sortNodes } from './depth.js';
 import { render } from './renderer.js';
 import { pickPerson } from './picking.js';
@@ -48,15 +48,14 @@ function devClock(config) {
 // ---------- 启动 ----------
 let engine, config, clock, lastSeen = null, dirty = false, lastSave = 0;
 const actors = new Actors();
-const scene = { ...baseScene, people: [], rooms: baseScene.rooms.map(r => ({ ...r, name: { consult: '内科诊室', ward: '外科诊室·处置室' }[r.id] || r.name })) };
-const staticNodes = buildScene(scene);
+let assets, staticNodes = [];
 let nodes = staticNodes, camera, width = 0, height = 0, dpr = 1, selected = null, view = null;
 const nav = [];   // 面板返回栈
 let current = null; // 当前面板 { kind, arg }
 
 async function start() {
   let data;
-  try { data = await loadData(); } catch (e) { showFatal(`数据加载失败：${e.message}`); return; }
+  try { [data, assets] = await Promise.all([loadData(), loadSprites()]); prepareWalkFrames(assets); staticNodes = clinicNodes(assets); } catch (e) { showFatal(`数据加载失败：${e.message}`); return; }
   config = data.config;
   if (DEV) {
     const c = devClock(config);
@@ -82,7 +81,7 @@ async function start() {
   }
   view = engine.view();
   actors.sync(view); actors.settle();
-  refreshHud(); rebuild(); invalidate();
+  refreshHud(); rebuild(); focusClinic(); invalidate();
   if (!DEV && lastSeen && Date.now() - lastSeen > 30 * 60000) openPanel('brief', { from: Math.floor(lastSeen / 60000), to: engine.s.minute });
   setInterval(tick, 1000);
   window.addEventListener('pagehide', save);
@@ -101,7 +100,7 @@ function tick() {
   if (engine.s.minute !== before) {
     view = engine.view(); dirty = true;
     if (actors.sync(view)) animate();
-    rebuild(); invalidate(); refreshHud();
+    refreshHud();
     if (current && ['record', 'staff', 'report', 'people', 'money'].includes(current.kind)) renderPanel(false);
   }
   if (dirty && Date.now() - lastSave > 30000) save();
@@ -112,7 +111,7 @@ const invalidate = invalidator(() => {
   render(ctx, scene, nodes, camera, width, height, dpr, selected && actors.list.get(selected.id) ? selected : null);
   canvas.dataset.frames = String(Number(canvas.dataset.frames || 0) + 1);
 });
-function rebuild() { nodes = sortNodes([...staticNodes, ...personNodes(actors)]); }
+function rebuild() { nodes = sortNodes([...staticNodes, ...personNodes(actors, assets)]); }
 let animating = false, lastT = 0;
 function animate() {
   if (animating) return; animating = true; lastT = performance.now();
@@ -145,6 +144,21 @@ new ResizeObserver(resize).observe(canvas);
 window.addEventListener('resize', resize);
 resize();
 
+// The clinic and hospital views share one engine, scene and save.
+function focusClinic() {
+  const p = project(2, 2.2);
+  camera.zoom = camera.base * 1.65;
+  camera.x = width * .5 - p.x * camera.zoom;
+  camera.y = height * .42 - p.y * camera.zoom;
+  invalidate();
+}
+const views = document.createElement('div'); views.className = 'scene-views';
+views.innerHTML = '<button type="button" id="view-clinic">内科诊室</button><button type="button" id="view-hospital">全院</button>';
+const clinicStatus = document.createElement('div'); clinicStatus.className = 'clinic-status'; clinicStatus.setAttribute('aria-live', 'polite');
+document.querySelector('.stage').append(views, clinicStatus);
+$('#view-clinic').onclick = focusClinic;
+$('#view-hospital').onclick = () => { camera = defaultCamera(width, height); invalidate(); };
+
 // ---------- 顶栏 ----------
 function fmtTime(minute) { const t = engine.local(minute); return `${pad(t.hour)}:${pad(t.minute)}`; }
 function fmtDate(minute) { const t = engine.local(minute), d = new Date(t.day * 86400000); return `${d.getUTCMonth() + 1}月${d.getUTCDate()}日 周${WEEK[d.getUTCDay()]}`; }
@@ -152,6 +166,9 @@ function fmtDateTime(minute) { return `${fmtDate(minute)} ${fmtTime(minute)}`; }
 const pad = n => String(n).padStart(2, '0');
 function refreshHud() {
   const t = engine.local();
+  const doctor = view.staff.find(s => s.id === 'doctor-1');
+  const patient = doctor?.patientId && view.patients.find(p => p.id === doctor.patientId);
+  clinicStatus.textContent = `内科 · ${doctor?.name || '医生'} · ${doctor?.status || '空闲'}${patient ? ' · ' + patient.name : ''}`;
   $('#clock').textContent = `${fmtDate(engine.s.minute)} ${fmtTime(engine.s.minute)}${DEV ? '（测试时钟）' : ''}`;
   $('#status').textContent = view.open ? '营业中' : '已下班';
   $('#status').className = `status ${view.open ? 'open' : 'closed'}`;

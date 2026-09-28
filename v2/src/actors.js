@@ -21,7 +21,7 @@ const SPOT = {
   'xray': { x: 1.6, y: 7.27, z: .38, pose: 'lie' },
 };
 export const STAFF_HOME = {
-  'doctor-1': { x: 2.3, y: 1.05, z: 0, pose: 'stand' },
+  'doctor-1': { x: 2.28, y: 1.05, z: 0, pose: 'seat' },
   'doctor-2': { x: 7.75, y: 8.55, z: 0, pose: 'stand' },
   'triage': { x: 1.4, y: 4.35, z: 0, pose: 'stand' },
   'ward-nurse': { x: 6.4, y: 8.2, z: 0, pose: 'stand' },
@@ -37,15 +37,22 @@ export function roomAt(p) {
   for (const [id, r] of Object.entries(ROOMS)) if (id !== 'outside' && p.x >= r.x0 && p.x <= r.x1 && p.y >= r.y0 && p.y <= r.y1) return id;
   return 'outside';
 }
+// Join room doors and seat fronts through the clear southern aisle.
+// Bench footprints occupy x=4.2..7.5, y=4.35..4.85 and 5.2..5.7.
+function toAisle(p, room) {
+  if (room === 'lab') return [{ ...ROOMS.lab.door }, { x: 7.8, y: 4.1 }, { x: 7.8, y: 5.92 }];
+  if (room === 'consult') return [{ ...ROOMS.consult.door }, { x: 3.65, y: 5.92 }];
+  if (room === 'outside') return [{ x: 9.4, y: 5.3 }, { ...ROOMS.outside.door }, { x: 8, y: 5.92 }];
+  if (room !== 'hall') return [{ ...ROOMS[room].door }];
+  if (p.x >= 4.2 && p.x <= 7.5 && p.y < 4.35) return [{ x: 3.65, y: p.y }, { x: 3.65, y: 5.92 }];
+  if (p.x >= 4.2 && p.x <= 7.5 && p.y < 5.2) return [{ x: p.x, y: 5.02 }, { x: 3.65, y: 5.02 }, { x: 3.65, y: 5.92 }];
+  return [{ x: p.x, y: 5.92 }];
+}
 export function route(from, to) {
-  const a = roomAt(from), b = roomAt(to), pts = [];
-  if (a === b) return [to];
-  if (a !== 'hall') pts.push({ ...ROOMS[a].door });
-  if (a === 'outside') pts.unshift({ x: 9.4, y: 5.3 });
-  if (b !== 'hall') pts.push({ ...ROOMS[b].door });
-  if (b === 'outside') pts.push({ x: 9.4, y: 5.3 });
-  pts.push(to);
-  return pts;
+  const a = roomAt(from), b = roomAt(to);
+  if (a === b && a !== 'hall') return [to];
+  const pts = [...toAisle(from, a), ...toAisle(to, b).reverse(), to];
+  return pts.filter((p,i) => !i || p.x !== pts[i-1].x || p.y !== pts[i-1].y);
 }
 
 export class Actors {
@@ -73,7 +80,7 @@ export class Actors {
         a = { id: p.id, kind: 'patient', name: p.name, role: '患者', appearance: PATIENT_LOOKS[num(p.id) % PATIENT_LOOKS.length], ...OUTSIDE, target: null, path: [] };
         this.list.set(p.id, a);
       }
-      a.stageLabel = p.stageLabel; a.level = p.level;
+      a.stageLabel = p.stageLabel; a.level = p.level; a.sex = p.sex; a.stage = p.stage;
       this.goTo(a, spot);
     }
     for (const a of this.list.values()) {
@@ -103,30 +110,44 @@ export class Actors {
     if (t && t.x === spot.x && t.y === spot.y && t.z === spot.z && t.pose === spot.pose) return;
     a.target = { ...spot };
     a.path = route(a, spot);
-    a.z = 0; a.pose = 'walk'; a.back = false;
+    a.transition = a.pose === 'seat' ? { kind: 'rise', elapsed: 0, duration: .32 } : null;
+    a.z = 0; if (!a.transition) a.pose = 'walk';
   }
-  // 推进走路动画 dt 秒，返回是否还有人在走。
+  // 动作只随实际移动距离推进；坐下/起身在原地完成，不改变模拟时钟。
   step(dt) {
-    let moving = false;
     for (const a of [...this.list.values()]) {
+      let time = Math.max(0, dt);
+      if (a.transition) {
+        const t = a.transition, spent = Math.min(time, t.duration - t.elapsed);
+        t.elapsed += spent; time -= spent;
+        if (t.elapsed < t.duration) continue;
+        a.transition = null;
+        a.pose = t.kind === 'rise' ? 'walk' : 'seat';
+      }
       if (!a.path.length) continue;
-      let budget = SPEED * dt;
+      let budget = SPEED * time;
       while (budget > 0 && a.path.length) {
         const n = a.path[0], dx = n.x - a.x, dy = n.y - a.y, d = Math.hypot(dx, dy);
+        if (d > .00001) {
+          // 正交地面方向投影到屏幕，四个方向由正背面与镜像组成。
+          a.back = dx + dy < 0; a.mirror = a.back ? dx - dy < 0 : dx - dy > 0;
+          a.walkDistance = (a.walkDistance || 0) + Math.min(d, budget);
+        }
         if (d <= budget) { a.x = n.x; a.y = n.y; budget -= d; a.path.shift(); }
         else { a.x += dx / d * budget; a.y += dy / d * budget; budget = 0; }
       }
-      if (a.path.length) { moving = true; a.pose = 'walk'; a.back = a.path[0].y < a.y; }
+      if (a.path.length) a.pose = 'walk';
       else {
-        Object.assign(a, { z: a.target.z || 0, pose: a.target.pose, back: !!a.target.back });
+        Object.assign(a, { z: a.target.z || 0, pose: a.target.pose, back: !!a.target.back, mirror: false });
         if (a.leaving) this.list.delete(a.id);
+        else if (a.target.pose === 'seat' && budget / SPEED < .32) a.transition = { kind: 'sit', elapsed: budget / SPEED, duration: .32 };
       }
     }
-    return moving;
+    return this.moving();
   }
   // 直接放到目标位置（首次载入、离线补算后，不播放走路）。
-  settle() { for (const a of [...this.list.values()]) { if (a.leaving) { this.list.delete(a.id); continue; } if (a.target) Object.assign(a, { x: a.target.x, y: a.target.y, z: a.target.z || 0, pose: a.target.pose, back: !!a.target.back, path: [] }); } }
-  moving() { for (const a of this.list.values()) if (a.path.length) return true; return false; }
+  settle() { for (const a of [...this.list.values()]) { if (a.leaving) { this.list.delete(a.id); continue; } if (a.target) Object.assign(a, { x: a.target.x, y: a.target.y, z: a.target.z || 0, pose: a.target.pose, back: !!a.target.back, path: [], transition: null, mirror: false }); } }
+  moving() { for (const a of this.list.values()) if (a.path.length || a.transition) return true; return false; }
   people() { return [...this.list.values()]; }
 }
 function num(id) { return Number(String(id).replace(/\D/g, '')) || 0; }

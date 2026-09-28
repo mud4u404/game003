@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 const root = new URL('../../data/', import.meta.url);
 const read = name => JSON.parse(readFileSync(new URL(name, root), 'utf8'));
-const files = readdirSync(new URL('diseases/', root)).filter(f => f.endsWith('.json')).sort();
+const files = readdirSync(new URL('diseases/', root)).filter(f => !f.startsWith('._') && f.endsWith('.json')).sort();
 const dataset = { diseases: files.map(f => read(`diseases/${f}`)), exams: read('exams.json'), glossary: read('glossary.json'), sources: read('sources.json'), ids: read('ids.json') };
 const expected = ['upper_respiratory_infection','community_acquired_pneumonia','acute_gastroenteritis','essential_hypertension','type_2_diabetes','lower_urinary_tract_infection','acute_appendicitis','soft_tissue_injury','distal_radius_fracture','acute_urticaria','acute_coronary_syndrome'];
 const requiredExams = ['cbc','urinalysis','blood_glucose','hba1c','ecg','troponin','chest_xray','limb_xray','abdominal_ultrasound','abdominal_ct'];
