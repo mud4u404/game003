@@ -121,7 +121,14 @@ export class Engine {
     const openMinutes = (this.config.closeHour - this.config.openHour) * 60;
     let total = 0;
     for (const dis of this.kb.diseases) total += this.diseaseWeight(dis, month);
-    return total * d.population / 1e5 * d.marketShare / 365 / openMinutes;
+    return total * d.population / 1e5 * d.marketShare / 365 / openMinutes * this.hourFactor(minute);
+  }
+  // 门诊时段分布：各营业小时的相对系数，归一后平均为 1（总量不变）。
+  hourFactor(minute) {
+    const w = this.config.arrivalProfile?.weights; if (!w) return 1;
+    const hours = []; for (let h = this.config.openHour; h < this.config.closeHour; h++) hours.push(w[h] ?? 1);
+    const mean = hours.reduce((a, b) => a + b, 0) / hours.length;
+    return (w[this.local(minute).hour] ?? 1) / mean;
   }
   diseaseWeight(dis, month) { return dis.epidemiology.annualIncidencePer100k * (dis.epidemiology.seasonality[month] ?? 1); }
 
