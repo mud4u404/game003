@@ -6,9 +6,13 @@
 
 ## T004 诊室美术预览（2026-09-28）
 
-用户最新选定白色与青绿色插画方向，参考与规范见 `art/style/`。`npm start` 后打开 `http://localhost:4173/v2/?scene=clinic-room`，查看一间诊室：拖动、缩放、点选人物；下方入口返回正式 `/v2/`。预览不读写存档，没有就诊模拟；正式医院功能保持原有版本。整院替换待用户看过本轮效果后决定。
+用户最新选定白色与青绿色插画方向，参考与规范见 `art/style/`。`npm start` 后打开 `http://localhost:4173/v2/?scene=clinic-room`，查看一间诊室：拖动、缩放、点选人物；下方入口返回正式 `/v2/`。预览不读写存档，没有就诊模拟。用户已批准继续动态试验：正式 `/v2/` 已接入新诊室、内科医生及站坐患者，按真实患者状态行走、转身、起身/落座；左上可切换内科诊室与全院，两者共用进度。其他科室设备、其他员工及卧姿尚未换装。
 
-可选浏览器验收：`PLAYWRIGHT_MODULE=/absolute/path/to/playwright node tests/v2/art-browser.cjs`。使用独立存储，生成 `art/screens/T004/room.png` 与 `room-zoom.png`，验证触屏/鼠标、静止帧、点选和返回正式医院。
+动态短片见 `art/screens/T004/clinic-motion-test-clock.webm`（10倍开发测试时钟，正式游戏没有加速）。可复现演示 `/v2/?dev&at=2026-09-28T10:30&speed=10&seed=2`，不会读写玩家存档。
+
+新诊室触控/病历/相机/静止帧检查：`PLAYWRIGHT_MODULE=/absolute/path/to/playwright node tests/v2/live-clinic-browser.cjs`。
+
+可选静态美术预览浏览器验收：`PLAYWRIGHT_MODULE=/absolute/path/to/playwright node tests/v2/art-browser.cjs`。使用独立存储，生成 `art/screens/T004/room.png` 与 `room-zoom.png`，验证触屏/鼠标、静止帧、点选和返回正式医院。
 
 ## 开始工作
 

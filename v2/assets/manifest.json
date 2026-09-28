@@ -341,6 +341,86 @@
         512
       ],
       "kind": "furniture"
+    },
+    "patient-male-stand-front": {
+      "file": "patient-male-stand-front.png",
+      "footprint": [
+        0.25,
+        0.25
+      ],
+      "height": 1.5,
+      "displayWidth": 12.21875,
+      "anchor": [
+        0.5,
+        0.98
+      ],
+      "facing": "down-left",
+      "mirror": true,
+      "pixelSize": [
+        136,
+        512
+      ],
+      "kind": "person"
+    },
+    "patient-male-stand-back": {
+      "file": "patient-male-stand-back.png",
+      "footprint": [
+        0.25,
+        0.25
+      ],
+      "height": 1.5,
+      "displayWidth": 12.21875,
+      "anchor": [
+        0.5,
+        0.98
+      ],
+      "facing": "up-right",
+      "mirror": true,
+      "pixelSize": [
+        136,
+        512
+      ],
+      "kind": "person"
+    },
+    "patient-male-seat-front": {
+      "file": "patient-male-seat-front.png",
+      "footprint": [
+        0.25,
+        0.25
+      ],
+      "height": 1.15,
+      "displayWidth": 13.876953125,
+      "anchor": [
+        0.5,
+        0.98
+      ],
+      "facing": "down-left",
+      "mirror": true,
+      "pixelSize": [
+        203,
+        512
+      ],
+      "kind": "person"
+    },
+    "patient-male-seat-back": {
+      "file": "patient-male-seat-back.png",
+      "footprint": [
+        0.25,
+        0.25
+      ],
+      "height": 1.15,
+      "displayWidth": 18.525390625,
+      "anchor": [
+        0.5,
+        0.98
+      ],
+      "facing": "up-right",
+      "mirror": true,
+      "pixelSize": [
+        271,
+        512
+      ],
+      "kind": "person"
     }
   }
 }

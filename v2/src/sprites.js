@@ -38,3 +38,30 @@ export function spriteNode(asset, instance) {
     draw:r=>{const g=r.context;g.save();g.translate(rect.left+(mirror?width:0),rect.top);if(mirror)g.scale(-1,1);g.drawImage(asset.image,0,0,width,height);g.restore();},
   };
 }
+
+// Cache a small gait cycle once. No pixel reads, allocations or frame loop while idle.
+export function prepareWalkFrames(assets) {
+  for (const [id, source] of [...assets]) {
+    if (!id.includes('-stand-')) continue;
+    const w = 128, h = Math.round(w * source.pixelHeight / source.pixelWidth);
+    for (let frame = 0; frame < 8; frame++) {
+      const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      const phase = frame / 8 * Math.PI * 2, hip = h * .56;
+      // Pivot each lower-body half at the hip. The upper body overlaps the seams.
+      for (const side of [0, 1]) {
+        ctx.save(); ctx.translate(w * .5, hip);
+        ctx.rotate(Math.sin(phase + side * Math.PI) * .055);
+        ctx.drawImage(source.image, side * source.pixelWidth / 2, source.pixelHeight * .54,
+          source.pixelWidth / 2, source.pixelHeight * .46,
+          side * w / 2 - w * .5, h * .54 - hip, w / 2, h * .46);
+        ctx.restore();
+      }
+      ctx.drawImage(source.image, 0, 0, source.pixelWidth, source.pixelHeight * .58,
+        0, -Math.abs(Math.sin(phase)) * h * .007, w, h * .58);
+      const rgba = ctx.getImageData(0, 0, w, h).data, alpha = new Uint8Array(w * h);
+      for (let i = 0; i < alpha.length; i++) alpha[i] = rgba[i * 4 + 3];
+      assets.set(`${id}:walk:${frame}`, { ...source, image: canvas, alpha, pixelWidth: w, pixelHeight: h });
+    }
+  }
+}

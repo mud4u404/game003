@@ -18,3 +18,7 @@
 .bar{display:inline-block;width:80px;height:6px;background:#e8edf1;border-radius:3px;vertical-align:middle}.bar span{display:block;height:100%;background:#e0a14a;border-radius:3px}
 details{font-size:12px;margin:8px 0}summary{cursor:pointer;color:#1f6f67}.timeline{padding-left:0!important;list-style:none}.timeline li{padding:3px 0}.timeline time{display:inline-block;width:44px;color:#8993a1}
 #new-game{min-height:44px;padding:0 16px;border:0;border-radius:8px;background:#e0644a;color:#fff}
+
+.scene-views{position:absolute;top:12px;left:12px;display:flex;gap:6px;z-index:2}.scene-views button{background:rgba(255,255,255,.94);color:#247d72;border:1px solid #b8dcd3;border-radius:16px;padding:7px 12px;font:12px system-ui;cursor:pointer}.scene-views button:focus-visible{outline:2px solid #247d72}
+
+.clinic-status{position:absolute;top:52px;left:12px;max-width:calc(100% - 24px);padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.9);font-size:11px;color:#32645d;pointer-events:none}
