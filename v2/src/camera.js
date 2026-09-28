@@ -6,7 +6,8 @@ export function constrain(camera,width,height) {
   // Clamp against the hospital diamond, not its rectangular bounding box: the
   // corners of that box are empty and could otherwise leave the building lost.
   const margin=Math.min(100,width*.3,height*.3),center={x:width/2,y:height/2};
-  const polygon=[[0,0],[9,0],[9,9],[0,9]].map(([x,y])=>toScreen(project(x,y),camera));
+  const [x,y,w,d]=camera.bounds||[0,0,9,9];
+  const polygon=[[x,y],[x+w,y],[x+w,y+d],[x,y+d]].map(([x,y])=>toScreen(project(x,y),camera));
   if(!inPolygon(center,polygon)) {
     let nearest=null,distance=Infinity;
     for(let i=0;i<4;i++) {

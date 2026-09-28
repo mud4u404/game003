@@ -26,12 +26,18 @@ export function buildScene(scene) {
       const a=segment.offset,l=segment.length,h=wall.height,axis=wall.axis;
       const x=wall.x+(axis==='x'?a:-.14),y=wall.y+(axis==='y'?a:-.14),w=axis==='x'?l:.14,d=axis==='y'?l:.14;
       add({x,y,w,d,z:0,h},r=>{
-        r.box(x,y,0,w,d,h,'#eef0f2',{left:axis==='x'?'#e9ebee':'#e3e6e9',right:'#dfe2e6',top:'#5a626d'});
+        r.box(x,y,0,w,d,h,'#eef0f2',scene.clean?{left:'#f7faf9',right:'#d9e6e2',top:'#ffffff'}:{left:axis==='x'?'#e9ebee':'#e3e6e9',right:'#dfe2e6',top:'#5a626d'});
         const face=(lo,hi,z0,z1,color,stroke)=>r.poly((axis==='x'?[[x+lo,wall.y,z0],[x+hi,wall.y,z0],[x+hi,wall.y,z1],[x+lo,wall.y,z1]]:[[wall.x,y+lo,z0],[wall.x,y+hi,z0],[wall.x,y+hi,z1],[wall.x,y+lo,z1]]).map(p=>r.S(...p)),color,stroke,.4);
-        if(wall.dado&&h>.6)face(0,l,0,.38,'#cfe3de');
+        if(wall.dado&&h>.6)face(0,l,0,scene.clean?.18:.38,scene.clean?'#229f91':'#cfe3de');
         if(wall.windows?.some(([start,end])=>a>=start&&a<end))face(.08,l-.08,.55,1.02,'#a9cfe6','rgba(60,90,110,.6)');
       });
     }
+  }
+  if(scene.clean)for(const door of scene.doors) {
+    const wall=scene.walls.find(w=>w.id===door.wall);owner=door.id;part=0;orientation=0;
+    ox=wall.x+(wall.axis==='x'?door.offset:0);oy=wall.y+(wall.axis==='y'?door.offset:0);
+    if(wall.axis==='x') {box(0,0,0,.08,.14,1.6,'#74c8bb');box(door.width-.08,0,0,.08,.14,1.6,'#74c8bb');box(0,0,1.5,door.width,.14,.1,'#85d4c8');}
+    else {box(0,0,0,.14,.08,1.6,'#74c8bb');box(0,door.width-.08,0,.14,.08,1.6,'#74c8bb');box(0,0,1.5,.14,door.width,.1,'#85d4c8');}
   }
   for(const door of scene.doors.filter(d=>d.type==='glass')) {
     const wall=scene.walls.find(w=>w.id===door.wall);owner=door.id;part=0;ox=wall.x-.05;oy=wall.y+door.offset;orientation=wall.axis==='x'?1:0;

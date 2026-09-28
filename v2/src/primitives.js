@@ -1,7 +1,7 @@
 import { project, shade } from './iso.js';
-export function primitives(g) {
+export function primitives(g, options={}) {
 const S = (x,y,z=0) => { const p=project(x,y,z); return [p.x,p.y]; };
-const OL='rgba(45,52,64,.75)';
+const OL=options.clean ? null : 'rgba(45,52,64,.75)';
 function poly(pts,fill,stroke,lw){g.beginPath();pts.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.closePath();if(fill){g.fillStyle=fill;g.fill();}if(stroke){g.strokeStyle=stroke;g.lineWidth=lw||.5;g.stroke();}}
 function quad(x,y,w,d,z,fill,stroke,lw){poly([S(x,y,z),S(x+w,y,z),S(x+w,y+d,z),S(x,y+d,z)],fill,stroke,lw);}
 function box(x,y,z,w,d,h,col,o={}){
@@ -34,5 +34,5 @@ function person(px,py,o){const x=px,y=py,sc=1.7;g.save();g.translate(x,y);g.scal
   ell(-1.25,hy+.9,.42,.5,'#2a2522');ell(1.25,hy+.9,.42,.5,'#2a2522');}
  g.restore();}
 
-return { S, poly, quad, box, shadowQ, ell, rr, person };
+return { context:g, S, poly, quad, box, shadowQ, ell, rr, person };
 }

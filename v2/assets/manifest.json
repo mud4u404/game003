@@ -1,0 +1,346 @@
+{
+  "version": 1,
+  "projection": "2:1",
+  "assets": {
+    "cabinet": {
+      "file": "cabinet.png",
+      "footprint": [
+        1.6,
+        0.4
+      ],
+      "height": 0.55,
+      "displayWidth": 50,
+      "anchor": [
+        0.5,
+        0.88
+      ],
+      "facing": "down-left",
+      "mirror": true,
+      "pixelSize": [
+        512,
+        481
+      ],
+      "kind": "furniture"
+    },
+    "desk": {
+      "file": "desk.png",
+      "footprint": [
+        1.4,
+        0.65
+      ],
+      "height": 0.52,
+      "displayWidth": 51,
+      "anchor": [
+        0.5,
+        0.83
+      ],
+      "facing": "down-left",
+      "mirror": true,
+      "pixelSize": [
+        512,
+        435
+      ],
+      "kind": "furniture"
+    },
+    "doctor-chair": {
+      "file": "doctor-chair.png",
+      "footprint": [
+        0.55,
+        0.55
+      ],
+      "height": 0.62,
+      "displayWidth": 25,
+      "anchor": [
+        0.5,
+        0.88
+      ],
+      "facing": "down-left",
+      "mirror": true,
+      "pixelSize": [
+        288,
+        512
+      ],
+      "kind": "furniture"
+    },
+    "doctor-seat-back": {
+      "file": "doctor-seat-back.png",
+      "footprint": [
+        0.25,
+        0.25
+      ],
+      "height": 1.15,
+      "displayWidth": 20.78125,
+      "anchor": [
+        0.5,
+        0.98
+      ],
+      "facing": "up-right",
+      "mirror": true,
+      "pixelSize": [
+        304,
+        512
+      ],
+      "kind": "person"
+    },
+    "doctor-seat-front": {
+      "file": "doctor-seat-front.png",
+      "footprint": [
+        0.25,
+        0.25
+      ],
+      "height": 1.15,
+      "displayWidth": 16.474609375,
+      "anchor": [
+        0.5,
+        0.98
+      ],
+      "facing": "down-left",
+      "mirror": true,
+      "pixelSize": [
+        241,
+        512
+      ],
+      "kind": "person"
+    },
+    "doctor-stand-back": {
+      "file": "doctor-stand-back.png",
+      "footprint": [
+        0.25,
+        0.25
+      ],
+      "height": 1.5,
+      "displayWidth": 12.84765625,
+      "anchor": [
+        0.5,
+        0.98
+      ],
+      "facing": "up-right",
+      "mirror": true,
+      "pixelSize": [
+        143,
+        512
+      ],
+      "kind": "person"
+    },
+    "doctor-stand-front": {
+      "file": "doctor-stand-front.png",
+      "footprint": [
+        0.25,
+        0.25
+      ],
+      "height": 1.5,
+      "displayWidth": 12.84765625,
+      "anchor": [
+        0.5,
+        0.98
+      ],
+      "facing": "down-left",
+      "mirror": true,
+      "pixelSize": [
+        143,
+        512
+      ],
+      "kind": "person"
+    },
+    "exam-bed": {
+      "file": "exam-bed.png",
+      "footprint": [
+        0.65,
+        1.8
+      ],
+      "height": 0.52,
+      "displayWidth": 64,
+      "anchor": [
+        0.5,
+        0.85
+      ],
+      "facing": "down-left",
+      "mirror": true,
+      "pixelSize": [
+        512,
+        442
+      ],
+      "kind": "furniture"
+    },
+    "lightbox": {
+      "file": "lightbox.png",
+      "footprint": [
+        1,
+        0.07
+      ],
+      "height": 0.5,
+      "displayWidth": 28,
+      "anchor": [
+        0.5,
+        0.95
+      ],
+      "facing": "down-left",
+      "mirror": true,
+      "pixelSize": [
+        496,
+        512
+      ],
+      "kind": "furniture"
+    },
+    "monitor": {
+      "file": "monitor.png",
+      "footprint": [
+        0.35,
+        0.18
+      ],
+      "height": 0.35,
+      "displayWidth": 18,
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "facing": "down-left",
+      "mirror": true,
+      "pixelSize": [
+        416,
+        512
+      ],
+      "kind": "furniture"
+    },
+    "patient-chair": {
+      "file": "patient-chair.png",
+      "footprint": [
+        0.5,
+        0.5
+      ],
+      "height": 0.6,
+      "displayWidth": 24,
+      "anchor": [
+        0.5,
+        0.88
+      ],
+      "facing": "down-left",
+      "mirror": true,
+      "pixelSize": [
+        396,
+        512
+      ],
+      "kind": "furniture"
+    },
+    "patient-seat-back": {
+      "file": "patient-seat-back.png",
+      "footprint": [
+        0.25,
+        0.25
+      ],
+      "height": 1.15,
+      "displayWidth": 18.388671875,
+      "anchor": [
+        0.5,
+        0.98
+      ],
+      "facing": "up-right",
+      "mirror": true,
+      "pixelSize": [
+        269,
+        512
+      ],
+      "kind": "person"
+    },
+    "patient-seat-front": {
+      "file": "patient-seat-front.png",
+      "footprint": [
+        0.25,
+        0.25
+      ],
+      "height": 1.15,
+      "displayWidth": 13.056640625,
+      "anchor": [
+        0.5,
+        0.98
+      ],
+      "facing": "down-left",
+      "mirror": true,
+      "pixelSize": [
+        191,
+        512
+      ],
+      "kind": "person"
+    },
+    "patient-stand-back": {
+      "file": "patient-stand-back.png",
+      "footprint": [
+        0.25,
+        0.25
+      ],
+      "height": 1.5,
+      "displayWidth": 11.6796875,
+      "anchor": [
+        0.5,
+        0.98
+      ],
+      "facing": "up-right",
+      "mirror": true,
+      "pixelSize": [
+        130,
+        512
+      ],
+      "kind": "person"
+    },
+    "patient-stand-front": {
+      "file": "patient-stand-front.png",
+      "footprint": [
+        0.25,
+        0.25
+      ],
+      "height": 1.5,
+      "displayWidth": 12.30859375,
+      "anchor": [
+        0.5,
+        0.98
+      ],
+      "facing": "down-left",
+      "mirror": true,
+      "pixelSize": [
+        137,
+        512
+      ],
+      "kind": "person"
+    },
+    "plant": {
+      "file": "plant.png",
+      "footprint": [
+        0.45,
+        0.45
+      ],
+      "height": 0.8,
+      "displayWidth": 20,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "facing": "down-left",
+      "mirror": true,
+      "pixelSize": [
+        401,
+        512
+      ],
+      "kind": "furniture"
+    },
+    "sink": {
+      "file": "sink.png",
+      "footprint": [
+        0.7,
+        0.5
+      ],
+      "height": 0.55,
+      "displayWidth": 31,
+      "anchor": [
+        0.5,
+        0.85
+      ],
+      "facing": "down-left",
+      "mirror": true,
+      "pixelSize": [
+        425,
+        512
+      ],
+      "kind": "furniture"
+    }
+  }
+}

@@ -73,3 +73,9 @@ npm run verify
 接力测试包含允许账号过滤、命令解析、状态恢复、单实例锁、分页及留言失败后的防重复执行。GitHub/Codex 控制流程的自动集成测试使用本地替身，不向远程发布测试评论；实机 CLI、后台运行及推送验证见 HANDOFF.md。本安装不修改游戏代码，不替代游戏正常入口的验收。
 
 官方参考：[非交互运行](https://learn.chatgpt.com/docs/non-interactive-mode)、[沙箱与自动批准](https://learn.chatgpt.com/docs/agent-approvals-security)。实际参数以安装的 `codex exec --help` 为准；本机 sandbox 测试语法是 `codex sandbox [COMMAND]`，不是旧版文档的 `codex sandbox macos`。
+
+## 2026-09-28 暂停与通知重试修正
+
+用户确认由当前 Codex 会话接手，Claude 暂停。本机 LaunchAgent 已 bootout 并 disable，状态与日志保留；修正后的脚本副本已安装，但没有重新启用，以免再接取 T004 旧评论。通知失败现在独立捕获，按 1、2、4 分钟递增至最多 1 小时重试，不再挡住后续任务，也不重跑已完成任务。瞬时与持续失败均有集成测试。
+
+GitHub PR 写权限仍需恢复后单独验证；修复重试逻辑不代表授权已修好。恢复前须核对积压评论与当前会话已完成的任务，避免重复开发；确认后按原安装步骤重新启用。T005 的开工留言和十五分钟心跳未在本轮实现。
