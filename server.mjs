@@ -10,9 +10,9 @@ const port = Number(process.env.PORT || 4173);
 http.createServer(async (req, res) => {
   try {
     const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
-    const relative = pathname === '/' ? 'index.html' : pathname === '/v2/' ? 'v2/index.html' : pathname.slice(1);
+    const relative = pathname === '/' ? 'index.html' : pathname === '/v2/' ? 'v2/index.html' : pathname === '/v3/art-probe/' ? 'v3/art-probe/index.html' : pathname.slice(1);
     // Serve only the application, not repository metadata or local credentials.
-    if (!(relative === 'index.html' || relative === 'style.css' || relative.startsWith('src/') || relative.startsWith('assets/') || relative.startsWith('v2/') || relative.startsWith('data/')) ||
+    if (!(relative === 'index.html' || relative === 'style.css' || relative.startsWith('src/') || relative.startsWith('assets/') || relative.startsWith('v2/') || relative.startsWith('v3/art-probe/') || relative.startsWith('data/')) ||
         relative.split('/').some(p => p === '..' || p.startsWith('.'))) {
       res.writeHead(404).end('Not found'); return;
     }

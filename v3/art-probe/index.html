@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>v3 二维美术可行性样张</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="phone">
+    <header class="bar"><div><div class="eyebrow">美术管线验证 · 可运行场景</div><h1>仁和医院</h1></div><div class="clock"><span class="live"></span>09:24</div></header>
+    <section class="stage" aria-label="代码绘制的等轴候诊区和诊室">
+      <svg id="world" viewBox="0 0 390 650" role="img" aria-label="中国医院候诊与问诊场景，患者可见地从座椅前往诊室"></svg>
+      <div class="scene-tag"><span class="pulse"></span> 门诊运行中</div>
+      <div class="hint">点击人物查看当前环节</div>
+    </section>
+    <section class="case" aria-live="polite">
+      <div class="handle"></div>
+      <div class="case-top"><div><span class="case-kicker">正在关注的患者</span><h2 id="patient-name">陈女士 <small>· 42 岁</small></h2></div><span class="stage-pill" id="patient-state">候诊中</span></div>
+      <div class="path"><span class="done">到院</span><i></i><span class="now" id="path-current">候诊</span><i></i><span>问诊</span><i></i><span>检查</span></div>
+      <div class="note" id="case-note">她正在候诊区等待叫号。医生空出诊室后，她会自己走进去。</div>
+      <div class="actions"><button id="follow" type="button">跟随患者</button><button id="pause" type="button" aria-pressed="false">暂停</button></div>
+    </section>
+  </main>
+  <script type="module" src="./scene.js"></script>
+</body>
+</html>
